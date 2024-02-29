@@ -1,7 +1,6 @@
 #include <algorithm>
 #include <iostream>
 #include <fstream>
-#include <vector>
 #include <string>
 #include <optional>
 const std::string FILE_NAME = "IEEE.csv";
