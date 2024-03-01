@@ -78,12 +78,12 @@ return std::nullopt;
 
 int main()
 {
-    std::ifstream target_File("target.txt");
-    target_File.seekg(0, std::ios::end);
-    size_t size = target_File.tellg();
+    std::ifstream targetFile("target.txt");
+    targetFile.seekg(0, std::ios::end);
+    size_t size = targetFile.tellg();
     std::string target(size, ' ');
-    target_File.seekg(0);
-    target_File.read(&target[0], size);
+    targetFile.seekg(0);
+    targetFile.read(&target[0], size);
     int key;
     std::cout << "1. Encrypt File \n2. Decrypt File ";
     int choice;
