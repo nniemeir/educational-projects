@@ -1,19 +1,24 @@
+/* 
+Caesar - Encrypt and decrypt text using Caesar ciphers, with the option to use frequency analysis to guess the key of an encrypted file.
+
+Author: Nat Niemeir <nniemeir@protonmail.com>
+*/
+
 #include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <vector>
 #include <optional>
 
-const std::string FILE_NAME = "target.txt";
-const int ALPHABET_LENGTH = 26;
-const int ASSUMED_MOST_FREQUENT = 4;
+const std::string FILE_NAME = "target.txt"; // The file to be encrypted/decrypted
+const int ALPHABET_LENGTH = 26; // The number of letters in the English alphabet
+const int ASSUMED_MOST_FREQUENT = 4; // The index of the letter e in the array of all English letters
 
 std::string encrypt(const std::string& target, int key) {
 	std::string cipherText;
 	for (char i : target)
         {
-            int test = isalpha(i);
-            if (test != 0)
+            if (isalpha(i))
             {
                 if (isupper(i))
                 {
@@ -33,8 +38,7 @@ std::string decrypt(const std::string& target, int key) {
 	std::string clearText;
 	for (char i : target)
         {
-            int test = isalpha(i);
-            if (test)
+            if (isalpha(i))
             {
                 if (isupper(i))
                 {
@@ -73,12 +77,16 @@ const char alphabet[] = "abcdefghijklmnopqrstuvwxyz";
         }
     }
 
-    return 0;  // Return a default value if no difference is calculated
+    return 0;
 }
 
 int main()
 {
-    std::ifstream targetFile("target.txt");
+    std::ifstream targetFile(FILE_NAME); 
+    if (!targetFile.is_open()) {
+	    std::cout << "Unable to access " << FILE_NAME << "\n";
+	    return EXIT_FAILURE;
+    }
     // The number of chars in the file is determined by putting the pointer at the end and finding its position
     targetFile.seekg(0, std::ios::end);
     size_t targetSize = targetFile.tellg();
@@ -86,7 +94,7 @@ int main()
     std::string target(targetSize, ' ');
     targetFile.seekg(0);
     // The contents of targetFile are written into the target variable
-    targetFile.read(&target[0], size);
+    targetFile.read(&target[0], targetSize);
     int key;
     std::cout << "1. Encrypt File \n2. Decrypt File ";
     int choice;
@@ -127,5 +135,5 @@ int main()
     {
         std::cout << "Invalid Option, Please Try Again\n";
     }
-    return 0;
+    return EXIT_SUCCESS;
 }
