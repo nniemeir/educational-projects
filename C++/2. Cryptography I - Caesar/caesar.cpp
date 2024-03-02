@@ -52,7 +52,6 @@ std::string decrypt(const std::string& target, int key) {
 
 int findKey(const std::string& target) {
 const char alphabet[] = "abcdefghijklmnopqrstuvwxyz";
-int diff = 0;
             std::vector<int> letterOccurrences;
             for (char i : alphabet)
             {
@@ -70,18 +69,23 @@ int diff = 0;
                     {
                         diff = ALPHABET_LENGTH - diff;
                     }
-                }
-	    }
-return diff;
+		       return diff;  // Return the calculated difference
+        }
+    }
+
+    return 0;  // Return a default value if no difference is calculated
 }
 
 int main()
 {
     std::ifstream targetFile("target.txt");
+    // The number of chars in the file is determined by putting the pointer at the end and finding its position
     targetFile.seekg(0, std::ios::end);
-    size_t size = targetFile.tellg();
-    std::string target(size, ' ');
+    size_t targetSize = targetFile.tellg();
+    // A string of the same size as targetFile is created
+    std::string target(targetSize, ' ');
     targetFile.seekg(0);
+    // The contents of targetFile are written into the target variable
     targetFile.read(&target[0], size);
     int key;
     std::cout << "1. Encrypt File \n2. Decrypt File ";
@@ -107,17 +111,17 @@ int main()
         }
         else if (choice2 == 2)
         {
-	int key = findKey(target);
+	key = findKey(target);
+	std::cout << key;
 	if (key==0) {
 		std::cout << "The text does not appear to be encrypted\n";
+		return 0;
 	}
-	else {
+	}
         std::cout << "Output:\n\n~~~" << "\n";
 	std::string clearText = decrypt(target, key);
         std::cout << clearText;
 	std::cout << "\n~~~\n\n";
-	}
-    }
     }
     else
     {
