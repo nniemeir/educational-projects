@@ -50,30 +50,29 @@ std::string decrypt(const std::string& target, int key) {
 	return clearText;
 }
 
-std::optional<int> findKey(const std::string& target) {
+int findKey(const std::string& target) {
 const char alphabet[] = "abcdefghijklmnopqrstuvwxyz";
-            std::vector<int> occurrences;
+int diff = 0;
+            std::vector<int> letterOccurrences;
             for (char i : alphabet)
             {
                 std::string::difference_type charFreq = std::count(target.begin(), target.end(), i);
-                occurrences.push_back(charFreq);
+                letterOccurrences.push_back(charFreq);
             }
-            auto it = std::max_element(occurrences.begin(), occurrences.end());
-            if (it != occurrences.end())
+            auto it = std::max_element(letterOccurrences.begin(), letterOccurrences.end());
+            if (it != letterOccurrences.end())
             {
-                int index = std::distance(occurrences.begin(), it);
-                std::cout << "Most Common Letter: " << alphabet[index] << "\n";
-                if (index != ASSUMED_MOST_FREQUENT)
+                int mostFreqLetterIndex = std::distance(letterOccurrences.begin(), it);
+                if (mostFreqLetterIndex != ASSUMED_MOST_FREQUENT)
                 {
-                    int diff = abs(index - ASSUMED_MOST_FREQUENT);
-                    if (index < ASSUMED_MOST_FREQUENT)
+                    int diff = abs(mostFreqLetterIndex - ASSUMED_MOST_FREQUENT);
+                    if (mostFreqLetterIndex < ASSUMED_MOST_FREQUENT)
                     {
                         diff = ALPHABET_LENGTH - diff;
                     }
-		    return diff;
                 }
 	    }
-return std::nullopt;
+return diff;
 }
 
 int main()
@@ -98,7 +97,7 @@ int main()
     else if (choice == 2)
     {
         std::cout << "1. I Know The Key\n2. I Do Not Know The Key ";
-        int index;
+        int mostFreqLetterIndex;
         int choice2;
         std::cin >> choice2;
         if (choice2 == 1)
@@ -108,11 +107,17 @@ int main()
         }
         else if (choice2 == 2)
         {
-	std::optional<int> guessedKey = findKey(target);
-        }
+	int key = findKey(target);
+	if (key==0) {
+		std::cout << "The text does not appear to be encrypted\n";
+	}
+	else {
         std::cout << "Output:\n\n~~~" << "\n";
 	std::string clearText = decrypt(target, key);
-        std::cout << clearText << "\n~~~\n\n";
+        std::cout << clearText;
+	std::cout << "\n~~~\n\n";
+	}
+    }
     }
     else
     {
