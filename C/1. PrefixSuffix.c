@@ -10,6 +10,7 @@
 #define MAX_PATTERN_LENGTH 256
 #define MAX_EXTENSION_LENGTH 20
 
+// Prepends or appends pattern to all files of specified extension in the specified directory
 void patternRename(const char *directoryPath, const char *pattern,
              const char *filteredExtension, const char *mode) {
   DIR *dir;
@@ -22,7 +23,9 @@ void patternRename(const char *directoryPath, const char *pattern,
     perror("Error opening directory");
     exit(EXIT_FAILURE);
   }
+
   printf("Prepending %s to %s files in %s/\n", pattern, filteredExtension, directoryPath);
+
   // The end of the directory has been reached once entry is NULL
   while ((entry = readdir(dir)) != NULL) {
     if (entry->d_type == DT_REG) { // Check if it is a regular file
@@ -97,8 +100,6 @@ int main() {
   printf("1. Prepend\n2. Append\n ");
   fgets(mode, 2, stdin);
   mode[strcspn(mode, "\n")] = '\0';
-
-
   patternRename(directoryPath, pattern, filteredExtension, mode);
   return 0;
 }
