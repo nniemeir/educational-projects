@@ -1,8 +1,15 @@
+/* 
+OUI Lookup - Given a MAC address, match the OUI to a manufacturer's name using IEEE records
+
+Author: Nat Niemeir <nniemeir@protonmail.com>
+*/
+
 #include <algorithm>
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <optional>
+
 const std::string FILE_NAME = "IEEE.csv";
 const int MANUFACTURER_ID_LENGTH = 6;
 const int MIN_MAC_LENGTH = 12;
@@ -14,6 +21,7 @@ struct record {
 	std::string manufacturerName;
 };
 
+// Search records for OUI that matches the one in MAC variable. Return corresponding name if match found, return nothing otherwise.
 std::optional<record> searchRecords(std::ifstream& csvFile, std::string search_term)
 {
 	record targetRecord;
@@ -40,6 +48,7 @@ bool validateInput(const std::string& mac) {
 	return (mac.length() < MIN_MAC_LENGTH || mac.length() > MAX_MAC_LENGTH);
 }
 
+// Alter input string to match formatting of the CSV file
 std::string formatMAC(const std::string& mac) {
 	std::string searchTerm = mac;
 	// Remove punctuation symbols from target string
