@@ -1,5 +1,6 @@
 // Author: Nat Niemeir
-// This is a POSIX-compliant program to prepend or append a string to each filename of the chosen extension in the chosen directory 
+// This is a POSIX-compliant program to prepend or append a string to each
+// filename of the chosen extension in the chosen directory
 #include <dirent.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -10,9 +11,10 @@
 #define MAX_PATTERN_LENGTH 256
 #define MAX_EXTENSION_LENGTH 20
 
-// Prepends or appends pattern to all files of specified extension in the specified directory
+// Prepends or appends pattern to all files of specified extension in the
+// specified directory
 void patternRename(const char *directoryPath, const char *pattern,
-             const char *filteredExtension, const char *mode) {
+                   const char *filteredExtension, const char *mode) {
   DIR *dir;
   struct dirent *entry;
 
@@ -24,7 +26,8 @@ void patternRename(const char *directoryPath, const char *pattern,
     exit(EXIT_FAILURE);
   }
 
-  printf("Prepending %s to %s files in %s/\n", pattern, filteredExtension, directoryPath);
+  printf("Prepending %s to %s files in %s/\n", pattern, filteredExtension,
+         directoryPath);
 
   // The end of the directory has been reached once entry is NULL
   while ((entry = readdir(dir)) != NULL) {
@@ -45,36 +48,35 @@ void patternRename(const char *directoryPath, const char *pattern,
         // Allocate memory for filenames dynamically
         char *oldFilePath =
             malloc(strlen(directoryPath) + 1 + strlen(entry->d_name) + 1);
-        char *newFilePath =
-            malloc(strlen(directoryPath) + 1 + strlen(pattern) +
-                   strlen(entry->d_name) + 1);
+        char *newFilePath = malloc(strlen(directoryPath) + 1 + strlen(pattern) +
+                                   strlen(entry->d_name) + 1);
 
         // Construct file paths
         sprintf(oldFilePath, "%s/%s", directoryPath, entry->d_name);
-	if (strcmp(mode, "1") == 0) {
-        sprintf(newFilePath, "%s/%s%s", directoryPath, pattern,
-                entry->d_name);
-	}
-	
-	else {
-	sprintf(newFilePath, "%s/%s%s", directoryPath, entry->d_name, pattern);
-	}
-
-	if(strlen(newFilePath) < MAX_PATH) {
-	
-        // Rename the file
-        if (rename(oldFilePath, newFilePath) != 0) {
-          printf("Error renaming file %s to %s\n", oldFilePath, newFilePath);
-        } else {
-          printf("File renamed: %s to %s\n", entry->d_name, newFilePath);
+        if (strcmp(mode, "1") == 0) {
+          sprintf(newFilePath, "%s/%s%s", directoryPath, pattern,
+                  entry->d_name);
         }
-        // Free dynamically allocated memory
-        free(oldFilePath);
-        free(newFilePath);
-	}
-	else {
-	  printf("Maximum filename length exceeded for %s", oldFilePath);
-	}
+
+        else {
+          sprintf(newFilePath, "%s/%s%s", directoryPath, entry->d_name,
+                  pattern);
+        }
+
+        if (strlen(newFilePath) < MAX_PATH) {
+
+          // Rename the file
+          if (rename(oldFilePath, newFilePath) != 0) {
+            printf("Error renaming file %s to %s\n", oldFilePath, newFilePath);
+          } else {
+            printf("File renamed: %s to %s\n", entry->d_name, newFilePath);
+          }
+          // Free dynamically allocated memory
+          free(oldFilePath);
+          free(newFilePath);
+        } else {
+          printf("Maximum filename length exceeded for %s", oldFilePath);
+        }
       }
     }
   }
@@ -87,10 +89,9 @@ int main() {
   char filteredExtension[MAX_EXTENSION_LENGTH];
   char pattern[MAX_PATTERN_LENGTH];
   char mode[2];
-  system("clear");
   printf("Enter the directory's path: ");
-  fgets(directoryPath, MAX_DIRECTORY_LENGTH, stdin);  
-  directoryPath[strcspn(directoryPath, "\n")] = '\0'; 
+  fgets(directoryPath, MAX_DIRECTORY_LENGTH, stdin);
+  directoryPath[strcspn(directoryPath, "\n")] = '\0';
   printf("Enter the file type to rename: ");
   fgets(filteredExtension, MAX_EXTENSION_LENGTH, stdin);
   filteredExtension[strcspn(filteredExtension, "\n")] = '\0';
