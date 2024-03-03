@@ -14,6 +14,8 @@ const std::string FILE_NAME = "target.txt"; // The file to be encrypted/decrypte
 const int ALPHABET_LENGTH = 26; // The number of letters in the English alphabet
 const int ASSUMED_MOST_FREQUENT = 4; // The index of the letter e in the array of all English letters
 
+// Shift each letter in target by x, where x is key. 
+// It is necessary to use A instead of a when the letter is upper-case because the ASCII values of upper and lower-case letters differ
 std::string encrypt(const std::string& target, int key) {
 	std::string cipherText;
 	for (char i : target)
@@ -34,6 +36,7 @@ std::string encrypt(const std::string& target, int key) {
         return cipherText;
 }
 
+// The same logic from the encrypt function applies here, but we shift backwards instead of forwards to decrypt
 std::string decrypt(const std::string& target, int key) {
 	std::string clearText;
 	for (char i : target)
@@ -54,6 +57,7 @@ std::string decrypt(const std::string& target, int key) {
 	return clearText;
 }
 
+// Since the letter e is most common in English, the key is the absolute value of the difference between the index value of the most common letter in target and e in alphabet. 
 int findKey(const std::string& target) {
 const char alphabet[] = "abcdefghijklmnopqrstuvwxyz";
             std::vector<int> letterOccurrences;
@@ -73,7 +77,7 @@ const char alphabet[] = "abcdefghijklmnopqrstuvwxyz";
                     {
                         diff = ALPHABET_LENGTH - diff;
                     }
-		       return diff;  // Return the calculated difference
+		       return diff;
         }
     }
 
@@ -83,6 +87,7 @@ const char alphabet[] = "abcdefghijklmnopqrstuvwxyz";
 int main()
 {
     std::ifstream targetFile(FILE_NAME); 
+    // The program has no data to operate on if it cannot read the file
     if (!targetFile.is_open()) {
 	    std::cout << "Unable to access " << FILE_NAME << "\n";
 	    return EXIT_FAILURE;
@@ -97,27 +102,27 @@ int main()
     targetFile.read(&target[0], targetSize);
     int key;
     std::cout << "1. Encrypt File \n2. Decrypt File ";
-    int choice;
-    std::cin >> choice;
-    if (choice == 1)
+    int shiftMode;
+    std::cin >> shiftMode;
+    if (shiftMode == 1)
     {
         std::cout << "Enter a ROT key: ";
         std::cin >> key;
 	std::string cipherText = encrypt(target, key);
 	std::cout << cipherText << "\n~~~\n\n"; 
     }
-    else if (choice == 2)
+    else if (shiftMode == 2)
     {
         std::cout << "1. I Know The Key\n2. I Do Not Know The Key ";
         int mostFreqLetterIndex;
-        int choice2;
-        std::cin >> choice2;
-        if (choice2 == 1)
+        int decryptionMode;
+        std::cin >> decryptionMode;
+        if (decryptionMode == 1)
         {
             std::cout << "\nEnter the key: ";
             std::cin >> key;
         }
-        else if (choice2 == 2)
+        else if (decryptionMode == 2)
         {
 	key = findKey(target);
 	std::cout << key;
