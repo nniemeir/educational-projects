@@ -25,10 +25,14 @@ void patternRename(const char *directoryPath, const char *pattern,
     perror("Error opening directory");
     exit(EXIT_FAILURE);
   }
-
-  printf("Prepending %s to %s files in %s/\n", pattern, filteredExtension,
+  char modeName[11];
+  if (strcmp(mode, "1") == 0) {
+	strcpy(modeName, "Prepending");
+  } else {
+	strcpy(modeName, "Appending");
+  }
+  printf("%s %s to %s files in %s/\n", modeName, pattern, filteredExtension,
          directoryPath);
-
   // The end of the directory has been reached once entry is NULL
   while ((entry = readdir(dir)) != NULL) {
     if (entry->d_type == DT_REG) { // Check if it is a regular file
@@ -36,7 +40,7 @@ void patternRename(const char *directoryPath, const char *pattern,
       char *fileExtension = strrchr(entry->d_name, dot);
       if (fileExtension == NULL || fileExtension[0] == '\0') {
         // Handle empty string or null pointer
-        return;
+        continue;
       }
 
       // Create a new string for the modified file extension
@@ -59,8 +63,13 @@ void patternRename(const char *directoryPath, const char *pattern,
         }
 
         else {
-          sprintf(newFilePath, "%s/%s%s", directoryPath, entry->d_name,
-                  pattern);
+	  size_t baseNameLength = strlen(entry->d_name) - strlen(fileExtension);
+	  char *baseName = malloc(baseNameLength + 1);
+	  strncpy(baseName, entry->d_name, baseNameLength);
+	  baseName[baseNameLength] = '\0';
+          sprintf(newFilePath, "%s/%s%s%s", directoryPath, baseName,
+                  pattern, fileExtension);
+	  free(baseName);
         }
 
         if (strlen(newFilePath) < MAX_PATH) {
@@ -74,6 +83,7 @@ void patternRename(const char *directoryPath, const char *pattern,
           // Free dynamically allocated memory
           free(oldFilePath);
           free(newFilePath);
+
         } else {
           printf("Maximum filename length exceeded for %s", oldFilePath);
         }
@@ -102,5 +112,5 @@ int main() {
   fgets(mode, 2, stdin);
   mode[strcspn(mode, "\n")] = '\0';
   patternRename(directoryPath, pattern, filteredExtension, mode);
-  return 0;
+  return EXIT_SUCCESS;
 }

@@ -1,7 +1,7 @@
 ## Educational Projects
 
 ### C
-1. PrefixSuffix (WIP) - Prepend or append a string to the name of all files with chosen extension
+1. PrefixSuffix - Prepend or append a string to the name of all files with chosen extension
 
 ### C++
 1. OUI Lookup: uses IEEE Registration Authority data to determine NIC manufacturer from MAC Address
