@@ -1,6 +1,5 @@
 // Author: Nat Niemeir
-// This is a POSIX-compliant program to prepend or append a string to each
-// filename of the chosen extension in the chosen directory
+// Prepend or append a string to each filename of the chosen extension in the chosen directory
 #include <dirent.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,58 +10,41 @@
 #define MAX_PATTERN_LENGTH 256
 #define MAX_EXTENSION_LENGTH 20
 
-// Prepends or appends pattern to all files of specified extension in the
-// specified directory
 void patternRename(const char *directoryPath, const char *pattern,
                    const char *filteredExtension, const char *mode) {
   DIR *dir;
   struct dirent *entry;
 
-  // Open the directory
   dir = opendir(directoryPath);
 
   if (dir == NULL) {
-    perror("Error opening directory");
+    fprintf(stderr, "Error opening directory:  %s", directoryPath);
     exit(EXIT_FAILURE);
   }
-  char modeName[11];
-  if (strcmp(mode, "1") == 0) {
-	strcpy(modeName, "Prepending");
-  } else {
-	strcpy(modeName, "Appending");
-  }
-  printf("%s %s to %s files in %s/\n", modeName, pattern, filteredExtension,
-         directoryPath);
-  // The end of the directory has been reached once entry is NULL
+  
   while ((entry = readdir(dir)) != NULL) {
-    if (entry->d_type == DT_REG) { // Check if it is a regular file
+    if (entry->d_type == DT_REG) {
       const char dot = '.';
       char *fileExtension = strrchr(entry->d_name, dot);
       if (fileExtension == NULL || fileExtension[0] == '\0') {
-        // Handle empty string or null pointer
         continue;
       }
 
-      // Create a new string for the modified file extension
       size_t length = strlen(fileExtension);
       char modifiedExtension[length];
-      strcpy(modifiedExtension, fileExtension + 1); // Skip the dot
-
+      strcpy(modifiedExtension, fileExtension + 1); 
+      
       if (strcmp(modifiedExtension, filteredExtension) == 0) {
-        // Allocate memory for filenames dynamically
         char *oldFilePath =
             malloc(strlen(directoryPath) + 1 + strlen(entry->d_name) + 1);
         char *newFilePath = malloc(strlen(directoryPath) + 1 + strlen(pattern) +
                                    strlen(entry->d_name) + 1);
 
-        // Construct file paths
         sprintf(oldFilePath, "%s/%s", directoryPath, entry->d_name);
         if (strcmp(mode, "1") == 0) {
           sprintf(newFilePath, "%s/%s%s", directoryPath, pattern,
                   entry->d_name);
-        }
-
-        else {
+        } else {
 	  size_t baseNameLength = strlen(entry->d_name) - strlen(fileExtension);
 	  char *baseName = malloc(baseNameLength + 1);
 	  strncpy(baseName, entry->d_name, baseNameLength);
@@ -73,24 +55,18 @@ void patternRename(const char *directoryPath, const char *pattern,
         }
 
         if (strlen(newFilePath) < MAX_PATH) {
-
-          // Rename the file
           if (rename(oldFilePath, newFilePath) != 0) {
-            printf("Error renaming file %s to %s\n", oldFilePath, newFilePath);
-          } else {
-            printf("File renamed: %s to %s\n", entry->d_name, newFilePath);
+            fprintf(stderr, "Error renaming file %s to %s\n", oldFilePath, newFilePath);
           }
-          // Free dynamically allocated memory
           free(oldFilePath);
           free(newFilePath);
 
         } else {
-          printf("Maximum filename length exceeded for %s", oldFilePath);
+          fprintf(stderr, "Maximum filename length exceeded for %s", oldFilePath);
         }
       }
     }
   }
-  // Close the directory
   closedir(dir);
 }
 
@@ -99,10 +75,10 @@ int main() {
   char filteredExtension[MAX_EXTENSION_LENGTH];
   char pattern[MAX_PATTERN_LENGTH];
   char mode[2];
-  printf("Enter the directory's path: ");
+  printf("Enter the directory's absolute path: ");
   fgets(directoryPath, MAX_DIRECTORY_LENGTH, stdin);
   directoryPath[strcspn(directoryPath, "\n")] = '\0';
-  printf("Enter the file type to rename: ");
+  printf("Enter the file type to rename (E.g. csv): ");
   fgets(filteredExtension, MAX_EXTENSION_LENGTH, stdin);
   filteredExtension[strcspn(filteredExtension, "\n")] = '\0';
   printf("Enter a pattern: ");
