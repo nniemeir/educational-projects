@@ -2,6 +2,7 @@
 
 ### C
 1. PrefixSuffix - Prepend or append a string to the name of all files with chosen extension
+2. Lone (WIP) - a text-based survival game
 
 ### C++
 1. OUI Lookup: uses IEEE Registration Authority data to determine NIC manufacturer from MAC Address
