@@ -121,7 +121,7 @@ void warnings(struct playerStats *player) {
 
 void travelMenu() {
   clearScreen();
-  printf("Where should I travel to?\n");
+  printf("I walked to...\n");
   printf("Press Enter to continue");
   while (getchar() != '\n')
     ;
@@ -141,15 +141,14 @@ void homeMenu() {
   char homeSelection[3];
   int day = 1;
   int climate = 23;
-  char conditions[20] = "snowing";
+  char conditions[20] = "snowed";
   int leftHome = 0;
   while (!leftHome) {
     clearScreen();
-    printf("San Juan Mountains, Colorado, 1893\n\n");
     printf("Day %d\n\n", day);
-    printf("It is %s today.\n", conditions);
-    printf("What should I do now?\n\n");
-    printf("1. Leave Camp\n2. Examine Belongings\n3. Reflect\n4. List Stats"
+    printf("It %s today.\n", conditions);
+    printf("I decided to...\n\n");
+    printf("1. Leave Camp\n2. Examine My Belongings\n3. Reflect\n4. List Stats"
            "(Debug)\n5. Sleep\n");
     fgets(homeSelection, 3, stdin);
     homeSelection[strcspn(homeSelection, "\n")] = '\0';
@@ -182,7 +181,7 @@ void homeMenu() {
   }
 }
 
-void prologue() {
+void preface() {
   printf("Someday you'll find yourself compelled to disrupt a patch of dirt, "
          "thinking you'll dig up a better tomorrow.\n\n");
   sleep(2);
@@ -204,17 +203,17 @@ void gameplay() { homeMenu(); }
 
 void mainMenu() {
   char mainSelection[3];
-  char prologueSelection[3];
-  printf("1. New Game\n2. Load Game\n3. Exit\n");
+  char prefaceSelection[3];
+  printf("1. New Journal\n2. Continue Journal\n3. Go Home\n");
   fgets(mainSelection, 3, stdin);
   mainSelection[strcspn(mainSelection, "\n")] = '\0';
   if (strcmp(mainSelection, "1") == 0) {
     clearScreen();
-    printf("1. Show Prologue\n2. Skip Prologue\n");
-    fgets(prologueSelection, 3, stdin);
-    prologueSelection[strcspn(prologueSelection, "\n")] = '\0';
-    if (strcmp(prologueSelection, "1") == 0) {
-      prologue();
+    printf("1. Read Preface\n2. Skip Preface\n");
+    fgets(prefaceSelection, 3, stdin);
+    prefaceSelection[strcspn(prefaceSelection, "\n")] = '\0';
+    if (strcmp(prefaceSelection, "1") == 0) {
+      preface();
     }
     gameplay();
   } else if (strcmp(mainSelection, "2") == 0) {
