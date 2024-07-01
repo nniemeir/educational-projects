@@ -87,35 +87,35 @@ void listStats(struct playerStats *player) {
 void warnings(struct playerStats *player) {
   clearScreen();
   if (player->temperature < 20) {
-    printf("I am freezing\n");
+    printf("I won't survive this cold much longer.\n");
   } else if (20 <= player->temperature && player->temperature < 50) {
-    printf("The cold is becoming unbearable\n");
+    printf("The cold is becoming unbearable.\n"
   } else if (50 <= player->temperature && player->temperature < 70) {
-    printf("The cold is starting to get to me\n");
+    printf("The cold is starting to get to me.\n");
   }
 
   if (player->health < 20) {
-    printf("I can barely move\n");
+    printf("My health is quickly deteriorating.\n");
   } else if (20 <= player->health && player->health < 50) {
-    printf("I feel very ill\n");
+    printf("I feel very ill.\n");
   } else if (50 <= player->health && player->health < 70) {
-    printf("I feel a little under the weather\n");
+    printf("I feel a little under the weather.\n");
   }
 
   if (player->hunger < 20) {
-    printf("I am starving\n");
+    printf("I am starving.\n");
   } else if (20 <= player->hunger && player->hunger < 50) {
-    printf("I am hungry\n");
+    printf("I need to eat something soon.\n");
   } else if (50 <= player->hunger && player->hunger < 70) {
-    printf("I am slightly hungry\n");
+    printf("I am starting to get hungry.\n");
   }
 
   if (player->thirst < 20) {
-    printf("I am very thirsty\n");
+    printf("My throat is very dry.\n");
   } else if (20 <= player->thirst && player->thirst < 50) {
-    printf("I am thirsty\n");
+    printf("I need to drink something soon.\n");
   } else if (50 <= player->thirst && player->thirst < 70) {
-    printf("I am slightly thirsty\n");
+    printf("I am starting to get thirsty.\n");
   }
 }
 
