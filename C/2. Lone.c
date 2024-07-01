@@ -149,7 +149,7 @@ void homeMenu() {
     printf("It %s today.\n", conditions);
     printf("I decided to...\n\n");
     printf("1. Leave Camp\n2. Examine My Belongings\n3. Reflect\n4. List Stats"
-           "(Debug)\n5. Sleep\n");
+           "(Debug)\n5. Sleep\n\n> ");
     fgets(homeSelection, 3, stdin);
     homeSelection[strcspn(homeSelection, "\n")] = '\0';
     if (strcmp(homeSelection, "1") == 0) {
@@ -204,12 +204,12 @@ void gameplay() { homeMenu(); }
 void mainMenu() {
   char mainSelection[3];
   char prefaceSelection[3];
-  printf("1. New Journal\n2. Continue Journal\n3. Go Home\n");
+  printf("1. New Journal\n2. Continue Journal\n3. Go Home\n\n> ");
   fgets(mainSelection, 3, stdin);
   mainSelection[strcspn(mainSelection, "\n")] = '\0';
   if (strcmp(mainSelection, "1") == 0) {
     clearScreen();
-    printf("1. Read Preface\n2. Skip Preface\n");
+    printf("1. Read Preface\n2. Skip Preface\n\n> ");
     fgets(prefaceSelection, 3, stdin);
     prefaceSelection[strcspn(prefaceSelection, "\n")] = '\0';
     if (strcmp(prefaceSelection, "1") == 0) {
