@@ -89,7 +89,7 @@ void warnings(struct playerStats *player) {
   if (player->temperature < 20) {
     printf("I won't survive this cold much longer.\n");
   } else if (20 <= player->temperature && player->temperature < 50) {
-    printf("The cold is becoming unbearable.\n")
+    printf("The cold is becoming unbearable.\n");
   } else if (50 <= player->temperature && player->temperature < 70) {
     printf("The cold is starting to get to me.\n");
   }
