@@ -185,7 +185,7 @@ void preface() {
   printf("Someday you'll find yourself compelled to disrupt a patch of dirt, "
          "thinking you'll dig up a better tomorrow.\n\n");
   sleep(2);
-  printf("You'll dig until your hands are masses of blisters and your as "
+  printf("You'll dig until your hands are masses of blisters and you're as "
          "stiff as a board. Another hour and I'll certainly be there, you'll "
          "think to yourself.\n\n");
   sleep(2);
