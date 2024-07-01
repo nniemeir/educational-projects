@@ -122,7 +122,7 @@ void warnings(struct playerStats *player) {
 void travelMenu() {
   clearScreen();
   printf("I walked to...\n");
-  printf("Press Enter to continue");
+  printf("...");
   while (getchar() != '\n')
     ;
 }
@@ -157,26 +157,26 @@ void homeMenu() {
       int leftHome = 1;
     } else if (strcmp(homeSelection, "2") == 0) {
       displayInventory();
-      printf("Press Enter to continue");
+      printf("...");
       while (getchar() != '\n')
         ;
     } else if (strcmp(homeSelection, "3") == 0) {
       warnings(&player);
-      printf("Press Enter to continue");
+      printf("...");
       while (getchar() != '\n')
         ;
     } else if (strcmp(homeSelection, "4") == 0) {
       listStats(&player);
-      printf("Press Enter to continue");
+      printf("...");
       while (getchar() != '\n')
         ;
 	} else if (strcmp(homeSelection, "5") == 0) {
       advanceDay();
-      printf("Press Enter to continue");
+      printf("...");
       while (getchar() != '\n')
         ;
     } else {
-      printf("Invalid Input");
+      printf("My memory is failing me at the moment.");
     }
   }
 }
@@ -221,7 +221,7 @@ void mainMenu() {
   } else if (strcmp(mainSelection, "3") == 0) {
     return;
   } else {
-    printf("Invalid Choice\n");
+    printf("That can't be right.\n");
   }
 }
 
