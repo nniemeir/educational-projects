@@ -18,6 +18,7 @@ struct playerStats {
   int temperature;
   int charm;
   int quickness;
+  int day;
 };
 
 struct item {
@@ -36,7 +37,7 @@ struct playerInventory {
   struct item pelts[PELTS_ITEMS];
 };
 
-struct playerStats player = {100, 50, 100, 100, 50, 50, 20};
+struct playerStats player = {100, 50, 100, 100, 50, 50, 20, 1};
 
 struct playerInventory inventory = {
     .food =
@@ -107,78 +108,79 @@ void clearScreen() {
 #endif
 }
 
-void listStats(struct playerStats *player) {
+void listStats() {
   clearScreen();
-  char *statNames[20] = {"Health",      "Energy", "Hunger",   "Thirst",
-                         "Temperature", "Charm",  "Quickness"};
-  printf("Health: %d\n", player->health);
-  printf("Energy: %d\n", player->energy);
-  printf("Hunger: %d\n", player->hunger);
-  printf("Thirst: %d\n", player->thirst);
-  printf("Temperature: %d\n", player->temperature);
-  printf("Charm: %d\n", player->charm);
-  printf("Quickness: %d\n", player->quickness);
+  printf("Health: %d\n", player.health);
+  printf("Energy: %d\n", player.energy);
+  printf("Hunger: %d\n", player.hunger);
+  printf("Thirst: %d\n", player.thirst);
+  printf("Temperature: %d\n", player.temperature);
+  printf("Charm: %d\n", player.charm);
+  printf("Quickness: %d\n", player.quickness);
 }
 
-void warnings(struct playerStats *player) {
+void warnings() {
   clearScreen();
-  if (player->temperature < 20) {
+  if (player.temperature < 20) {
     printf("I won't survive this cold much longer.\n");
-  } else if (20 <= player->temperature && player->temperature < 50) {
+  } else if (20 <= player.temperature && player.temperature < 50) {
     printf("The cold is becoming unbearable.\n");
-  } else if (50 <= player->temperature && player->temperature < 70) {
+  } else if (50 <= player.temperature && player.temperature < 70) {
     printf("The cold is starting to get to me.\n");
   }
 
-  if (player->health < 20) {
+  if (player.health < 20) {
     printf("My health is quickly deteriorating.\n");
-  } else if (20 <= player->health && player->health < 50) {
+  } else if (20 <= player.health && player.health < 50) {
     printf("I feel very ill.\n");
-  } else if (50 <= player->health && player->health < 70) {
+  } else if (50 <= player.health && player.health < 70) {
     printf("I feel a little under the weather.\n");
   }
 
-  if (player->hunger < 20) {
+  if (player.hunger < 20) {
     printf("I am starving.\n");
-  } else if (20 <= player->hunger && player->hunger < 50) {
+  } else if (20 <= player.hunger && player.hunger < 50) {
     printf("I need to eat something soon.\n");
-  } else if (50 <= player->hunger && player->hunger < 70) {
+  } else if (50 <= player.hunger && player.hunger < 70) {
     printf("I am starting to get hungry.\n");
   }
 
-  if (player->thirst < 20) {
+  if (player.thirst < 20) {
     printf("My throat is very dry.\n");
-  } else if (20 <= player->thirst && player->thirst < 50) {
+  } else if (20 <= player.thirst && player.thirst < 50) {
     printf("I need to drink something soon.\n");
-  } else if (50 <= player->thirst && player->thirst < 70) {
+  } else if (50 <= player.thirst && player.thirst < 70) {
     printf("I am starting to get thirsty.\n");
   }
+  printf("I will persist...");
+  while (getchar() != '\n')
+    ;
 }
 
 void travelMenu() {
   int validDestination = 0;
   while (!validDestination) {
-  clearScreen();
-  char destination[4];
-  printf("I walked to...\n\n1. The Lake\n2. The Valley\n\n> ");
-  fgets(destination, 4, stdin);
-  int destinationInt = atoi(destination);
-  switch (destinationInt) {
-  case 1:
-    printf("Traveling to the lake...\n");
-    validDestination = 1;
-    break;
-  case 2:
-    printf("Traveling to the valley...\n");
-    validDestination = 1;
-    break;
-  default:
     clearScreen();
-    printf("My memory is failing me at the moment...");
-    while (getchar() != '\n')
-      ;
-    clearScreen();
-  }
+    char destination[4];
+    printf("I walked to...\n\n1. The Lake\n2. The Valley\n\n> ");
+    fgets(destination, 4, stdin);
+    int destinationInt = atoi(destination);
+    switch (destinationInt) {
+    case 1:
+      printf("Traveling to the lake...\n");
+      validDestination = 1;
+      break;
+    case 2:
+      printf("Traveling to the valley...\n");
+      validDestination = 1;
+      break;
+    default:
+      clearScreen();
+      printf("My memory is failing me at the moment...");
+      while (getchar() != '\n')
+        ;
+      clearScreen();
+    }
   }
 }
 
@@ -220,17 +222,16 @@ void displayInventory() {
 }
 
 // Calculate whether to lower player's stats at end of day
-void advanceDay() { printf("Advancing day...\n"); }
+void advanceDay() { player.day = player.day + 1; }
 
 void homeMenu() {
   char homeSelection[3];
-  int day = 1;
   int climate = 23;
   char conditions[20] = "snowed";
   int leftHome = 0;
   while (!leftHome) {
     clearScreen();
-    printf("Day %d\n\n", day);
+    printf("Day %d\n\n", player.day);
     printf("It %s today.\n", conditions);
     printf("I decided to...\n\n");
     printf("1. Leave Camp\n2. Examine My Belongings\n3. Reflect\n4. List Stats"
@@ -245,17 +246,13 @@ void homeMenu() {
       while (getchar() != '\n')
         ;
     } else if (strcmp(homeSelection, "3") == 0) {
-      warnings(&player);
-      while (getchar() != '\n')
-        ;
+      warnings();
     } else if (strcmp(homeSelection, "4") == 0) {
-      listStats(&player);
+      listStats();
       while (getchar() != '\n')
         ;
     } else if (strcmp(homeSelection, "5") == 0) {
       advanceDay();
-      while (getchar() != '\n')
-        ;
     } else {
       clearScreen();
       printf("My memory is failing me at the moment...");
