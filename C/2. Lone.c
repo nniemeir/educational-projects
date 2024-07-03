@@ -156,10 +156,30 @@ void warnings(struct playerStats *player) {
 }
 
 void travelMenu() {
+  int validDestination = 0;
+  while (!validDestination) {
   clearScreen();
-  printf("I walked to...\n");
-  while (getchar() != '\n')
-    ;
+  char destination[4];
+  printf("I walked to...\n\n1. The Lake\n2. The Valley\n\n> ");
+  fgets(destination, 4, stdin);
+  int destinationInt = atoi(destination);
+  switch (destinationInt) {
+  case 1:
+    printf("Traveling to the lake...\n");
+    validDestination = 1;
+    break;
+  case 2:
+    printf("Traveling to the valley...\n");
+    validDestination = 1;
+    break;
+  default:
+    clearScreen();
+    printf("My memory is failing me at the moment...");
+    while (getchar() != '\n')
+      ;
+    clearScreen();
+  }
+  }
 }
 
 void displayInventory() {
@@ -259,8 +279,9 @@ void preface() {
   printf("The truth is, some holes don't want to be dug.\n\n");
   sleep(2);
   printf("Eventually there comes a time where you just have to put down the "
-         "shovel and be on your way, or that hole will be your grave.\n\n");
-  sleep(2);
+         "shovel and be on your way, or that hole will be your grave...\n\n");
+  while (getchar() != '\n')
+    ;
   clearScreen();
 }
 
@@ -285,7 +306,10 @@ void mainMenu() {
       }
       gameplay();
     } else if (strcmp(mainSelection, "2") == 0) {
-      printf("Saving not yet implemented\n");
+      clearScreen();
+      printf("Saving not yet implemented...\n");
+      while (getchar() != '\n')
+        ;
     } else if (strcmp(mainSelection, "3") == 0) {
       return;
     } else {
