@@ -4,6 +4,12 @@
 #include <string.h>
 #include <unistd.h>
 
+#define FOOD_ITEMS 18
+#define CLOTHING_ITEMS 15
+#define TOOLS_ITEMS 3
+#define RESOURCES_ITEMS 3
+#define PELTS_ITEMS 6
+
 struct playerStats {
   int health;
   int energy;
@@ -14,60 +20,90 @@ struct playerStats {
   int quickness;
 };
 
+struct item {
+  char name[50];
+  int amount;
+  bool equipped;
+  int effects;
+};
+
 struct playerInventory {
   // Food
-  char *food[18][20];
-  int foodPossessed[18];
-  int foodEffects[18];
-  // Clothing
-  char *clothing[18][50];
-  int clothingPossessed[18];
-  bool clothingEquipped[18];
-  int clothingEffects[18];
-  // Tools
-  char *tools[6][20];
-  int toolsPossessed[6];
-  int toolsCondition[6];
-  bool toolsEquipped[6];
-  // Resources
-  char *resources[3][15];
-  int resourcesPossessed[6];
-  // Pelts
-  char *pelts[6][9];
-  int peltsPossessed[6];
+  struct item food[FOOD_ITEMS];
+  struct item clothing[CLOTHING_ITEMS];
+  struct item tools[TOOLS_ITEMS];
+  struct item resources[RESOURCES_ITEMS];
+  struct item pelts[PELTS_ITEMS];
 };
 
 struct playerStats player = {100, 50, 100, 100, 50, 50, 20};
 
 struct playerInventory inventory = {
-    {"Badger Meat", "Bear Meat", "Deer Meat", "Fox Meat", "Rabbit Meat",
-     "Squirrel Meat", "Barberry", "Bindweed", "Buckthorn", "Chokecherry",
-     "Common Burdock", "Dandelion", "Mountain Deathcamas", "Oregon Grape",
-     "Purslane", "Stinging Nettle", "Wild Onion", "Wild Strawberry"},
-    {0},
-    {20, 100, 40, 20, 10, 10, 2, -2, -5, 3, 5, 5, -100, 2, 10, 2, 2},
-
-    {"Bearskin Cloak", "Fox Skin Gloves", "Leather Gloves",
-     "Rabbit Skin Gloves", "Badger Hat", "Felt Hat", "Fox Hat", "Raccoon Hat",
-     "Heavy Cotton Shirt", "Heavy Cotton Trousers", "Heavy Wool Vest",
-     "Moccasins", "Bearskin Boots", "Deerskin Boots", "Rabbit Boots"},
-    {0, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0},
-    {0, 0, 1, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 0, 0, 1, 1, 0},
-    {50, 7, 5, 8, 7, 5, 8, 7, 5, 8, 7, 10, 20, 20, 10, 30, 20, 15},
-    {"Axe", "Kettle", "Knife"},
-    {0},
-    {0},
-    {false},
-    {"Purified Water", "River Water", "Wood"},
-    {0},
-    {"Badger", "Bear", "Deer", "Fox", "Rabbit", "Squirrel"},
-    {0}};
+    .food =
+        {
+            {"Badger Meat", 0, false, 20},
+            {"Bear Meat", 0, false, 100},
+            {"Deer Meat", 0, false, 40},
+            {"Fox Meat", 0, false, 20},
+            {"Rabbit Meat", 0, false, 10},
+            {"Squirrel Meat", 0, false, 10},
+            {"Barberry", 0, false, 2},
+            {"Bindweed", 0, false, -2},
+            {"Buckthorn", 0, false, -5},
+            {"Chokecherry", 0, false, 3},
+            {"Common Burdock", 0, false, 5},
+            {"Dandelion", 0, false, 5},
+            {"Mountain Deathcamas", 0, false, -100},
+            {"Oregon Grape", 0, false, 2},
+            {"Purslane", 0, false, 2},
+            {"Stinging Nettle", 0, false, 10},
+            {"Wild Onion", 0, false, 2},
+            {"Wild Strawberry", 0, false, 2},
+        },
+    .clothing =
+        {
+            {"Bearskin Cloak", 0, false, 50},
+            {"Fox Skin Gloves", 0, false, 7},
+            {"Leather", 0, false, 5},
+            {"Rabbit Skin Gloves", 0, false, 8},
+            {"Badger Hat", 0, false, 7},
+            {"Felt Hat", 0, false, 5},
+            {"Fox Hat", 0, false, 8},
+            {"Raccoon Hat", 0, false, 7},
+            {"Heavy Cotton Shirt", 0, false, 10},
+            {"Heavy Cotton Trousers", 0, false, 20},
+            {"Heavy Wool Vest", 0, false, 20},
+            {"Moccasins", 0, false, 10},
+            {"Bearskin Boots", 0, false, 30},
+            {"Dearskin Boots", 0, false, 20},
+            {"Rabbit Boots", 0, false, 15},
+        },
+    .tools =
+        {
+            {"Axe", 0, false, 0},
+            {"Kettle", 0, false, 0},
+            {"Knife", 0, false, 0},
+        },
+    .resources =
+        {
+            {"Purified Water", 0, false, 50},
+            {"River Water", 0, false, 25},
+            {"Wood", 0, false, 0},
+        },
+    .pelts = {
+        {"Badger", 0, false, 0},
+        {"Bear", 0, false, 0},
+        {"Deer", 0, false, 0},
+        {"Fox", 0, false, 0},
+        {"Rabbit", 0, false, 0},
+        {"Squirrel", 0, false, 0},
+    }};
 
 void clearScreen() {
-#ifdef _WIN32 
-system("cls");
+#ifdef _WIN32
+  system("cls");
 #else
-system("clear");
+  system("clear");
 #endif
 }
 
@@ -122,20 +158,49 @@ void warnings(struct playerStats *player) {
 void travelMenu() {
   clearScreen();
   printf("I walked to...\n");
-  printf("...");
   while (getchar() != '\n')
     ;
 }
 
 void displayInventory() {
   clearScreen();
-  printf("%s:%d\n", inventory.clothing[0][1], inventory.clothingPossessed[0]);
+  int clothingIncrement;
+  printf("\n~~~ Clothing ~~~\n");
+  for (clothingIncrement = 0; clothingIncrement < CLOTHING_ITEMS;
+       clothingIncrement++) {
+    printf("%s:%d\n", inventory.clothing[clothingIncrement].name,
+           inventory.clothing[clothingIncrement].amount);
+  }
+  int foodIncrement;
+  printf("\n~~~ Food ~~~\n");
+  for (foodIncrement = 0; foodIncrement < FOOD_ITEMS; foodIncrement++) {
+    printf("%s:%d\n", inventory.food[foodIncrement].name,
+           inventory.food[foodIncrement].amount);
+  }
+  int toolsIncrement;
+
+  printf("\n~~~ Tools ~~~\n");
+  for (toolsIncrement = 0; toolsIncrement < TOOLS_ITEMS; toolsIncrement++) {
+    printf("%s:%d\n", inventory.tools[toolsIncrement].name,
+           inventory.tools[toolsIncrement].amount);
+  }
+  int resourcesIncrement;
+  printf("\n~~~ Resources ~~~\n");
+  for (resourcesIncrement = 0; resourcesIncrement < RESOURCES_ITEMS;
+       resourcesIncrement++) {
+    printf("%s:%d\n", inventory.resources[resourcesIncrement].name,
+           inventory.resources[resourcesIncrement].amount);
+  }
+  int peltsIncrement;
+  printf("\n~~~ Pelts ~~~\n");
+  for (peltsIncrement = 0; peltsIncrement < PELTS_ITEMS; peltsIncrement++) {
+    printf("%s:%d\n", inventory.pelts[peltsIncrement].name,
+           inventory.pelts[peltsIncrement].amount);
+  }
 }
 
-// Calculate whether to lower player's stats at end of day 
-void advanceDay() {
-	printf("Advancing day...\n");
-}
+// Calculate whether to lower player's stats at end of day
+void advanceDay() { printf("Advancing day...\n"); }
 
 void homeMenu() {
   char homeSelection[3];
@@ -157,31 +222,31 @@ void homeMenu() {
       int leftHome = 1;
     } else if (strcmp(homeSelection, "2") == 0) {
       displayInventory();
-      printf("...");
       while (getchar() != '\n')
         ;
     } else if (strcmp(homeSelection, "3") == 0) {
       warnings(&player);
-      printf("...");
       while (getchar() != '\n')
         ;
     } else if (strcmp(homeSelection, "4") == 0) {
       listStats(&player);
-      printf("...");
       while (getchar() != '\n')
         ;
-	} else if (strcmp(homeSelection, "5") == 0) {
+    } else if (strcmp(homeSelection, "5") == 0) {
       advanceDay();
-      printf("...");
       while (getchar() != '\n')
         ;
     } else {
-      printf("My memory is failing me at the moment.");
+      clearScreen();
+      printf("My memory is failing me at the moment...");
+      while (getchar() != '\n')
+        ;
     }
   }
 }
 
 void preface() {
+  clearScreen();
   printf("Someday you'll find yourself compelled to disrupt a patch of dirt, "
          "thinking you'll dig up a better tomorrow.\n\n");
   sleep(2);
@@ -202,26 +267,34 @@ void preface() {
 void gameplay() { homeMenu(); }
 
 void mainMenu() {
-  char mainSelection[3];
-  char prefaceSelection[3];
-  printf("1. New Journal\n2. Continue Journal\n3. Go Home\n\n> ");
-  fgets(mainSelection, 3, stdin);
-  mainSelection[strcspn(mainSelection, "\n")] = '\0';
-  if (strcmp(mainSelection, "1") == 0) {
-    clearScreen();
-    printf("1. Read Preface\n2. Skip Preface\n\n> ");
-    fgets(prefaceSelection, 3, stdin);
-    prefaceSelection[strcspn(prefaceSelection, "\n")] = '\0';
-    if (strcmp(prefaceSelection, "1") == 0) {
-      preface();
+  clearScreen();
+  char mainSelection[4];
+  char prefaceSelection[4];
+  int validSelection = 0;
+  while (!validSelection) {
+    printf("1. New Journal\n2. Continue Journal\n3. Go Home\n\n> ");
+    fgets(mainSelection, 4, stdin);
+    mainSelection[strcspn(mainSelection, "\n")] = '\0';
+    if (strcmp(mainSelection, "1") == 0) {
+      clearScreen();
+      printf("1. Read Preface\n2. Skip Preface\n\n> ");
+      fgets(prefaceSelection, 4, stdin);
+      prefaceSelection[strcspn(prefaceSelection, "\n")] = '\0';
+      if (strcmp(prefaceSelection, "1") == 0) {
+        preface();
+      }
+      gameplay();
+    } else if (strcmp(mainSelection, "2") == 0) {
+      printf("Saving not yet implemented\n");
+    } else if (strcmp(mainSelection, "3") == 0) {
+      return;
+    } else {
+      clearScreen();
+      printf("That can't be right...\n");
+      while (getchar() != '\n')
+        ;
+      clearScreen();
     }
-    gameplay();
-  } else if (strcmp(mainSelection, "2") == 0) {
-    printf("Saving not yet implemented\n");
-  } else if (strcmp(mainSelection, "3") == 0) {
-    return;
-  } else {
-    printf("That can't be right.\n");
   }
 }
 
