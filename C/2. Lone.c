@@ -108,6 +108,14 @@ void clearScreen() {
 #endif
 }
 
+void invalidInputMessage() {
+  clearScreen();
+  printf("My memory is failing me at the moment...\n");
+  while (getchar() != '\n')
+    ;
+  clearScreen();
+}
+
 void listStats() {
   clearScreen();
   printf("Health: %d\n", player.health);
@@ -163,7 +171,7 @@ void travelMenu() {
     clearScreen();
     char destination[4];
     printf("I walked to...\n\n1. The Lake\n2. The Valley\n\n> ");
-    fgets(destination, 4, stdin);
+    fgets(destination, sizeof(destination), stdin);
     int destinationInt = atoi(destination);
     switch (destinationInt) {
     case 1:
@@ -175,11 +183,7 @@ void travelMenu() {
       validDestination = 1;
       break;
     default:
-      clearScreen();
-      printf("My memory is failing me at the moment...");
-      while (getchar() != '\n')
-        ;
-      clearScreen();
+      invalidInputMessage();
     }
   }
 }
@@ -222,13 +226,17 @@ void displayInventory() {
 }
 
 // Calculate whether to lower player's stats at end of day
-void advanceDay() { player.day = player.day + 1; }
+void advanceDay() {
+  player.day = player.day + 1;
+  player.health = player.health - 100;
+}
 
-void homeMenu() {
+int homeMenu() {
   char homeSelection[3];
   int climate = 23;
   char conditions[20] = "snowed";
   int leftHome = 0;
+  int dead = 0;
   while (!leftHome) {
     clearScreen();
     printf("Day %d\n\n", player.day);
@@ -236,7 +244,7 @@ void homeMenu() {
     printf("I decided to...\n\n");
     printf("1. Leave Camp\n2. Examine My Belongings\n3. Reflect\n4. List Stats"
            "(Debug)\n5. Sleep\n\n> ");
-    fgets(homeSelection, 3, stdin);
+    fgets(homeSelection, sizeof(homeSelection), stdin);
     homeSelection[strcspn(homeSelection, "\n")] = '\0';
     if (strcmp(homeSelection, "1") == 0) {
       travelMenu();
@@ -253,13 +261,19 @@ void homeMenu() {
         ;
     } else if (strcmp(homeSelection, "5") == 0) {
       advanceDay();
+      if (player.health <= 0) {
+        clearScreen();
+        printf("This is my last entry, my health is failing me. Whoever finds "
+               "this journal is welcome to whatever is left in my camp...");
+        while (getchar() != '\n')
+          ;
+        leftHome = 1;
+      }
     } else {
-      clearScreen();
-      printf("My memory is failing me at the moment...");
-      while (getchar() != '\n')
-        ;
+      invalidInputMessage();
     }
   }
+  return 0;
 }
 
 void preface() {
@@ -289,32 +303,40 @@ void mainMenu() {
   char mainSelection[4];
   char prefaceSelection[4];
   int validSelection = 0;
+  int validPrefaceSelection = 0;
   while (!validSelection) {
     printf("1. New Journal\n2. Continue Journal\n3. Go Home\n\n> ");
-    fgets(mainSelection, 4, stdin);
+    fgets(mainSelection, sizeof(mainSelection), stdin);
     mainSelection[strcspn(mainSelection, "\n")] = '\0';
     if (strcmp(mainSelection, "1") == 0) {
-      clearScreen();
-      printf("1. Read Preface\n2. Skip Preface\n\n> ");
-      fgets(prefaceSelection, 4, stdin);
-      prefaceSelection[strcspn(prefaceSelection, "\n")] = '\0';
-      if (strcmp(prefaceSelection, "1") == 0) {
-        preface();
+      while (!validPrefaceSelection) {
+        clearScreen();
+        printf("1. Read Preface\n2. Skip Preface\n\n> ");
+        fgets(prefaceSelection, sizeof(prefaceSelection), stdin);
+        prefaceSelection[strcspn(prefaceSelection, "\n")] = '\0';
+        if (strcmp(prefaceSelection, "1") == 0) {
+          validPrefaceSelection = 1;
+          preface();
+          gameplay();
+          return;
+        } else if (strcmp(prefaceSelection, "2") == 0) {
+          validPrefaceSelection = 1;
+          gameplay();
+          return;
+        } else {
+          invalidInputMessage();
+        }
       }
-      gameplay();
     } else if (strcmp(mainSelection, "2") == 0) {
       clearScreen();
       printf("Saving not yet implemented...\n");
       while (getchar() != '\n')
         ;
+      clearScreen();
     } else if (strcmp(mainSelection, "3") == 0) {
       return;
     } else {
-      clearScreen();
-      printf("That can't be right...\n");
-      while (getchar() != '\n')
-        ;
-      clearScreen();
+      invalidInputMessage();
     }
   }
 }
