@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include <unistd.h>
 
 #define FOOD_ITEMS 18
@@ -65,16 +66,16 @@ struct playerInventory inventory = {
         {
             {"Bearskin Cloak", 0, false, 50},
             {"Fox Skin Gloves", 0, false, 7},
-            {"Leather", 0, false, 5},
+            {"Leather Gloves", 1, true, 5},
             {"Rabbit Skin Gloves", 0, false, 8},
             {"Badger Hat", 0, false, 7},
-            {"Felt Hat", 0, false, 5},
+            {"Felt Hat", 1, true, 5},
             {"Fox Hat", 0, false, 8},
             {"Raccoon Hat", 0, false, 7},
-            {"Heavy Cotton Shirt", 0, false, 10},
-            {"Heavy Cotton Trousers", 0, false, 20},
+            {"Heavy Cotton Shirt", 1, true, 10},
+            {"Heavy Cotton Trousers", 1, true, 20},
             {"Heavy Wool Vest", 0, false, 20},
-            {"Moccasins", 0, false, 10},
+            {"Moccasins", 1, true, 10},
             {"Bearskin Boots", 0, false, 30},
             {"Dearskin Boots", 0, false, 20},
             {"Rabbit Boots", 0, false, 15},
@@ -165,6 +166,11 @@ void warnings() {
     ;
 }
 
+int generateTemperature() {
+  int dailyTemperature = rand() % (30 + 1);
+  return dailyTemperature;
+}
+
 void travelMenu() {
   int validDestination = 0;
   while (!validDestination) {
@@ -194,53 +200,64 @@ void displayInventory() {
   printf("\n~~~ Clothing ~~~\n");
   for (clothingIncrement = 0; clothingIncrement < CLOTHING_ITEMS;
        clothingIncrement++) {
-    printf("%s:%d\n", inventory.clothing[clothingIncrement].name,
-           inventory.clothing[clothingIncrement].amount);
+    if (inventory.clothing[clothingIncrement].amount != 0) {
+      printf("%s: %d\n", inventory.clothing[clothingIncrement].name,
+             inventory.clothing[clothingIncrement].amount);
+    }
   }
   int foodIncrement;
   printf("\n~~~ Food ~~~\n");
   for (foodIncrement = 0; foodIncrement < FOOD_ITEMS; foodIncrement++) {
-    printf("%s:%d\n", inventory.food[foodIncrement].name,
-           inventory.food[foodIncrement].amount);
+    if (inventory.food[foodIncrement].amount != 0) {
+
+      printf("%s: %d\n", inventory.food[foodIncrement].name,
+             inventory.food[foodIncrement].amount);
+    }
   }
   int toolsIncrement;
-
   printf("\n~~~ Tools ~~~\n");
   for (toolsIncrement = 0; toolsIncrement < TOOLS_ITEMS; toolsIncrement++) {
-    printf("%s:%d\n", inventory.tools[toolsIncrement].name,
-           inventory.tools[toolsIncrement].amount);
+    if (inventory.tools[toolsIncrement].amount != 0) {
+
+      printf("%s: %d\n", inventory.tools[toolsIncrement].name,
+             inventory.tools[toolsIncrement].amount);
+    }
   }
   int resourcesIncrement;
   printf("\n~~~ Resources ~~~\n");
   for (resourcesIncrement = 0; resourcesIncrement < RESOURCES_ITEMS;
        resourcesIncrement++) {
-    printf("%s:%d\n", inventory.resources[resourcesIncrement].name,
-           inventory.resources[resourcesIncrement].amount);
+    if (inventory.resources[resourcesIncrement].amount != 0) {
+
+      printf("%s: %d\n", inventory.resources[resourcesIncrement].name,
+             inventory.resources[resourcesIncrement].amount);
+    }
   }
   int peltsIncrement;
   printf("\n~~~ Pelts ~~~\n");
   for (peltsIncrement = 0; peltsIncrement < PELTS_ITEMS; peltsIncrement++) {
-    printf("%s:%d\n", inventory.pelts[peltsIncrement].name,
-           inventory.pelts[peltsIncrement].amount);
+    if (inventory.pelts[peltsIncrement].amount != 0) {
+
+      printf("%s: %d\n", inventory.pelts[peltsIncrement].name,
+             inventory.pelts[peltsIncrement].amount);
+    }
   }
 }
 
 // Calculate whether to lower player's stats at end of day
 void advanceDay() {
   player.day = player.day + 1;
-  player.health = player.health - 100;
 }
 
 int homeMenu() {
   char homeSelection[3];
-  int climate = 23;
   char conditions[20] = "snowed";
   int leftHome = 0;
-  int dead = 0;
+  int dailyTemperature = 30;
   while (!leftHome) {
     clearScreen();
     printf("Day %d\n\n", player.day);
-    printf("It %s today.\n", conditions);
+    printf("It was %d degrees and %s today.\n", dailyTemperature, conditions);
     printf("I decided to...\n\n");
     printf("1. Leave Camp\n2. Examine My Belongings\n3. Reflect\n4. List Stats"
            "(Debug)\n5. Sleep\n\n> ");
@@ -261,6 +278,7 @@ int homeMenu() {
         ;
     } else if (strcmp(homeSelection, "5") == 0) {
       advanceDay();
+      dailyTemperature = generateTemperature();
       if (player.health <= 0) {
         clearScreen();
         printf("This is my last entry, my health is failing me. Whoever finds "
@@ -342,6 +360,7 @@ void mainMenu() {
 }
 
 int main() {
+  srand(time(NULL));
   mainMenu();
   return EXIT_SUCCESS;
 }
