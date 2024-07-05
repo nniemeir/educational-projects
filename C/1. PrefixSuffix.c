@@ -1,4 +1,4 @@
-// Author: Nat Niemeir
+// Author: Niemeir
 // Prepend or append a string to each filename of the chosen extension in the chosen directory
 #include <dirent.h>
 #include <stdio.h>
