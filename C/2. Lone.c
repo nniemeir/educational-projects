@@ -1,3 +1,6 @@
+// Author: Niemeir
+// A text-based survival game
+
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
