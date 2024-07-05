@@ -1,7 +1,7 @@
 /* 
 OUI Lookup - Given a MAC address, match the OUI to a manufacturer's name using IEEE records
 
-Author: Nat Niemeir <nniemeir@protonmail.com>
+Author: Niemeir <nniemeir@protonmail.com>
 */
 
 #include <algorithm>
