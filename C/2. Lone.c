@@ -161,7 +161,7 @@ void warnings() {
   } else if (50 <= player.thirst && player.thirst < 70) {
     printf("I am starting to get thirsty.\n");
   }
-  printf("I will persist...");
+  printf("\nI will persist...");
   while (getchar() != '\n')
     ;
 }
@@ -169,6 +169,29 @@ void warnings() {
 int generateTemperature() {
   int dailyTemperature = rand() % (30 + 1);
   return dailyTemperature;
+}
+
+char *generateConditions() {
+  float blizzardProbability = 5;
+  float snowyProbability = 15;
+  float cloudyProbability = 30;
+  float clearProbability = 50;
+  static char conditions[20];
+
+  int prob = rand() % (100 + 1);
+  if (prob <= 5) {
+    strcpy(conditions, "snowed heavily");
+  } else if (prob > 5 && prob <= 20) {
+    strcpy(conditions, "snowed");
+  } else if (prob > 20 && prob <= 50) {
+    strcpy(conditions, "was cloudy");
+  } else if (prob > 50) {
+    strcpy(conditions, "was clear");
+  } else {
+    printf("There was an issue generating weather conditions");
+    return NULL;
+  }
+  return conditions;
 }
 
 void travelMenu() {
@@ -245,27 +268,44 @@ void displayInventory() {
 }
 
 // Calculate whether to lower player's stats at end of day
-void advanceDay() {
-  player.day = player.day + 1;
+void advanceDay() { 
+  player.day = player.day + 1; 
+}
+
+// WIP Function
+void consumeItem() {
+  printf("Previous hunger was: %d", player.hunger);
+  player.hunger = player.hunger + inventory.food[2].effects;
+  if (player.health)
+  printf("New hunger was: %d", player.hunger);
+
 }
 
 int homeMenu() {
   char homeSelection[3];
-  char conditions[20] = "snowed";
   int leftHome = 0;
-  int dailyTemperature = 30;
+  int dailyTemperature = generateTemperature();
+  char *conditions = generateConditions();
   while (!leftHome) {
     clearScreen();
     printf("Day %d\n\n", player.day);
     printf("It was %d degrees and %s today.\n", dailyTemperature, conditions);
     printf("I decided to...\n\n");
-    printf("1. Leave Camp\n2. Examine My Belongings\n3. Reflect\n4. List Stats"
-           "(Debug)\n5. Sleep\n\n> ");
+    printf(
+        "1. Leave Camp\n2. Examine My Belongings\n3. Reflect\n4. Sleep\n\n> ");
     fgets(homeSelection, sizeof(homeSelection), stdin);
     homeSelection[strcspn(homeSelection, "\n")] = '\0';
     if (strcmp(homeSelection, "1") == 0) {
-      travelMenu();
-      int leftHome = 1;
+      if (strcmp(conditions, "snowed heavily") == 0) {
+        clearScreen();
+        printf("It was snowing too heavily for me to travel...");
+        while (getchar() != '\n')
+          ;
+        clearScreen();
+      } else {
+        travelMenu();
+        int leftHome = 1;
+      }
     } else if (strcmp(homeSelection, "2") == 0) {
       displayInventory();
       while (getchar() != '\n')
@@ -273,12 +313,9 @@ int homeMenu() {
     } else if (strcmp(homeSelection, "3") == 0) {
       warnings();
     } else if (strcmp(homeSelection, "4") == 0) {
-      listStats();
-      while (getchar() != '\n')
-        ;
-    } else if (strcmp(homeSelection, "5") == 0) {
       advanceDay();
       dailyTemperature = generateTemperature();
+      char *conditions = generateConditions();
       if (player.health <= 0) {
         clearScreen();
         printf("This is my last entry, my health is failing me. Whoever finds "
@@ -287,6 +324,12 @@ int homeMenu() {
           ;
         leftHome = 1;
       }
+    } else if (strcmp(homeSelection, "5") == 0) {
+      listStats();
+      while (getchar() != '\n')
+        ;
+    } else if (strcmp(homeSelection, "6") == 0) {
+      consumeItem();
     } else {
       invalidInputMessage();
     }
@@ -320,9 +363,9 @@ void mainMenu() {
   clearScreen();
   char mainSelection[4];
   char prefaceSelection[4];
-  int validSelection = 0;
+  int validMainSelection = 0;
   int validPrefaceSelection = 0;
-  while (!validSelection) {
+  while (!validMainSelection) {
     printf("1. New Journal\n2. Continue Journal\n3. Go Home\n\n> ");
     fgets(mainSelection, sizeof(mainSelection), stdin);
     mainSelection[strcspn(mainSelection, "\n")] = '\0';
