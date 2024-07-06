@@ -1,4 +1,4 @@
-// Author: Niemeir
+// Author: Jacob Niemeir <nniemeir@protonmail.com>
 // A text-based survival game
 
 #include <stdbool.h>
