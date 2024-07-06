@@ -2,7 +2,7 @@
 Caesar - Encrypt and decrypt text using Caesar ciphers, with the option to use
 frequency analysis to guess the key of an encrypted file.
 
-Author: Nat Niemeir <nniemeir@protonmail.com>
+Author: Jacob Niemeir <nniemeir@protonmail.com>
 */
 
 #include <algorithm>
