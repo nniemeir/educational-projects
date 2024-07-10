@@ -187,9 +187,9 @@ char *generateConditions() {
   } else if (prob > 5 && prob <= 20) {
     strcpy(conditions, "snowed");
   } else if (prob > 20 && prob <= 50) {
-    strcpy(conditions, "was cloudy");
+    strcpy(conditions, "cloudy");
   } else if (prob > 50) {
-    strcpy(conditions, "was clear");
+    strcpy(conditions, "clear");
   } else {
     printf("There was an issue generating weather conditions");
     return NULL;
