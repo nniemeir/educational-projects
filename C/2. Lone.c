@@ -33,7 +33,7 @@ struct playerInventory {
   struct item items[NUM_OF_ITEMS];
 };
 
-struct playerStats player = {100, 50, 100, 100, 50, 50, 20, 1};
+struct playerStats player = {100, 50, 100, 100, 0, 50, 20, 1};
 
 struct playerInventory inventory = {{
     {"Badger Meat", 0, false, 20, "food"},
@@ -176,47 +176,20 @@ char *generateConditions() {
   return conditions;
 }
 
-void travelMenu() {
-  int validDestination = 0;
-  while (!validDestination) {
-    clearScreen();
-    char destination[4];
-    printf("I walked to...\n\n1. The Lake\n2. The Valley\n\n> ");
-    fgets(destination, sizeof(destination), stdin);
-    destination[strcspn(destination, "\n")] = '\0';
-    if (destination[0] == '\0') {
-      clearScreen();
-      printf("I realized that I still had something to do at camp before "
-             "leaving...\n");
-      while (getchar() != '\n')
-        ;
-      clearScreen();
-      return;
-    }
-    int destinationInt = atoi(destination);
-    switch (destinationInt) {
-    case 1:
-      printf("Traveling to the lake...\n");
-      validDestination = 1;
-      break;
-    case 2:
-      printf("Traveling to the valley...\n");
-      validDestination = 1;
-      break;
-    default:
-      invalidInputMessage();
-    }
-  }
-}
-
-void useItem(char *itemToUseName) {
+int findItemIndex(char *itemToUseName) {
   int itemIndex;
   int itemsIncrement;
   for (itemsIncrement = 0; itemsIncrement < NUM_OF_ITEMS; itemsIncrement++) {
     if (strcmp(inventory.items[itemsIncrement].name, itemToUseName) == 0) {
       itemIndex = itemsIncrement;
+      return itemIndex;
     }
   }
+  exit(1);
+}
+
+void useItem(int itemIndex) {
+  clearScreen();
   if (strcmp(inventory.items[itemIndex].type, "food") == 0) {
     player.health = player.health + inventory.items[itemIndex].effects;
     inventory.items[itemIndex].amount = inventory.items[itemIndex].amount - 1;
@@ -224,9 +197,17 @@ void useItem(char *itemToUseName) {
     player.thirst = player.thirst + inventory.items[2].effects;
     inventory.items[itemIndex].amount = inventory.items[itemIndex].amount - 1;
   } else if (strcmp(inventory.items[itemIndex].type, "clothing") == 0) {
-    player.temperature =
-        player.temperature + inventory.items[itemIndex].effects;
-    inventory.items[itemIndex].amount = inventory.items[itemIndex].amount - 1;
+    if (inventory.items[itemIndex].equipped == true) {
+      printf("I took off my %s...\n", inventory.items[itemIndex].name);
+      inventory.items[itemIndex].equipped = false;
+       player.temperature =
+          player.temperature - inventory.items[itemIndex].effects;
+    } else {
+      printf("I put on my %s...\n", inventory.items[itemIndex].name);
+      inventory.items[itemIndex].equipped = true;
+      player.temperature =
+          player.temperature + inventory.items[itemIndex].effects;
+    }
   } else if (strcmp(inventory.items[itemIndex].type, "tool") == 0) {
     printf("Tool usage not implemented yet");
   } else if (strcmp(inventory.items[itemIndex].type, "resource") == 0) {
@@ -234,18 +215,37 @@ void useItem(char *itemToUseName) {
   } else {
     printf("Invalid inventory entry");
   }
+   while (getchar() != '\n')
+    ;
 }
 
-void discardItem(char *itemToUseName) {
-  int itemIndex;
-  int itemsIncrement;
-  for (itemsIncrement = 0; itemsIncrement < NUM_OF_ITEMS; itemsIncrement++) {
-    if (strcmp(inventory.items[itemsIncrement].name, itemToUseName) == 0) {
-      itemIndex = itemsIncrement;
-      inventory.items[itemIndex].amount--;
+void discardItem(int itemIndex) {
+  int validDiscardAmount = 0;
+  char discardAmount[5];
+  while (!validDiscardAmount) {
+    clearScreen();
+    printf("I had %d, so I discarded...\n> ",
+           inventory.items[itemIndex].amount);
+    fgets(discardAmount, sizeof(discardAmount), stdin);
+    discardAmount[strcspn(discardAmount, "\n")] = '\0';
+    if (discardAmount[0] != '\0') {
+      int discardAmountInt = atoi(discardAmount);
+      if (discardAmountInt >= 0 &&
+          discardAmountInt <= inventory.items[itemIndex].amount) {
+        validDiscardAmount = 1;
+        if (inventory.items[itemIndex].equipped == true) {
+          useItem(itemIndex);
+        }
+        inventory.items[itemIndex].amount =
+            inventory.items[itemIndex].amount - discardAmountInt;
+      } else {
+        printf("I didn't have enough to discard that many...\n");
+        clearScreen();
+      }
     }
   }
 }
+
 void inventoryMenu() {
   int exitedInventory = 0;
   while (!exitedInventory) {
@@ -253,7 +253,6 @@ void inventoryMenu() {
     char itemSelection[3];
     int itemSelectionInt = -1;
     char itemsPossessed[NUM_OF_ITEMS][30] = {};
-
     while (!validItemSelection) {
       clearScreen();
       int itemsPossessedSize = 0;
@@ -276,7 +275,7 @@ void inventoryMenu() {
       if (itemSelection[0] == '\0') {
         clearScreen();
         printf("I switched my focus to another matter...\n");
-        return; 
+        return;
       }
 
       itemSelectionInt = atoi(itemSelection);
@@ -284,41 +283,39 @@ void inventoryMenu() {
       if (itemSelectionInt < 0 || itemSelectionInt >= itemsPossessedSize) {
         invalidInputMessage();
       } else {
+        int itemIndex = findItemIndex(itemsPossessed[itemSelectionInt]);
         validItemSelection = 1;
         char itemMenuSelection[3];
         int validMenuSelection = 0;
-
         while (!validMenuSelection) {
           clearScreen();
-          printf("%s\n\nQuantity: %d\n\n1. Use\n2. Craft\n3. Discard\n\n> ",
+          printf("%s\n\n1. Use\n2. Craft\n3. Discard\n\n> ",
                  itemsPossessed[itemSelectionInt]);
           fgets(itemMenuSelection, sizeof(itemMenuSelection), stdin);
-          itemMenuSelection[strcspn(itemMenuSelection, "\n")] =
-              '\0';
-
+          itemMenuSelection[strcspn(itemMenuSelection, "\n")] = '\0';
           if (itemMenuSelection[0] == '\0') {
             clearScreen();
             printf("I chose to let it be...\n");
             while (getchar() != '\n')
-              ; 
-            break; 
+              ;
+            break;
           }
 
           int itemMenuSelectionInt = atoi(itemMenuSelection);
 
           switch (itemMenuSelectionInt) {
           case 1:
-            useItem(itemsPossessed[itemSelectionInt]);
+            useItem(itemIndex);
             validMenuSelection = 1;
             break;
           case 2:
             printf("Crafting not yet implemented...\n");
             while (getchar() != '\n')
-              ; 
+              ;
             validMenuSelection = 1;
             break;
           case 3:
-            discardItem(itemsPossessed[itemSelectionInt]);
+            discardItem(itemIndex);
             validMenuSelection = 1;
             break;
           default:
@@ -330,10 +327,136 @@ void inventoryMenu() {
   }
 }
 
+void huntingMenu() {
+  clearScreen();
+  printf("Hunting is not yet implemented...\n");
+  while (getchar() != '\n')
+    ;
+  clearScreen();
+  return;
+}
+
+void foragingMenu() {
+  clearScreen();
+  printf("Foraging is not yet implemented...\n");
+  while (getchar() != '\n')
+    ;
+  clearScreen();
+  return;
+}
+
+void fishingMenu() {
+  clearScreen();
+  printf("Fishing is not yet implemented...\n");
+  while (getchar() != '\n')
+    ;
+  clearScreen();
+  return;
+}
+
+void lakeMenu() {
+  int validLakeDestination = 0;
+  while (!validLakeDestination) {
+    clearScreen();
+    char lakeDestination[4];
+    printf("After reaching the lake, I decided to...\n\n1. Fish\n2. "
+           "Reflect\n3. Return to Camp\n\n> ");
+    fgets(lakeDestination, sizeof(lakeDestination), stdin);
+    lakeDestination[strcspn(lakeDestination, "\n")] = '\0';
+    if (lakeDestination[0] == '\0') {
+      clearScreen();
+      printf("I realized that I still had something to do at camp before "
+             "leaving...\n");
+      while (getchar() != '\n')
+        ;
+      clearScreen();
+      return;
+    }
+    int lakeDestinationInt = atoi(lakeDestination);
+    switch (lakeDestinationInt) {
+    case 1:
+      fishingMenu();
+      break;
+    case 2:
+      warnings();
+      break;
+    case 3:
+      validLakeDestination = 1;
+      break;
+    default:
+      invalidInputMessage();
+    }
+  }
+}
+
+void valleyMenu() {
+  int validValleyDestination = 0;
+  while (!validValleyDestination) {
+    clearScreen();
+    char valleyDestination[4];
+    printf("After reaching the valley, I decided to...\n\n1. Gather plants\n2. "
+           "Hunt\n3. Reflect\n4. Return to Camp\n\n> ");
+    fgets(valleyDestination, sizeof(valleyDestination), stdin);
+    valleyDestination[strcspn(valleyDestination, "\n")] = '\0';
+    int valleyDestinationInt = atoi(valleyDestination);
+    switch (valleyDestinationInt) {
+    case 1:
+      foragingMenu();
+      break;
+    case 2:
+      huntingMenu();
+      break;
+    case 3:
+      warnings();
+      break;
+    case 4:
+      validValleyDestination = 1;
+      break;
+    default:
+      invalidInputMessage();
+    }
+  }
+}
+
+void travelMenu() {
+  int validDestination = 0;
+  while (!validDestination) {
+    clearScreen();
+    char destination[4];
+    printf("I walked to...\n\n1. The Lake\n2. The Valley\n\n> ");
+    fgets(destination, sizeof(destination), stdin);
+    destination[strcspn(destination, "\n")] = '\0';
+    if (destination[0] == '\0') {
+      clearScreen();
+      printf("I realized that I still had something to do at camp before "
+             "leaving...\n");
+      while (getchar() != '\n')
+        ;
+      clearScreen();
+      return;
+    }
+    int destinationInt = atoi(destination);
+    switch (destinationInt) {
+    case 1:
+      validDestination = 1;
+      lakeMenu();
+      break;
+    case 2:
+      validDestination = 1;
+      valleyMenu();
+      break;
+    default:
+      invalidInputMessage();
+    }
+  }
+}
+
 // Calculate whether to lower player's stats at end of day
-void advanceDay() { player.day = player.day + 1; }
+void advanceDay() { player.day = player.day + 1; 
+}
 
 int homeMenu() {
+  // TO DO - PUT IN TEMPERATURE INITIALIZATION BASED ON CLOTHES FOR DAY 1
   char homeSelection[3];
   int leftHome = 0;
   int dailyTemperature = generateTemperature();
@@ -422,7 +545,7 @@ void mainMenu() {
   int validMainSelection = 0;
   int validPrefaceSelection = 0;
   while (!validMainSelection) {
-    printf("1. New Journal\n2. Continue Journal\n3. Go Home\n\n> ");
+    printf("L O N E\n\n1. New Journal\n2. Continue Journal\n3. Go Home\n\n> ");
     fgets(mainSelection, sizeof(mainSelection), stdin);
     mainSelection[strcspn(mainSelection, "\n")] = '\0';
     if (strcmp(mainSelection, "1") == 0) {
