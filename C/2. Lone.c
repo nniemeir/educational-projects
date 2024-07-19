@@ -155,25 +155,53 @@ int generateTemperature() {
 
 char *generateConditions() {
   float blizzardProbability = 5;
-  float snowyProbability = 15;
-  float cloudyProbability = 30;
-  float clearProbability = 50;
+  float snowyProbability = 20;
+  float cloudyProbability = 50;
   static char conditions[20];
 
   int prob = rand() % (100 + 1);
-  if (prob <= 5) {
+  if (prob <= blizzardProbability) {
     strcpy(conditions, "snowed heavily");
-  } else if (prob > 5 && prob <= 20) {
+  } else if (prob > blizzardProbability && prob <= snowyProbability) {
     strcpy(conditions, "snowed");
-  } else if (prob > 20 && prob <= 50) {
+  } else if (prob > snowyProbability && prob <= cloudyProbability) {
     strcpy(conditions, "cloudy");
-  } else if (prob > 50) {
+  } else if (prob > cloudyProbability) {
     strcpy(conditions, "clear");
   } else {
     printf("There was an issue generating weather conditions");
     return NULL;
   }
   return conditions;
+}
+
+char *generateAnimalEncounter() {
+  float badgerProbability = 5;
+  float bearProbability = 30;
+  float deerProbability = 70;
+  float foxProbability = 75;
+  float rabbitProbability = 90;
+  static char animalEncountered[20];
+
+  int prob = rand() % (100 + 1);
+  if (prob <= badgerProbability) {
+    strcpy(animalEncountered, "badger");
+  } else if (prob > badgerProbability && prob <= bearProbability) {
+    strcpy(animalEncountered, "bear");
+  } else if (prob > bearProbability && prob <= deerProbability) {
+    strcpy(animalEncountered, "deer");
+  } else if (prob > deerProbability && prob <= foxProbability) {
+    strcpy(animalEncountered, "fox");
+  } else if (prob > foxProbability && prob <= rabbitProbability) {
+    strcpy(animalEncountered, "rabbit");
+  } else if (prob > rabbitProbability) {
+    strcpy(animalEncountered, "squirrel");
+  } else {
+    printf("There was an issue deciding what animal type should be "
+           "encountered...");
+    return NULL;
+  }
+  return animalEncountered;
 }
 
 int findItemIndex(char *itemToUseName) {
@@ -233,7 +261,8 @@ void discardItem(int itemIndex) {
       if (discardAmountInt >= 0 &&
           discardAmountInt <= inventory.items[itemIndex].amount) {
         validDiscardAmount = 1;
-        if (inventory.items[itemIndex].equipped == true && discardAmountInt > 0) {
+        if (inventory.items[itemIndex].equipped == true &&
+            discardAmountInt > 0) {
           useItem(itemIndex);
         }
         inventory.items[itemIndex].amount =
@@ -242,6 +271,44 @@ void discardItem(int itemIndex) {
         printf("I didn't have enough to discard that many...\n");
         clearScreen();
       }
+    }
+  }
+}
+
+void itemMenu(char *itemName) {
+  int itemIndex = findItemIndex(itemName);
+  char itemMenuSelection[3];
+  int validMenuSelection = 0;
+  while (!validMenuSelection) {
+    clearScreen();
+    printf("%s\n\n1. Use\n2. Craft\n3. Discard\n\n> ", itemName);
+    fgets(itemMenuSelection, sizeof(itemMenuSelection), stdin);
+    itemMenuSelection[strcspn(itemMenuSelection, "\n")] = '\0';
+    if (itemMenuSelection[0] == '\0') {
+      clearScreen();
+      printf("I chose to let it be...\n");
+      while (getchar() != '\n')
+        ;
+      break;
+    }
+    int itemMenuSelectionInt = atoi(itemMenuSelection);
+    switch (itemMenuSelectionInt) {
+    case 1:
+      useItem(itemIndex);
+      validMenuSelection = 1;
+      break;
+    case 2:
+      printf("Crafting not yet implemented...\n");
+      while (getchar() != '\n')
+        ;
+      validMenuSelection = 1;
+      break;
+    case 3:
+      discardItem(itemIndex);
+      validMenuSelection = 1;
+      break;
+    default:
+      invalidInputMessage();
     }
   }
 }
@@ -267,61 +334,20 @@ void inventoryMenu() {
           itemsPossessedSize++;
         }
       }
-
       printf("\n> ");
       fgets(itemSelection, sizeof(itemSelection), stdin);
       itemSelection[strcspn(itemSelection, "\n")] = '\0';
-
       if (itemSelection[0] == '\0') {
         clearScreen();
         printf("I switched my focus to another matter...\n");
         return;
       }
-
       itemSelectionInt = atoi(itemSelection);
-
       if (itemSelectionInt < 0 || itemSelectionInt >= itemsPossessedSize) {
         invalidInputMessage();
       } else {
-        int itemIndex = findItemIndex(itemsPossessed[itemSelectionInt]);
         validItemSelection = 1;
-        char itemMenuSelection[3];
-        int validMenuSelection = 0;
-        while (!validMenuSelection) {
-          clearScreen();
-          printf("%s\n\n1. Use\n2. Craft\n3. Discard\n\n> ",
-                 itemsPossessed[itemSelectionInt]);
-          fgets(itemMenuSelection, sizeof(itemMenuSelection), stdin);
-          itemMenuSelection[strcspn(itemMenuSelection, "\n")] = '\0';
-          if (itemMenuSelection[0] == '\0') {
-            clearScreen();
-            printf("I chose to let it be...\n");
-            while (getchar() != '\n')
-              ;
-            break;
-          }
-
-          int itemMenuSelectionInt = atoi(itemMenuSelection);
-
-          switch (itemMenuSelectionInt) {
-          case 1:
-            useItem(itemIndex);
-            validMenuSelection = 1;
-            break;
-          case 2:
-            printf("Crafting not yet implemented...\n");
-            while (getchar() != '\n')
-              ;
-            validMenuSelection = 1;
-            break;
-          case 3:
-            discardItem(itemIndex);
-            validMenuSelection = 1;
-            break;
-          default:
-            invalidInputMessage();
-          }
-        }
+        itemMenu(itemsPossessed[itemSelectionInt]);
       }
     }
   }
@@ -329,11 +355,16 @@ void inventoryMenu() {
 
 void huntingMenu() {
   clearScreen();
-  printf("Hunting is not yet implemented...\n");
-  while (getchar() != '\n')
-    ;
-  clearScreen();
-  return;
+  int exitedHunting = 0;
+  while (!exitedHunting) {
+    char *animalEncountered = generateAnimalEncounter();
+    printf("I spotted a %s\n", animalEncountered);
+    while (getchar() != '\n')
+      ;
+    clearScreen();
+    exitedHunting = 1;
+    return;
+  }
 }
 
 void foragingMenu() {
