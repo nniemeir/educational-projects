@@ -1,6 +1,6 @@
 // Author: Jacob Niemeir <nniemeir@protonmail.com>
 // A text-based survival game
-
+#include <ncurses.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -33,7 +33,7 @@ struct playerInventory {
   struct item items[NUM_OF_ITEMS];
 };
 
-struct playerStats player = {100, 50, 100, 100, 0, 50, 20, 1};
+struct playerStats player = {100, 50, 100, 100, 50, 50, 20, 1};
 
 struct playerInventory inventory = {{
     {"Badger Meat", 0, false, 20, "food"},
@@ -200,7 +200,7 @@ void useItem(int itemIndex) {
     if (inventory.items[itemIndex].equipped == true) {
       printf("I took off my %s...\n", inventory.items[itemIndex].name);
       inventory.items[itemIndex].equipped = false;
-       player.temperature =
+      player.temperature =
           player.temperature - inventory.items[itemIndex].effects;
     } else {
       printf("I put on my %s...\n", inventory.items[itemIndex].name);
@@ -215,7 +215,7 @@ void useItem(int itemIndex) {
   } else {
     printf("Invalid inventory entry");
   }
-   while (getchar() != '\n')
+  while (getchar() != '\n')
     ;
 }
 
@@ -233,7 +233,7 @@ void discardItem(int itemIndex) {
       if (discardAmountInt >= 0 &&
           discardAmountInt <= inventory.items[itemIndex].amount) {
         validDiscardAmount = 1;
-        if (inventory.items[itemIndex].equipped == true) {
+        if (inventory.items[itemIndex].equipped == true && discardAmountInt > 0) {
           useItem(itemIndex);
         }
         inventory.items[itemIndex].amount =
@@ -452,11 +452,9 @@ void travelMenu() {
 }
 
 // Calculate whether to lower player's stats at end of day
-void advanceDay() { player.day = player.day + 1; 
-}
+void advanceDay() { player.day = player.day + 1; }
 
 int homeMenu() {
-  // TO DO - PUT IN TEMPERATURE INITIALIZATION BASED ON CLOTHES FOR DAY 1
   char homeSelection[3];
   int leftHome = 0;
   int dailyTemperature = generateTemperature();
