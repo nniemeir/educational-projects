@@ -59,6 +59,7 @@ int findItemIndex(char *selectedItemName) {
       return selectedItemIndex;
     }
   }
+  fprintf(stderr, "Error occurred when finding item index from name.\n");
   exit(1);
 }
 
