@@ -9,7 +9,7 @@
 
 #define NUM_OF_ITEMS 45
 #define ITEM_NAME_SIZE 255
-#define PROMPT_SIZE 100
+#define PROMPT_SIZE 255
 
 struct item {
   char name[50];
@@ -21,6 +21,13 @@ struct item {
 
 struct playerInventory {
   struct item items[NUM_OF_ITEMS];
+};
+
+struct inventoryValues {
+char itemsPossessed[NUM_OF_ITEMS][ITEM_NAME_SIZE];
+int itemCount;
+int numOfItemsPossessed;
+long selection;
 };
 
 struct worldStats {
@@ -41,6 +48,7 @@ struct playerStats {
 extern struct playerInventory inventory;
 extern struct playerStats player;
 extern struct worldStats world;
+extern struct inventoryValues values;
 
 void clearScreen();
 void clearStdin();

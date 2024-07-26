@@ -73,7 +73,7 @@ void useItem(int selectedItemIndex) {
     inventory.items[selectedItemIndex].amount =
         inventory.items[selectedItemIndex].amount - 1;
   } else if (strcmp(inventory.items[selectedItemIndex].type, "liquid") == 0) {
-    player.thirst = player.thirst + inventory.items[2].effects;
+    player.thirst = player.thirst + inventory.items[selectedItemIndex].effects;
     inventory.items[selectedItemIndex].amount =
         inventory.items[selectedItemIndex].amount - 1;
   } else if (strcmp(inventory.items[selectedItemIndex].type, "clothing") == 0) {
@@ -95,7 +95,6 @@ void useItem(int selectedItemIndex) {
   } else {
     printf("Invalid inventory entry");
   }
-  clearStdin();
 }
 
 // Removes x of an item from the inventory if x is <= the amount currently
