@@ -1,4 +1,4 @@
-#include "halfway_across.h"
+#include "../include/halfway_across.h"
 
 #define INVENTORY_ARRAY_OFFSET 1
 
@@ -26,7 +26,7 @@ typedef enum { LAKE_REFLECT = 1, LAKE_LEAVE } LakeMenuOption;
 
 typedef enum { ITEM_USE = 1, ITEM_DISCARD, ITEM_EXIT } ItemMenuOption;
 
-struct inventoryValues values = {{"nothing"}, 0, 0, 0};
+struct inventoryValues currentInventoryValues = {{"nothing"}, 0, 0, 0};
 
 void clearScreen() { printf("\e[H\e[2J"); }
 
@@ -132,6 +132,8 @@ void itemMenu(char *selectedItemName) {
   }
 }
 
+// If the player possesses at least one of a given item, that item's array
+// number + 1 is added to the inventory prompt string along with its name.
 char *generateInventoryPrompt(char *generatedInventoryPrompt) {
   strcpy(generatedInventoryPrompt,
          "I had a variety of items, I inspected my...\n\n");
@@ -139,33 +141,37 @@ char *generateInventoryPrompt(char *generatedInventoryPrompt) {
   for (int itemsIncrement = 0; itemsIncrement < NUM_OF_ITEMS;
        itemsIncrement++) {
     if (inventory.items[itemsIncrement].amount != 0) {
-      strcpy(values.itemsPossessed[values.itemCount],
+      strcpy(currentInventoryValues
+                 .itemsPossessed[currentInventoryValues.itemCount],
              inventory.items[itemsIncrement].name);
       snprintf(buffer, sizeof(buffer), "%d",
-               values.itemCount + INVENTORY_ARRAY_OFFSET);
+               currentInventoryValues.itemCount + INVENTORY_ARRAY_OFFSET);
       strcat(generatedInventoryPrompt, buffer);
       strcat(generatedInventoryPrompt, ". ");
       strcat(generatedInventoryPrompt, inventory.items[itemsIncrement].name);
       strcat(generatedInventoryPrompt, "\n");
-      values.itemCount++;
+      currentInventoryValues.itemCount++;
     }
   }
   snprintf(buffer, sizeof(buffer), "%d",
-           values.itemCount + INVENTORY_ARRAY_OFFSET);
+           currentInventoryValues.itemCount + INVENTORY_ARRAY_OFFSET);
   strcat(generatedInventoryPrompt, buffer);
   strcat(generatedInventoryPrompt, ". Exit\n\n> ");
   return generatedInventoryPrompt;
 }
 
+// The value of each variable in the currentInventory struct is altered in
+// inventoryMenu and its associated functions, so they must all be reset before
+// running the functions again.
 void resetInventoryValues() {
   for (int itemsPossessedIncrement = 0; itemsPossessedIncrement < NUM_OF_ITEMS;
        itemsPossessedIncrement++) {
-    memset(values.itemsPossessed[itemsPossessedIncrement], '\0',
+    memset(currentInventoryValues.itemsPossessed[itemsPossessedIncrement], '\0',
            ITEM_NAME_SIZE);
   }
-  values.itemCount = 0;
-  values.numOfItemsPossessed = 0;
-  values.selection = 0;
+  currentInventoryValues.itemCount = 0;
+  currentInventoryValues.numOfItemsPossessed = 0;
+  currentInventoryValues.selection = 0;
 }
 
 void inventoryMenu() {
@@ -175,12 +181,17 @@ void inventoryMenu() {
     clearScreen();
     char generatedInventoryPrompt[PROMPT_SIZE];
     char *inventoryPrompt = generateInventoryPrompt(generatedInventoryPrompt);
-    values.selection = prompt(inventoryPrompt);
-    // Fix offset
-    int fixedOffsetSelection = values.selection - 1;
-    if (values.selection > 0 && values.selection <= values.itemCount) {
-      itemMenu(values.itemsPossessed[fixedOffsetSelection]);
-    } else if (values.selection == values.itemCount + INVENTORY_ARRAY_OFFSET) {
+    currentInventoryValues.selection = prompt(inventoryPrompt);
+    int exitOption = currentInventoryValues.itemCount + 1;
+    if (currentInventoryValues.selection > 0 &&
+        currentInventoryValues.selection <= currentInventoryValues.itemCount) {
+      // Since the prompt displays options starting from 1 instead of 0, this
+      // offset must be corrected before matching the user's selection to the
+      // corresponding name in the itemsPossessed array
+      int fixedOffsetSelection =
+          currentInventoryValues.selection - INVENTORY_ARRAY_OFFSET;
+      itemMenu(currentInventoryValues.itemsPossessed[fixedOffsetSelection]);
+    } else if (currentInventoryValues.selection == exitOption) {
       validInventorySelection = 1;
       clearScreen();
       printf("I switched my focus to another matter...\n");
@@ -256,9 +267,17 @@ void travelMenu() {
 }
 
 void campMenu() {
-  int leftCamp = 0;
-  while (!leftCamp) {
+  int gaveUp = 0;
+  while (!gaveUp) {
     clearScreen();
+    if (player.health <= 0) {
+      clearScreen();
+      printf("This is my last entry, my health is failing me. Whoever finds "
+             "this journal is welcome to whatever is left in my camp...");
+      clearStdin();
+      clearScreen();
+      return;
+    }
     printf("San Juan Mountains, 1893\n");
     printf("Day %d\n\n", world.day);
     printf("It was %d degrees and %s today.\n", world.currentTemperature,
@@ -280,7 +299,6 @@ void campMenu() {
         clearScreen();
       } else {
         travelMenu();
-        int leftCamp = 1;
       }
       break;
     case CAMP_SHOW_INVENTORY:
@@ -294,7 +312,7 @@ void campMenu() {
       advanceDay();
       break;
     case CAMP_GIVE_UP:
-      leftCamp = 1;
+      gaveUp = 1;
       clearScreen();
       printf("The journal ends here...\n");
       clearStdin();

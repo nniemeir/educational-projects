@@ -1,6 +1,6 @@
 // Author: Jacob Niemeir <nniemeir@protonmail.com>
 // A text-based survival game
-#include "halfway_across.h"
+#include "../include/halfway_across.h"
 
 
 int main() {

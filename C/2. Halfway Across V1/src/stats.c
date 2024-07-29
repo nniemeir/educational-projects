@@ -1,4 +1,4 @@
-#include "halfway_across.h"
+#include "../include/halfway_across.h"
 #define LOW_STAT_THRESHOLD 20
 #define MEDIUM_STAT_THRESHOLD 50
 #define HIGH_STAT_THRESHOLD 70
@@ -6,7 +6,6 @@
 struct worldStats world = {1, 32, "clear"};
 
 struct playerStats player = {100, 1, 100, 100, 50, 50};
-
 
 // Gives player vague indication of stats if they select "Reflect" option
 void warnings() {
@@ -54,16 +53,15 @@ void warnings() {
   clearStdin();
 }
 
-// A given day's temperature has an effect on
-// how high the temperature stat must be to avoid losing health
+// A given day's temperature will have an effect on
+// how high the warmth stat must be to avoid losing health
 int generateTemperature() {
   int currentTemperature = rand() % (30 + 1);
   return currentTemperature;
 }
 
-// A given day's currentWeather currentWeather have an effect on
-// what actions the player can do and how likely they are to succeed at those
-// they can
+// A given day's weather will have an effect on
+// what actions the player can take and how likely they are to succeed at them
 char *generateWeather() {
   float blizzardProb = 5;
   float snowyProb = 20;
@@ -80,21 +78,13 @@ char *generateWeather() {
   } else if (prob > cloudyProb) {
     strcpy(currentWeather, "clear");
   } else {
-    printf("There was an issue generating currentWeather currentWeather");
+    printf("There was an issue generating weather conditions");
     return NULL;
   }
   return currentWeather;
 }
 
 void advanceDay() {
-  if (player.health <= 0) {
-    clearScreen();
-    printf("This is my last entry, my health is failing me. Whoever finds "
-           "this journal is welcome to whatever is left in my camp...");
-    clearStdin();
-    clearScreen();
-    return;
-  }
   player.energy = 1;
   world.day = world.day + 1;
   world.currentTemperature = generateTemperature();

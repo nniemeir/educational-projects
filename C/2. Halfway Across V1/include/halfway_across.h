@@ -48,7 +48,7 @@ struct playerStats {
 extern struct playerInventory inventory;
 extern struct playerStats player;
 extern struct worldStats world;
-extern struct inventoryValues values;
+extern struct inventoryValues currentInventoryValues;
 
 void clearScreen();
 void clearStdin();

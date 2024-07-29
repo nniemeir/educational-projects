@@ -1,4 +1,4 @@
-#include "halfway_across.h"
+#include "../include/halfway_across.h"
 
 struct playerInventory inventory = {{
     {"Leather Gloves", 1, 1, 5, "clothing"},
@@ -9,8 +9,7 @@ struct playerInventory inventory = {{
     
 }};
 
-// The index of the item selected by the player in inventoryMenu is needed to
-// modify its members
+// The name of the item selected by the player is used to find which item struct instance it corresponds to within the inventory struct
 int findItemIndex(char *selectedItemName) {
   int selectedItemIndex;
   int itemsIncrement;
@@ -26,7 +25,7 @@ int findItemIndex(char *selectedItemName) {
 
 // The stat modified depends on the type of the item.
 // Using a consumable subtracts one of it from your inventory
-// However, using a clothing item instead equips/unequips it
+// However, using a clothing item equips/unequips it
 void useItem(int selectedItemIndex) {
  clearScreen();
  if (strcmp(inventory.items[selectedItemIndex].type, "clothing") == 0) {
