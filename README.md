@@ -1,7 +1,7 @@
 ## Educational Projects
 
 ### C
-1. PreSuff - Prepend or append a string to the name of all files in a directory with specified extension.
+1. PreSuff - POSIX program to prepend or append a string to the name of all files in a directory with specified extension.
 2. Halfway Across V1 (WIP) - a text-based survival game set in the Southern Rockies.
 
 ### C++
