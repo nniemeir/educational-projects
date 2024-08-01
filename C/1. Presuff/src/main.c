@@ -14,6 +14,10 @@ int main() {
                                    MAX_EXTENSION_LENGTH));
   strcpy(pattern, prompt("Enter a pattern: ", MAX_PATTERN_LENGTH));
   mode = modePrompt("1. Prepend\n2. Append\n", MODE_LENGTH);
-  patternRename(directoryPath, pattern, filteredExtension, mode);
-  return EXIT_SUCCESS;
+  if (patternRename(directoryPath, pattern, filteredExtension, mode)) {
+    return EXIT_SUCCESS;
+  } else {
+    fprintf(stderr, "Renaming files failed.\n");
+    return EXIT_FAILURE;
+  }
 }

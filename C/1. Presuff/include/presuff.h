@@ -17,7 +17,7 @@
 #define MODE_APPEND 2 
 #define NULL_TERMINATOR_LENGTH 1
 
-void patternRename(const char *directoryPath, const char *pattern,
+int patternRename(const char *directoryPath, const char *pattern,
                    const char *filteredExtension, long mode);
 char *prompt(char *promptMessage, int maxInputLength);
 long modePrompt(char *promptMessage, int maxInputLength);

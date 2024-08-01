@@ -4,7 +4,7 @@ char *constructFilePath(const char *directoryPath, const char *fileName) {
   char *filePath = malloc(strlen(directoryPath) + NULL_TERMINATOR_LENGTH + strlen(fileName) + NULL_TERMINATOR_LENGTH);
   if (filePath == NULL) {
     fprintf(stderr, "Error allocating memory for file path");
-    exit(EXIT_FAILURE);
+    return NULL;
   }
   sprintf(filePath, "%s/%s", directoryPath, fileName);
   return filePath;
@@ -22,7 +22,7 @@ char *constructNewFilePath(const char *directoryPath, const char *pattern,
   char *baseName = malloc(baseNameLength + NULL_TERMINATOR_LENGTH);
   if (baseName == NULL) {
     fprintf(stderr, "Error allocating memory for basename");
-    exit(EXIT_FAILURE);
+    return NULL;
   }
   strncpy(baseName, fileName, baseNameLength);
   baseName[baseNameLength] = '\0';
@@ -33,7 +33,7 @@ char *constructNewFilePath(const char *directoryPath, const char *pattern,
                          strlen(fileName) + NULL_TERMINATOR_LENGTH);
     if (newFilePath == NULL) {
       fprintf(stderr, "Error allocating memory for basename");
-      exit(EXIT_FAILURE);
+    return NULL;
     }
     sprintf(newFilePath, "%s/%s%s", directoryPath, pattern, fileName);
   } else if (mode == MODE_APPEND) {
@@ -41,14 +41,15 @@ char *constructNewFilePath(const char *directoryPath, const char *pattern,
                          baseNameLength + strlen(fileExtension) + NULL_TERMINATOR_LENGTH);
     if (newFilePath == NULL) {
       fprintf(stderr, "Error allocating memory for new file path");
-      exit(EXIT_FAILURE);
+    return NULL;
     }
     sprintf(newFilePath, "%s/%s%s%s", directoryPath, baseName, pattern,
             fileExtension);
   } else {
     fprintf(stderr, "Invalid mode selection, this is likely a problem in the modePrompt function");
     free(baseName);
-    exit(EXIT_SUCCESS);
+    free(newFilePath);
+    return NULL;
   }
   free(baseName);
   return newFilePath;
@@ -66,7 +67,7 @@ void renameFile(const char *oldFilePath, const char *newFilePath) {
 }
 
 
-void patternRename(const char *directoryPath, const char *pattern,
+int patternRename(const char *directoryPath, const char *pattern,
                    const char *filteredExtension, long mode) {
   DIR *dir;
   struct dirent *entry;
@@ -74,7 +75,7 @@ void patternRename(const char *directoryPath, const char *pattern,
   dir = opendir(directoryPath);
   if (dir == NULL) {
     fprintf(stderr, "Error opening directory: %s\n", directoryPath);
-    exit(EXIT_FAILURE);
+  return 0;
   }
 
   while ((entry = readdir(dir)) != NULL) {
@@ -104,4 +105,5 @@ void patternRename(const char *directoryPath, const char *pattern,
     }
   }
   closedir(dir);
+    return 1;
 }
