@@ -79,13 +79,13 @@ long convertInputToLong(char *menuSelection) {
 
 char *prompt(char *promptMessage, int maxInputLength) {
   printf("%s", promptMessage);
-  char *menuSelection = takeInput();
+  char *menuSelection = takeInput(maxInputLength);
   return menuSelection;
 }
 
 long modePrompt(char *promptMessage, int maxInputLength) {
   printf("%s", promptMessage);
-  char *menuSelection = takeNumInput();
+  char *menuSelection = takeNumInput(maxInputLength);
   if (menuSelection != NULL) {
     long selection = convertInputToLong(menuSelection);
     return selection;

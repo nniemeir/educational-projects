@@ -13,6 +13,9 @@
 #define MAX_PATTERN_LENGTH 256
 #define MAX_EXTENSION_LENGTH 20
 #define MODE_LENGTH 2
+#define MODE_PREPEND 1
+#define MODE_APPEND 2 
+#define NULL_TERMINATOR_LENGTH 1
 
 void patternRename(const char *directoryPath, const char *pattern,
                    const char *filteredExtension, long mode);
