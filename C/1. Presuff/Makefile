@@ -1,12 +1,28 @@
-SRC =	src/interface.c \
-	src/logic.c \
-	src/main.c 
+SRC =	src/file.c \
+	src/main.c \
+	src/utils.c
 
 CFLAGS += -I./include
 
-NAME = PreSuff
+NAME = presuff
 
 RM = rm -f
+
+CP = cp -f
+
+DESTDIR = /usr/bin/
+
+SRCMAN = man/
+
+MANPAGE = presuff.1
+
+COMPMAN = presuff.1.gz 
+
+COMPRESS = gzip < $(SRCMAN)$(MANPAGE) > $(SRCMAN)$(COMPMAN)
+
+MANDIR = /usr/share/man/man1/
+
+MANDB = mandb
 
 CC = gcc
 
@@ -15,14 +31,28 @@ OBJS=	$(SRC:.c=.o)
 all: $(NAME)
 
 $(NAME): $(OBJS)
-	$(CC) -o $(NAME) $(OBJS) $(LDFLAGS)
+	$(CC) -g -o $(NAME) $(OBJS) $(LDFLAGS)
 
 clean:
 	$(RM) $(OBJS)
 
-fclean: clean
+cleanMan:
+	$(RM) $(SRCMAN)$(COMPMAN)
+
+fclean: clean cleanMan
 	$(RM) $(NAME)
+
+install: $(NAME) 
+	$(CP) $(NAME) $(DESTDIR)
+	$(COMPRESS)
+	$(CP) $(SRCMAN)$(COMPMAN) $(MANDIR)
+	$(MANDB)
 
 re: fclean all
 
-.PHONY: all clean fclean re
+uninstall: $(NAME)
+	$(RM) $(DESTDIR)$(NAME)
+	$(RM) $(MANDIR)$(COMPMAN)
+	$(MANDB)
+
+.PHONY: all clean fclean install re uninstall

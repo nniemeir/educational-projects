@@ -1,7 +1,8 @@
 #include "../include/presuff.h"
 
 char *constructFilePath(const char *directoryPath, const char *fileName) {
-  char *filePath = malloc(strlen(directoryPath) + NULL_TERMINATOR_LENGTH + strlen(fileName) + NULL_TERMINATOR_LENGTH);
+  char *filePath = malloc(strlen(directoryPath) + NULL_TERMINATOR_LENGTH +
+                          strlen(fileName) + NULL_TERMINATOR_LENGTH);
   if (filePath == NULL) {
     fprintf(stderr, "Error allocating memory for file path");
     return NULL;
@@ -29,24 +30,27 @@ char *constructNewFilePath(const char *directoryPath, const char *pattern,
 
   char *newFilePath;
   if (mode == MODE_PREPEND) {
-    newFilePath = malloc(strlen(directoryPath) + NULL_TERMINATOR_LENGTH + strlen(pattern) +
-                         strlen(fileName) + NULL_TERMINATOR_LENGTH);
+    newFilePath =
+        malloc(strlen(directoryPath) + NULL_TERMINATOR_LENGTH +
+               strlen(pattern) + strlen(fileName) + NULL_TERMINATOR_LENGTH);
     if (newFilePath == NULL) {
       fprintf(stderr, "Error allocating memory for basename");
-    return NULL;
+      return NULL;
     }
     sprintf(newFilePath, "%s/%s%s", directoryPath, pattern, fileName);
   } else if (mode == MODE_APPEND) {
-    newFilePath = malloc(strlen(directoryPath) + NULL_TERMINATOR_LENGTH + strlen(pattern) +
-                         baseNameLength + strlen(fileExtension) + NULL_TERMINATOR_LENGTH);
+    newFilePath = malloc(strlen(directoryPath) + NULL_TERMINATOR_LENGTH +
+                         strlen(pattern) + baseNameLength +
+                         strlen(fileExtension) + NULL_TERMINATOR_LENGTH);
     if (newFilePath == NULL) {
       fprintf(stderr, "Error allocating memory for new file path");
-    return NULL;
+      return NULL;
     }
     sprintf(newFilePath, "%s/%s%s%s", directoryPath, baseName, pattern,
             fileExtension);
   } else {
-    fprintf(stderr, "Invalid mode selection, this is likely a problem in the modePrompt function");
+    fprintf(stderr, "Invalid mode selection, this is likely a problem in the "
+                    "modePrompt function");
     free(baseName);
     free(newFilePath);
     return NULL;
@@ -56,7 +60,7 @@ char *constructNewFilePath(const char *directoryPath, const char *pattern,
 }
 
 void renameFile(const char *oldFilePath, const char *newFilePath) {
-  if (strlen(newFilePath) >= MAX_PATH) {
+  if (strlen(newFilePath) >= PATH_MAX) {
     fprintf(stderr, "Maximum filename length exceeded for %s\n", oldFilePath);
     return;
   }
@@ -66,16 +70,15 @@ void renameFile(const char *oldFilePath, const char *newFilePath) {
   }
 }
 
-
 int patternRename(const char *directoryPath, const char *pattern,
-                   const char *filteredExtension, long mode) {
+                  const char *filteredExtension, long mode) {
   DIR *dir;
   struct dirent *entry;
 
   dir = opendir(directoryPath);
   if (dir == NULL) {
     fprintf(stderr, "Error opening directory: %s\n", directoryPath);
-  return 0;
+    return 0;
   }
 
   while ((entry = readdir(dir)) != NULL) {
@@ -88,9 +91,11 @@ int patternRename(const char *directoryPath, const char *pattern,
 
       size_t length = strlen(fileExtension);
       char modifiedExtension[length + NULL_TERMINATOR_LENGTH];
-      strcpy(modifiedExtension, fileExtension + NULL_TERMINATOR_LENGTH);
+      strncpy(modifiedExtension, fileExtension + NULL_TERMINATOR_LENGTH,
+              sizeof(fileExtension));
 
-      if (strcmp(modifiedExtension, filteredExtension) == 0) {
+      if (strcmp(modifiedExtension, filteredExtension) == 0 ||
+          strcmp(filteredExtension, "None") == 0) {
         char *oldFilePath = constructFilePath(directoryPath, entry->d_name);
         char *newFilePath =
             constructNewFilePath(directoryPath, pattern, entry->d_name, mode);
@@ -105,5 +110,5 @@ int patternRename(const char *directoryPath, const char *pattern,
     }
   }
   closedir(dir);
-    return 1;
+  return 1;
 }
