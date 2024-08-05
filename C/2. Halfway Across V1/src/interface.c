@@ -63,7 +63,8 @@ char *takeInput() {
     if (inputIsNumeric(menuSelection)) {
       char *menuSelectionCopy = malloc(strlen(menuSelection) + 1);
       if (menuSelectionCopy) {
-        strcpy(menuSelectionCopy, menuSelection);
+        snprintf(menuSelectionCopy, sizeof(menuSelectionCopy), "%s",
+                 menuSelection);
         return menuSelectionCopy;
       } else {
         fprintf(stderr, "Error allocating memory for menu selection.\n");
@@ -91,7 +92,7 @@ long convertInputToLong(char *menuSelection) {
 
 int prompt(char *promptMessage) {
   int selectionIncrement;
-  printf(promptMessage);
+  printf("%s", promptMessage);
   char *menuSelection = takeInput();
   if (menuSelection != NULL) {
     long selection = convertInputToLong(menuSelection);
@@ -106,7 +107,7 @@ void itemMenu(char *selectedItemName) {
   int validItemMenuSelection = 0;
   while (!validItemMenuSelection) {
     clearScreen();
-    printf("%s\nQuantity: %d\n\n", selectedItemName,
+    printf("%s\nQuantity: %d\nEquipped:%d\n\n", selectedItemName,
            inventory.items[selectedItemIndex].amount,
            inventory.items[selectedItemIndex].equipped);
     int selection = prompt("1. Use / Equip\n2. Discard\n3. Exit\n\n> ");
@@ -135,27 +136,30 @@ void itemMenu(char *selectedItemName) {
 // If the player possesses at least one of a given item, that item's array
 // number + 1 is added to the inventory prompt string along with its name.
 char *generateInventoryPrompt(char *generatedInventoryPrompt) {
-  strcpy(generatedInventoryPrompt,
-         "I had a variety of items, I inspected my...\n\n");
-  char buffer[100];
+  snprintf(generatedInventoryPrompt, strlen(generatedInventoryPrompt),
+           "I had a variety of items, I inspected my...\n\n");
+  char itemNumber[100];
   for (int itemsIncrement = 0; itemsIncrement < NUM_OF_ITEMS;
        itemsIncrement++) {
     if (inventory.items[itemsIncrement].amount != 0) {
-      strcpy(currentInventoryValues
-                 .itemsPossessed[currentInventoryValues.itemCount],
-             inventory.items[itemsIncrement].name);
-      snprintf(buffer, sizeof(buffer), "%d",
+      snprintf(currentInventoryValues
+                   .itemsPossessed[currentInventoryValues.itemCount],
+               sizeof(currentInventoryValues
+                          .itemsPossessed[currentInventoryValues.itemCount]),
+               "%s", inventory.items[itemsIncrement].name);
+
+      snprintf(itemNumber, sizeof(itemNumber), "%d",
                currentInventoryValues.itemCount + INVENTORY_ARRAY_OFFSET);
-      strcat(generatedInventoryPrompt, buffer);
+      strcat(generatedInventoryPrompt, itemNumber);
       strcat(generatedInventoryPrompt, ". ");
       strcat(generatedInventoryPrompt, inventory.items[itemsIncrement].name);
       strcat(generatedInventoryPrompt, "\n");
       currentInventoryValues.itemCount++;
     }
   }
-  snprintf(buffer, sizeof(buffer), "%d",
+  snprintf(itemNumber, sizeof(itemNumber), "%d",
            currentInventoryValues.itemCount + INVENTORY_ARRAY_OFFSET);
-  strcat(generatedInventoryPrompt, buffer);
+  strcat(generatedInventoryPrompt, itemNumber);
   strcat(generatedInventoryPrompt, ". Exit\n\n> ");
   return generatedInventoryPrompt;
 }

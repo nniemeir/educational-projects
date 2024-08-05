@@ -70,13 +70,13 @@ char *generateWeather() {
 
   int prob = rand() % 100;
   if (prob <= blizzardProb) {
-    strcpy(currentWeather, "snowed heavily");
+    snprintf(currentWeather, sizeof(currentWeather), "snowed heavily");
   } else if (prob > blizzardProb && prob <= snowyProb) {
-    strcpy(currentWeather, "snowed");
+    snprintf(currentWeather, sizeof(currentWeather), "snowed");
   } else if (prob > snowyProb && prob <= cloudyProb) {
-    strcpy(currentWeather, "cloudy");
+    snprintf(currentWeather, sizeof(currentWeather), "cloudy");
   } else if (prob > cloudyProb) {
-    strcpy(currentWeather, "clear");
+    snprintf(currentWeather, sizeof(currentWeather), "clear");
   } else {
     printf("There was an issue generating weather conditions");
     return NULL;
@@ -89,6 +89,7 @@ void advanceDay() {
   world.day = world.day + 1;
   world.currentTemperature = generateTemperature();
   memset(world.currentWeather, 0, sizeof(world.currentWeather));
-  strcpy(world.currentWeather, generateWeather());
+  snprintf(world.currentWeather, sizeof(world.currentWeather), "%s", generateWeather());
+  
   return;
 }
