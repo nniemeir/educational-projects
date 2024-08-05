@@ -1,13 +1,16 @@
 #include "../include/presuff.h"
 
 char *constructFilePath(const char *directoryPath, const char *fileName) {
-  char *filePath = malloc(strlen(directoryPath) + NULL_TERMINATOR_LENGTH +
+  char *filePath = malloc(strlen(directoryPath) + SLASH_LENGTH +
                           strlen(fileName) + NULL_TERMINATOR_LENGTH);
   if (filePath == NULL) {
     fprintf(stderr, "Error allocating memory for file path");
     return NULL;
   }
-  sprintf(filePath, "%s/%s", directoryPath, fileName);
+  snprintf(filePath,
+           strlen(directoryPath) + SLASH_LENGTH + strlen(fileName) +
+               NULL_TERMINATOR_LENGTH,
+           "%s/%s", directoryPath, fileName);
   return filePath;
 }
 
@@ -25,29 +28,41 @@ char *constructNewFilePath(const char *directoryPath, const char *pattern,
     fprintf(stderr, "Error allocating memory for basename");
     return NULL;
   }
-  strncpy(baseName, fileName, baseNameLength);
-  baseName[baseNameLength] = '\0';
+  snprintf(baseName, baseNameLength + NULL_TERMINATOR_LENGTH, "%s", fileName);
+
+  size_t directoryPathLength = strlen(directoryPath);
+  size_t patternLength = strlen(pattern);
+  size_t fileExtensionLength = strlen(fileExtension);
 
   char *newFilePath;
   if (mode == MODE_PREPEND) {
-    newFilePath =
-        malloc(strlen(directoryPath) + NULL_TERMINATOR_LENGTH +
-               strlen(pattern) + strlen(fileName) + NULL_TERMINATOR_LENGTH);
+    size_t totalLength = directoryPathLength + SLASH_LENGTH + patternLength +
+                         baseNameLength + fileExtensionLength +
+                         NULL_TERMINATOR_LENGTH;
+    newFilePath = malloc(totalLength);
     if (newFilePath == NULL) {
       fprintf(stderr, "Error allocating memory for basename");
       return NULL;
     }
-    sprintf(newFilePath, "%s/%s%s", directoryPath, pattern, fileName);
+    snprintf(newFilePath,
+             strlen(directoryPath) + SLASH_LENGTH + strlen(pattern) +
+                 baseNameLength + strlen(fileExtension) +
+                 NULL_TERMINATOR_LENGTH,
+             "%s/%s%s", directoryPath, pattern, fileName);
   } else if (mode == MODE_APPEND) {
-    newFilePath = malloc(strlen(directoryPath) + NULL_TERMINATOR_LENGTH +
-                         strlen(pattern) + baseNameLength +
-                         strlen(fileExtension) + NULL_TERMINATOR_LENGTH);
+    size_t totalLength = directoryPathLength + SLASH_LENGTH + patternLength +
+                         baseNameLength + fileExtensionLength +
+                         NULL_TERMINATOR_LENGTH;
+    newFilePath = malloc(totalLength);
     if (newFilePath == NULL) {
       fprintf(stderr, "Error allocating memory for new file path");
       return NULL;
     }
-    sprintf(newFilePath, "%s/%s%s%s", directoryPath, baseName, pattern,
-            fileExtension);
+    snprintf(newFilePath,
+             strlen(directoryPath) + SLASH_LENGTH + strlen(pattern) +
+                 baseNameLength + strlen(fileExtension) +
+                 NULL_TERMINATOR_LENGTH,
+             "%s/%s%s%s", directoryPath, baseName, pattern, fileExtension);
   } else {
     fprintf(stderr, "Invalid mode selection, this is likely a problem in the "
                     "modePrompt function");
@@ -91,8 +106,7 @@ int patternRename(const char *directoryPath, const char *pattern,
 
       size_t length = strlen(fileExtension);
       char modifiedExtension[length + NULL_TERMINATOR_LENGTH];
-      strncpy(modifiedExtension, fileExtension + NULL_TERMINATOR_LENGTH,
-              sizeof(fileExtension));
+      snprintf(modifiedExtension, length, "%s", fileExtension);
 
       if (strcmp(modifiedExtension, filteredExtension) == 0 ||
           strcmp(filteredExtension, "None") == 0) {

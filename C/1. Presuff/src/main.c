@@ -34,8 +34,7 @@ int main(int argc, char *argv[]) {
       break;
     case 'd':
       if (optarg) {
-        strncpy(dirArg, optarg, sizeof(dirArg) - 1);
-        dirArg[sizeof(dirArg) - 1] = '\0';
+        snprintf(dirArg, sizeof(dirArg), "%s", optarg);
       } else {
         fprintf(stderr, "Option -d requires an argument.\n");
         return EXIT_FAILURE;
@@ -51,8 +50,7 @@ int main(int argc, char *argv[]) {
       break;
     case 'p':
       if (optarg) {
-        strncpy(pattern, optarg, sizeof(pattern) - 1);
-        pattern[sizeof(pattern) - 1] = '\0';
+        snprintf(pattern, sizeof(pattern), "%s", optarg);
       } else {
         fprintf(stderr, "Option -p requires an argument.\n");
         return EXIT_FAILURE;
@@ -60,8 +58,7 @@ int main(int argc, char *argv[]) {
       break;
     case 'x':
       if (optarg) {
-        strncpy(extArg, optarg, sizeof(extArg) - 1);
-        extArg[sizeof(extArg) - 1] = '\0';
+        snprintf(extArg, sizeof(extArg), "%s", optarg);
       } else {
         fprintf(stderr, "Option -x requires an argument.\n");
         return EXIT_FAILURE;
@@ -95,17 +92,16 @@ int main(int argc, char *argv[]) {
   }
 
   if (dirArg[0] == '\0') {
-    strncpy(directoryPath, pathIsWorkDir(dirArg, sizeof(dirArg)),
-            sizeof(dirArg));
+    snprintf(directoryPath, sizeof(directoryPath), "%s",
+             pathIsWorkDir(dirArg, sizeof(dirArg)));
   } else {
-    printf("Directory path is: %s", dirArg);
-    strncpy(directoryPath, dirArg, sizeof(dirArg));
+    snprintf(directoryPath, sizeof(directoryPath), "%s", dirArg);
   }
 
   if (extArg[0] == '\0') {
-    strcpy(filteredExtension, "None");
+    snprintf(filteredExtension, sizeof(filteredExtension), "None");
   } else {
-    strncpy(filteredExtension, extArg, sizeof(extArg));
+    snprintf(filteredExtension, sizeof(filteredExtension), "%s", extArg);
   }
 
   if (patternRename(directoryPath, pattern, filteredExtension, mode)) {

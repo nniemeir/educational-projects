@@ -10,11 +10,10 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#define PROMPT_SIZE 255
-#define MAX_PATTERN_LENGTH 256
 #define MODE_PREPEND 1
 #define MODE_APPEND 2
 #define NULL_TERMINATOR_LENGTH 1
+#define SLASH_LENGTH 1
 
 int patternRename(const char *directoryPath, const char *pattern,
                   const char *filteredExtension, long mode);
