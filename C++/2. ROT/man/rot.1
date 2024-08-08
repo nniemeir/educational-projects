@@ -1,0 +1,43 @@
+.TH ROT "1" "August 2024" "Jacob Niemeir" "User Commands"
+.SH NAME
+rot \- encrypt or decrypt a plaintext file using Caesar shift
+.SH SYNOPSIS
+.B rot <-e|-d> -i \fI\,INPUT_FILE\/\fR [-o \fI\,OUTPUT_FILE\/\fR] <-k KEY> 
+
+.SH EXAMPLES
+This command would encrypt INPUT_FILE using KEY and write the result to OUTPUT_FILE.
+
+    # rot -e -i INPUT_FILE -o OUTPUT_FILE -k KEY
+
+This command would decrypt INPUT_FILE using a discerned KEY and write the result to stdout.
+
+    # rot -d -i INPUT_FILE 
+
+Alternatively, the user could specify a key in decrypt mode rather than having the program discern it for them.
+
+.SH DESCRIPTION
+.TP
+\fB\-d\fR 
+decrypt text in input file
+.TP
+\fB\-e\fR 
+encrypt text in input file
+.TP
+\fB\-h\fR 
+display program usage
+.TP
+\fB\-i[INPUT_FILE]\fR 
+specify path to input file
+.TP
+\fB\-k[KEY]\fR 
+specify cipher key, only required in encryption mode
+.TP
+\fB\-o[OUTPUT_FILE]\fR 
+specify path to output file, output directed to stdout if this argument is omitted
+
+.SH COPYRIGHT
+Copyright \(co 2024 Jacob Niemeir.
+License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>.
+.br
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
