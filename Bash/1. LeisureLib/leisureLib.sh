@@ -13,12 +13,6 @@ if ! [ -f game_collection.csv ]; then
 	exit 1
 fi
 
-# Ensure script is being run in kitty
-if [ "$TERM" != "xterm-kitty" ]; then
-	echo "This script must be run in kitty terminal"
-	exit 1
-fi
-
 # Ensure fzf is installed
 command -v fzf >/dev/null 2>&1 || {
 	echo >&2 "Error: fzf not found"
