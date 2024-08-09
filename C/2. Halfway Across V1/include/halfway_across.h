@@ -25,10 +25,10 @@ struct playerInventory {
 };
 
 struct inventoryValues {
-char itemsPossessed[NUM_OF_ITEMS][ITEM_NAME_SIZE];
-int itemCount;
-int numOfItemsPossessed;
-long selection;
+  char itemsPossessed[NUM_OF_ITEMS][ITEM_NAME_SIZE];
+  int itemCount;
+  int numOfItemsPossessed;
+  long selection;
 };
 
 struct worldStats {
@@ -46,28 +46,36 @@ struct playerStats {
   int charm;
 };
 
+extern struct inventoryValues currentInventoryValues;
 extern struct playerInventory inventory;
 extern struct playerStats player;
 extern struct worldStats world;
-extern struct inventoryValues currentInventoryValues;
 
+// Input Functions
+int inputIsNumeric(const char *input);
+int prompt(char *promptMessage);
+
+// Inventory Functions
+void discardItem(int selectedItemIndex);
+int findItemIndex(char *selectedItemName);
+void resetInventoryValues();
+void useItem(int selectedItemIndex);
+void warnings();
+
+// Menu Functions
+void mainMenu();
+void travelMenu();
+
+// Logic Functions
+void advanceDay();
+int generateTemperature();
+char *generateInventoryPrompt(char *generatedInventoryPrompt);
+char *generateWeather();
+void travelChecks();
+
+// Utility Functions
 void clearScreen();
 void clearStdin();
 void invalidInputMsg();
-int inputIsNumeric(const char *input);
-int findItemIndex(char *selectedItemName);
-void useItem(int selectedItemIndex);
-void discardItem(int selectedItemIndex);
-void gameplay();
-void warnings();
-void mainMenu();
-void travelMenu();
-int prompt(char *promptMessage);
-void travelChecks();
-int generateTemperature();
-void resetInventoryValues();
-char *generateInventoryPrompt(char *generatedInventoryPrompt);
-char *generateWeather();
-void advanceDay();
 
 #endif
