@@ -1,7 +1,7 @@
 ## Educational Projects
 
-### BASH
-1. LeisureLib - Browse book, film, game, and television libraries efficiently using fzf
+### Bash
+1. LeisureLib - Browse book, film, game, and television libraries efficiently using [fzf](https://github.com/junegunn/fzf)
 
 ### C
 1. PreSuff - POSIX program to prepend or append a string to the name of all files in a directory with specified extension.
