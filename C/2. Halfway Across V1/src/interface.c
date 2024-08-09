@@ -1,10 +1,6 @@
 #include "../include/halfway_across.h"
 
-#define INVENTORY_ARRAY_OFFSET 1
-
 typedef enum { MAIN_NEW_JOURNAL = 1, MAIN_GO_HOME } MainMenuOption;
-
-typedef enum { PREFACE_READ = 1, PREFACE_SKIP } PrefaceMenuOption;
 
 typedef enum {
   CAMP_LEAVE = 1,
@@ -36,70 +32,26 @@ void clearStdin() {
     ;
 }
 
-void invalidInputMessage() {
+void dailyMsg() {
+  printf("San Juan Mountains, 1893\n");
+  printf("Day %d\n\n", world.day);
+  printf("It was %d degrees and %s today.\n", world.currentTemperature,
+         world.currentWeather);
+}
+
+void deathMsg() {
   clearScreen();
-  printf("My memory is failing me at the moment...\n");
+  printf("This is my last entry, my health is failing me. Whoever finds "
+         "this journal is welcome to whatever is left in my camp...");
   clearStdin();
   clearScreen();
 }
 
-int inputIsNumeric(const char *input) {
-  if (*input == '\0') {
-    return 0;
-  }
-  while (*input) {
-    if (!isdigit(*input)) {
-      return 0;
-    }
-    input++;
-  }
-  return 1;
-}
-
-char *takeInput() {
-  char menuSelection[PROMPT_SIZE];
-  while (fgets(menuSelection, sizeof(menuSelection), stdin)) {
-    menuSelection[strcspn(menuSelection, "\n")] = '\0';
-    if (inputIsNumeric(menuSelection)) {
-      char *menuSelectionCopy = malloc(strlen(menuSelection) + 1);
-      if (menuSelectionCopy) {
-        snprintf(menuSelectionCopy, sizeof(menuSelectionCopy), "%s",
-                 menuSelection);
-        return menuSelectionCopy;
-      } else {
-        fprintf(stderr, "Error allocating memory for menu selection.\n");
-        return NULL;
-      }
-    } else {
-      return NULL;
-    }
-  }
-  return NULL;
-}
-
-long convertInputToLong(char *menuSelection) {
-  char *endptr;
-  long selection = strtol(menuSelection, &endptr, 10);
-  if (endptr == menuSelection || *endptr != '\0') {
-    fprintf(stderr, "Error converting input to long\n");
-    free(menuSelection);
-    invalidInputMessage();
-    return -1;
-  }
-  free(menuSelection);
-  return selection;
-}
-
-int prompt(char *promptMessage) {
-  int selectionIncrement;
-  printf("%s", promptMessage);
-  char *menuSelection = takeInput();
-  if (menuSelection != NULL) {
-    long selection = convertInputToLong(menuSelection);
-    return selection;
-  } else {
-    return -1;
-  }
+void invalidInputMsg() {
+  clearScreen();
+  printf("My memory is failing me at the moment...\n");
+  clearStdin();
+  clearScreen();
 }
 
 void itemMenu(char *selectedItemName) {
@@ -107,7 +59,7 @@ void itemMenu(char *selectedItemName) {
   int validItemMenuSelection = 0;
   while (!validItemMenuSelection) {
     clearScreen();
-    printf("%s\nQuantity: %d\nEquipped:%d\n\n", selectedItemName,
+    printf("%s\nQuantity: %d\nEquipped: %d\n\n", selectedItemName,
            inventory.items[selectedItemIndex].amount,
            inventory.items[selectedItemIndex].equipped);
     int selection = prompt("1. Use / Equip\n2. Discard\n3. Exit\n\n> ");
@@ -128,54 +80,9 @@ void itemMenu(char *selectedItemName) {
       clearStdin();
       break;
     default:
-      invalidInputMessage();
+      invalidInputMsg();
     }
   }
-}
-
-// If the player possesses at least one of a given item, that item's array
-// number + 1 is added to the inventory prompt string along with its name.
-char *generateInventoryPrompt(char *generatedInventoryPrompt) {
-  snprintf(generatedInventoryPrompt, strlen(generatedInventoryPrompt),
-           "I had a variety of items, I inspected my...\n\n");
-  char itemNumber[100];
-  for (int itemsIncrement = 0; itemsIncrement < NUM_OF_ITEMS;
-       itemsIncrement++) {
-    if (inventory.items[itemsIncrement].amount != 0) {
-      snprintf(currentInventoryValues
-                   .itemsPossessed[currentInventoryValues.itemCount],
-               sizeof(currentInventoryValues
-                          .itemsPossessed[currentInventoryValues.itemCount]),
-               "%s", inventory.items[itemsIncrement].name);
-
-      snprintf(itemNumber, sizeof(itemNumber), "%d",
-               currentInventoryValues.itemCount + INVENTORY_ARRAY_OFFSET);
-      strcat(generatedInventoryPrompt, itemNumber);
-      strcat(generatedInventoryPrompt, ". ");
-      strcat(generatedInventoryPrompt, inventory.items[itemsIncrement].name);
-      strcat(generatedInventoryPrompt, "\n");
-      currentInventoryValues.itemCount++;
-    }
-  }
-  snprintf(itemNumber, sizeof(itemNumber), "%d",
-           currentInventoryValues.itemCount + INVENTORY_ARRAY_OFFSET);
-  strcat(generatedInventoryPrompt, itemNumber);
-  strcat(generatedInventoryPrompt, ". Exit\n\n> ");
-  return generatedInventoryPrompt;
-}
-
-// The value of each variable in the currentInventory struct is altered in
-// inventoryMenu and its associated functions, so they must all be reset before
-// running the functions again.
-void resetInventoryValues() {
-  for (int itemsPossessedIncrement = 0; itemsPossessedIncrement < NUM_OF_ITEMS;
-       itemsPossessedIncrement++) {
-    memset(currentInventoryValues.itemsPossessed[itemsPossessedIncrement], '\0',
-           ITEM_NAME_SIZE);
-  }
-  currentInventoryValues.itemCount = 0;
-  currentInventoryValues.numOfItemsPossessed = 0;
-  currentInventoryValues.selection = 0;
 }
 
 void inventoryMenu() {
@@ -201,7 +108,7 @@ void inventoryMenu() {
       printf("I switched my focus to another matter...\n");
       return;
     } else {
-      invalidInputMessage();
+      invalidInputMsg();
     }
   }
 }
@@ -220,7 +127,7 @@ void lakeMenu() {
       leftLake = 1;
       break;
     default:
-      invalidInputMessage();
+      invalidInputMsg();
     }
   }
 }
@@ -239,7 +146,7 @@ void valleyMenu() {
       leftValley = 1;
       break;
     default:
-      invalidInputMessage();
+      invalidInputMsg();
     }
   }
 }
@@ -265,7 +172,7 @@ void travelMenu() {
       validTravelMenuSelection = 1;
       break;
     default:
-      invalidInputMessage();
+      invalidInputMsg();
     }
   }
 }
@@ -275,35 +182,16 @@ void campMenu() {
   while (!gaveUp) {
     clearScreen();
     if (player.health <= 0) {
-      clearScreen();
-      printf("This is my last entry, my health is failing me. Whoever finds "
-             "this journal is welcome to whatever is left in my camp...");
-      clearStdin();
-      clearScreen();
+      deathMsg();
       return;
     }
-    printf("San Juan Mountains, 1893\n");
-    printf("Day %d\n\n", world.day);
-    printf("It was %d degrees and %s today.\n", world.currentTemperature,
-           world.currentWeather);
+    dailyMsg();
     int selection = prompt("I decided to...\n\n1. Leave Camp\n2. Examine My "
                            "Belongings\n3. Reflect\n4. Sleep\n5. "
                            "Give Up\n\n> ");
     switch (selection) {
     case CAMP_LEAVE:
-      if (strcmp(world.currentWeather, "snowed heavily") == 0) {
-        clearScreen();
-        printf("It was snowing too heavily for me to travel...");
-        clearStdin();
-        clearScreen();
-      } else if (player.energy == 0) {
-        clearScreen();
-        printf("I didn't have the energy to travel anywhere else today...");
-        clearStdin();
-        clearScreen();
-      } else {
-        travelMenu();
-      }
+      travelChecks();
       break;
     case CAMP_SHOW_INVENTORY:
       inventoryMenu();
@@ -322,50 +210,7 @@ void campMenu() {
       clearStdin();
       break;
     default:
-      invalidInputMessage();
-    }
-  }
-}
-
-void preface() {
-  clearScreen();
-  printf("Someday you'll find yourself compelled to disrupt a patch of dirt, "
-         "thinking you'll dig up a better tomorrow.\n\n");
-  sleep(2);
-  printf("You'll dig until your hands are masses of blisters and you're as "
-         "stiff as a board. Another hour and I'll certainly be there, you'll "
-         "think to yourself.\n\n");
-  sleep(2);
-  printf("The sun might try to boil your skin, but you'll persist.\n\n");
-  sleep(2);
-  printf("The truth is, some holes don't want to be dug.\n\n");
-  sleep(2);
-  printf("Eventually there comes a time where you just have to put down the "
-         "shovel and be on your way, or that hole will be your grave...\n\n");
-  clearStdin();
-  clearScreen();
-}
-
-void gameplay() { campMenu(); }
-
-void prefaceMenu() {
-  int validPrefaceMenuSelection = 0;
-  while (!validPrefaceMenuSelection) {
-    clearScreen();
-    int selection = prompt("1. Read Preface\n2. Skip Preface\n\n> ");
-    switch (selection) {
-    case PREFACE_READ:
-      validPrefaceMenuSelection = 1;
-      preface();
-      gameplay();
-      return;
-      break;
-    case PREFACE_SKIP:
-      validPrefaceMenuSelection = 1;
-      gameplay();
-      return;
-    default:
-      invalidInputMessage();
+      invalidInputMsg();
     }
   }
 }
@@ -379,13 +224,13 @@ void mainMenu() {
     switch (selection) {
     case MAIN_NEW_JOURNAL:
       validMainMenuSelection = 1;
-      prefaceMenu();
+      campMenu();
       break;
     case MAIN_GO_HOME:
       validMainMenuSelection = 1;
       break;
     default:
-      invalidInputMessage();
+      invalidInputMsg();
     }
   }
 }

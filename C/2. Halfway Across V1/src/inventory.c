@@ -6,10 +6,11 @@ struct playerInventory inventory = {{
     {"Heavy Cotton Shirt", 1, 1, 10, "clothing"},
     {"Heavy Cotton Trousers", 1, 1, 20, "clothing"},
     {"Moccasins", 1, 1, 10, "clothing"},
-    
+
 }};
 
-// The name of the item selected by the player is used to find which item struct instance it corresponds to within the inventory struct
+// The name of the item selected by the player is used to find which item struct
+// instance it corresponds to within the inventory struct
 int findItemIndex(char *selectedItemName) {
   int selectedItemIndex;
   int itemsIncrement;
@@ -27,8 +28,8 @@ int findItemIndex(char *selectedItemName) {
 // Using a consumable subtracts one of it from your inventory
 // However, using a clothing item equips/unequips it
 void useItem(int selectedItemIndex) {
- clearScreen();
- if (strcmp(inventory.items[selectedItemIndex].type, "clothing") == 0) {
+  clearScreen();
+  if (strcmp(inventory.items[selectedItemIndex].type, "clothing") == 0) {
     if (inventory.items[selectedItemIndex].equipped == 1) {
       printf("I took off my %s...\n", inventory.items[selectedItemIndex].name);
       inventory.items[selectedItemIndex].equipped = 0;
@@ -40,8 +41,8 @@ void useItem(int selectedItemIndex) {
       player.warmth =
           player.warmth + inventory.items[selectedItemIndex].effects;
     }
- } else {
-    printf("Invalid inventory entry");
+  } else {
+      fprintf(stderr, "Invalid inventory entry.\n");
   }
 }
 
@@ -65,7 +66,7 @@ void discardItem(int selectedItemIndex) {
       char *endptr;
       long selection = strtol(discardAmount, &endptr, 10);
       if (endptr == discardAmount || *endptr != '\0') {
-        invalidInputMessage();
+        invalidInputMsg();
         continue;
       }
       discardAmount[strcspn(discardAmount, "\n")] = '\0';
@@ -88,7 +89,52 @@ void discardItem(int selectedItemIndex) {
         }
       }
     } else {
-      invalidInputMessage();
+      invalidInputMsg();
     }
   }
+}
+
+// If the player possesses at least one of a given item, that item's array
+// number + 1 is added to the inventory prompt string along with its name.
+char *generateInventoryPrompt(char *generatedInventoryPrompt) {
+  snprintf(generatedInventoryPrompt, strlen(generatedInventoryPrompt),
+           "I had a variety of items, I inspected my...\n\n");
+  char itemNumber[100];
+  for (int itemsIncrement = 0; itemsIncrement < NUM_OF_ITEMS;
+       itemsIncrement++) {
+    if (inventory.items[itemsIncrement].amount != 0) {
+      snprintf(currentInventoryValues
+                   .itemsPossessed[currentInventoryValues.itemCount],
+               sizeof(currentInventoryValues
+                          .itemsPossessed[currentInventoryValues.itemCount]),
+               "%s", inventory.items[itemsIncrement].name);
+
+      snprintf(itemNumber, sizeof(itemNumber), "%d",
+               currentInventoryValues.itemCount + INVENTORY_ARRAY_OFFSET);
+      strcat(generatedInventoryPrompt, itemNumber);
+      strcat(generatedInventoryPrompt, ". ");
+      strcat(generatedInventoryPrompt, inventory.items[itemsIncrement].name);
+      strcat(generatedInventoryPrompt, "\n");
+      currentInventoryValues.itemCount++;
+    }
+  }
+  snprintf(itemNumber, sizeof(itemNumber), "%d",
+           currentInventoryValues.itemCount + INVENTORY_ARRAY_OFFSET);
+  strcat(generatedInventoryPrompt, itemNumber);
+  strcat(generatedInventoryPrompt, ". Exit\n\n> ");
+  return generatedInventoryPrompt;
+}
+
+// The value of each variable in the currentInventory struct is altered in
+// inventoryMenu and its associated functions, so they must all be reset before
+// running the functions again.
+void resetInventoryValues() {
+  for (int itemsPossessedIncrement = 0; itemsPossessedIncrement < NUM_OF_ITEMS;
+       itemsPossessedIncrement++) {
+    memset(currentInventoryValues.itemsPossessed[itemsPossessedIncrement], '\0',
+           ITEM_NAME_SIZE);
+  }
+  currentInventoryValues.itemCount = 0;
+  currentInventoryValues.numOfItemsPossessed = 0;
+  currentInventoryValues.selection = 0;
 }

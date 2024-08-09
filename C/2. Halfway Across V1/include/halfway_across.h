@@ -10,6 +10,7 @@
 #define NUM_OF_ITEMS 5
 #define ITEM_NAME_SIZE 255
 #define PROMPT_SIZE 255
+#define INVENTORY_ARRAY_OFFSET 1
 
 struct item {
   char name[50];
@@ -52,7 +53,7 @@ extern struct inventoryValues currentInventoryValues;
 
 void clearScreen();
 void clearStdin();
-void invalidInputMessage();
+void invalidInputMsg();
 int inputIsNumeric(const char *input);
 int findItemIndex(char *selectedItemName);
 void useItem(int selectedItemIndex);
@@ -60,7 +61,12 @@ void discardItem(int selectedItemIndex);
 void gameplay();
 void warnings();
 void mainMenu();
+void travelMenu();
+int prompt(char *promptMessage);
+void travelChecks();
 int generateTemperature();
+void resetInventoryValues();
+char *generateInventoryPrompt(char *generatedInventoryPrompt);
 char *generateWeather();
 void advanceDay();
 

@@ -1,5 +1,7 @@
-SRC =	src/interface.c \
+SRC = src/input.c \
+	src/interface.c \
 	src/inventory.c \
+	src/logic.c \
 	src/main.c \
 	src/stats.c
 
