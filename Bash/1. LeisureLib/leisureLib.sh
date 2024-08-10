@@ -201,10 +201,6 @@ promptGame() {
 		launch
 
 		clear
-
-		# Clear screen once game launches
-		sleep 1
-		exit 0
 	done
 }
 
