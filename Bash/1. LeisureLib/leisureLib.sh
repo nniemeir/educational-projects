@@ -42,7 +42,7 @@ promptMediaType() {
 fzfPrompt() {
 	local libraryFiles="$1"
 	# Define the preview command
-	selection=$(echo -e "$libraryFiles" | xargs -I {} basename "{}" | sed 's/\.[^.]*$//' | fzf --height=80% --delimiter , --padding=5,40,0,40 --layout=reverse --cycle)
+	selection=$(echo -e "$libraryFiles" | xargs -I {} basename "{}" | sed 's/\.[^.]*$//' | fzf --height=80% --delimiter , --layout=reverse --cycle)
 	echo $selection
 }
 
