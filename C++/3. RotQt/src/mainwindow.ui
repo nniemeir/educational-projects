@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>436</width>
+    <width>691</width>
     <height>514</height>
    </rect>
   </property>
@@ -26,10 +26,10 @@
    <widget class="QLabel" name="label_outputArea">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>100</y>
-      <width>401</width>
-      <height>301</height>
+      <x>10</x>
+      <y>90</y>
+      <width>661</width>
+      <height>371</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -56,7 +56,7 @@
        </property>
       </widget>
      </item>
-     <item alignment="Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter">
+     <item>
       <widget class="QLineEdit" name="lineEdit_key"/>
      </item>
     </layout>
@@ -64,10 +64,10 @@
    <widget class="QWidget" name="horizontalLayoutWidget_2">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>420</y>
-      <width>421</width>
-      <height>41</height>
+      <x>180</x>
+      <y>10</y>
+      <width>501</width>
+      <height>81</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -88,12 +88,13 @@
     </layout>
    </widget>
   </widget>
+  <widget class="QStatusBar" name="statusbar"/>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>436</width>
+     <width>691</width>
      <height>23</height>
     </rect>
    </property>
@@ -106,7 +107,6 @@
    </widget>
    <addaction name="menuROT"/>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
   <action name="actionOpen_File">
    <property name="icon">
     <iconset theme="QIcon::ThemeIcon::FolderOpen"/>

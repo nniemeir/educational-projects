@@ -34,6 +34,7 @@ MainWindow::~MainWindow()
 void MainWindow::on_actionOpen_File_triggered()
 {
     file_name = QFileDialog::getOpenFileName(this, "Open a file");
+    if (file_name != "") {
     std::string preText = readFile( file_name.toStdString());
     ui->label_outputArea->setWordWrap(true);
     QString qPreText = QString::fromStdString(preText);
@@ -41,6 +42,7 @@ void MainWindow::on_actionOpen_File_triggered()
     ui->pushButton_decrypt->setEnabled(true);
     ui->pushButton_encrypt->setEnabled(true);
     ui->actionSave->setEnabled(true);
+    }
 }
 
 int MainWindow::setKey(std::string target) {
