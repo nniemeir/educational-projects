@@ -12,10 +12,6 @@
 #include <QTextStream>
 #include <QMessageBox>
 
-#define ALPHABET_LENGTH 26
-#define ASSUMED_MOST_FREQUENT                                                  \
-  4 // The index of the letter e in the array of all English letters
-
 QString encrypt(const QString &target, int key);
 QString decrypt(const QString &target, int key);
 int findKey(const QString &target);

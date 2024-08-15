@@ -71,6 +71,6 @@ int findKey(const QString &target) {
             return diff;
         }
     }
-    return 0; // Return 0 instead of EXIT_SUCCESS to indicate success
+    return 0;
 }
 
