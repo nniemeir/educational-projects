@@ -1,26 +1,30 @@
+#include "../include/mainwindow.h"
 #include "../include/rot.h"
 
-std::string readFile(const std::string &fileName) {
-  std::ifstream targetFile(fileName);
-  // The program has no data to operate on if it cannot read the file
-  if (!targetFile.is_open()) {
-    std::cout << "Unable to access " << fileName << "\n";
-    exit(EXIT_FAILURE);
-  }
-  // The number of chars in the file is determined by putting the pointer at the
-  // end and finding its position
-  targetFile.seekg(0, std::ios::end);
-  size_t targetSize = targetFile.tellg();
-  // A string of the same size as targetFile is created
-  std::string target(targetSize, ' ');
-  targetFile.seekg(0);
-  // The contents of targetFile are written into the target variable
-  targetFile.read(&target[0], targetSize);
-  return target;
+
+QString readFile(const QString &fileName) {
+    QFile file(fileName);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QMessageBox::critical(nullptr, "Error", QString("Unable to access %1").arg(fileName));
+        return QString();  // Return an empty QString to indicate failure
+    }
+
+    QTextStream in(&file);
+    QString content = in.readAll();  // Read the entire file content into QString
+    file.close();  // Always close the file when done
+    return content;
 }
 
-int writeFile(std::string &outputText, std::string &outputFile) {
-  std::ofstream output(outputFile, std::ofstream::out);
-  output << outputText;
-  return EXIT_SUCCESS;
+bool writeFile(const QString &outputText, const QString &outputFile) {
+    QFile file(outputFile);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QMessageBox::critical(nullptr, "Error", QString("Unable to open %1 for writing").arg(outputFile));
+        return false;  // Return false to indicate failure
+    }
+
+    QTextStream out(&file);
+    out << outputText;  // Write the content to the file
+    file.close();  // Always close the file when done
+    return true;  // Return true to indicate success
 }
+

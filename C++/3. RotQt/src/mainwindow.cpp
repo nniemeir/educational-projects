@@ -2,7 +2,6 @@
 #include "../include/rot.h"
 #include "./ui_mainwindow.h"
 #include <QFileDialog>
-#include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -35,17 +34,16 @@ void MainWindow::on_actionOpen_File_triggered()
 {
     file_name = QFileDialog::getOpenFileName(this, "Open a file");
     if (file_name != "") {
-    std::string preText = readFile( file_name.toStdString());
+    QString preText = readFile( file_name);
     ui->label_outputArea->setWordWrap(true);
-    QString qPreText = QString::fromStdString(preText);
-    ui->label_outputArea->setText(qPreText);
+    ui->label_outputArea->setText(preText);
     ui->pushButton_decrypt->setEnabled(true);
     ui->pushButton_encrypt->setEnabled(true);
     ui->actionSave->setEnabled(true);
     }
 }
 
-int MainWindow::setKey(std::string target) {
+int MainWindow::setKey(QString target) {
     QString key = ui->lineEdit_key->text();
     if (key == "") {
         numKey = findKey(target);
@@ -58,21 +56,19 @@ int MainWindow::setKey(std::string target) {
 
 void MainWindow::on_pushButton_decrypt_clicked()
 {
-        std::string target = readFile( file_name.toStdString());
+        QString target = readFile(file_name);
         numKey = setKey(target);
-        std::string postText = decrypt(target, numKey);
-        QString qPostText = QString::fromStdString(postText);
-        ui->label_outputArea->setText(qPostText);
+        QString postText = decrypt(target, numKey);
+        ui->label_outputArea->setText(postText);
         this->postText = postText;
 }
 
 void MainWindow::on_pushButton_encrypt_clicked()
 {
-        std::string target = readFile( file_name.toStdString());
+        QString target = readFile( file_name);
         numKey = setKey(target);
-        std::string postText = encrypt(target, numKey);
-        QString qPostText = QString::fromStdString(postText);
-        ui->label_outputArea->setText(qPostText);
+        QString postText = encrypt(target, numKey);
+        ui->label_outputArea->setText(postText);
         this->postText = postText;
 
 }
@@ -82,7 +78,7 @@ void MainWindow::on_actionSave_triggered()
     QString path = QFileDialog::getSaveFileName(this,
                                                     tr("Save Output Text"), "",
                                                     tr("Text File (*.txt);;All Files (*)"));
-    std::string strPath= path.toStdString();
+    QString strPath= path;
     writeFile(postText, strPath);
 }
 

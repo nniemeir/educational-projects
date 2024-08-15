@@ -29,10 +29,10 @@ private slots:
 private:
     Ui::MainWindow *ui;
     QString file_name;
-    std::string postText;
+    QString postText;
     int numKey;
     int setKey();
     void noFileMsg();
-    int setKey(std::string target);
+    int setKey(QString target);
 };
 #endif // MAINWINDOW_H

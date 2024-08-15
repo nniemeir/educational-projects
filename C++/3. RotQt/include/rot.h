@@ -6,19 +6,21 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
-#include <linux/limits.h>
 #include <unistd.h>
 #include <vector>
+#include <QFile>
+#include <QTextStream>
+#include <QMessageBox>
 
 #define ALPHABET_LENGTH 26
 #define ASSUMED_MOST_FREQUENT                                                  \
   4 // The index of the letter e in the array of all English letters
 
-std::string encrypt(const std::string &target, int key);
-std::string decrypt(const std::string &target, int key);
-int findKey(const std::string &target);
-std::string readFile(const std::string &fileName);
+QString encrypt(const QString &target, int key);
+QString decrypt(const QString &target, int key);
+int findKey(const QString &target);
+QString readFile(const QString &fileName);
 void helpMsg();
-int writeFile(std::string &outputText, std::string &outputFile);
+bool writeFile(const QString &outputText, const QString &outputFile);
 
 #endif
