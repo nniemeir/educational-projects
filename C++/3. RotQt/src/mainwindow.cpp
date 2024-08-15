@@ -22,7 +22,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->outputArea->setReadOnly(true);
     ui->outputArea->setText("...");
     ui->outputArea->setAlignment(Qt::AlignLeft);
-    setWindowTitle("ROT");
+    setWindowTitle("ROTQt");
 }
 
 MainWindow::~MainWindow()
