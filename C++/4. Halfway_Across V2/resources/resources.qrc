@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/camp.png</file>
+        <file>images/intro.png</file>
+        <file>images/river.png</file>
+        <file>stylesheets/stylesheet.qss</file>
+        <file>images/valley.png</file>
+        <file>images/campPath.png</file>
+        <file>images/caveEntrance.png</file>
+        <file>images/dream.png</file>
+        <file>images/cave.png</file>
+    </qresource>
+</RCC>

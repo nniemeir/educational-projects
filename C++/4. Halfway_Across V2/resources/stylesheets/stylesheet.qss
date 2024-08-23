@@ -1,0 +1,41 @@
+* {
+    background: black;
+    color: white;
+    selection-background-color: black;
+    font: 16pt "Press Start";
+}
+
+#settingImage {
+border: 3px solid #c0c0c0;
+}
+
+#outputArea {
+    line-height: 1.5;
+    padding-top: 10%;
+}
+
+QLineEdit {
+border: 3px solid #a89984;
+}
+
+QPushButton {
+    background-color: #504945;
+}
+
+#inputText {
+padding-top: 20%;
+padding-bottom: 20%;
+border: none;
+}
+
+#pushButton_encrypt:disabled {
+color: rgb(17, 17, 27);
+}
+
+#pushButton_decrypt:disabled {
+color: rgb(17, 17, 27);
+}
+
+#verticalLayout {
+border: 3px solid #a89984;
+}
