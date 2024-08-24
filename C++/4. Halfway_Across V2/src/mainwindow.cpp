@@ -2,6 +2,8 @@
 #include "src/ui_mainwindow.h"
 #include "../include/handling.h"
 #include "../include/world.h"
+#include <QTimer>
+#include <QShowEvent>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
@@ -30,6 +32,17 @@ void MainWindow::setUiProperties() {
             &MainWindow::handleReturnPressed);
 }
 
+void MainWindow::showEvent(QShowEvent *event)
+{
+    QMainWindow::showEvent(event);
+
+    if (ui->inputText) {
+        QTimer::singleShot(0, this, [this]() {
+            ui->inputText->setFocus();
+        });
+    }
+}
+
 void MainWindow::setDescription(QString text) { ui->outputArea->setText(text); }
 
 void MainWindow::closeProgram() {
@@ -45,7 +58,7 @@ void MainWindow::setLocation(const Location &object) {
 
 void MainWindow::handleReturnPressed() {
   QString input = ui->inputText->text();
-
+    input = input.toUpper();
   if (handle.validateVerb(input)) {
     handle.splitInput(this, input);
   } else {

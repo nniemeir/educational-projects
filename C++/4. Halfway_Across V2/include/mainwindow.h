@@ -34,6 +34,10 @@ private:
 
 private slots:
 void handleReturnPressed();
+
+protected:
+    void showEvent(QShowEvent *event) override;
+
 };
 
 

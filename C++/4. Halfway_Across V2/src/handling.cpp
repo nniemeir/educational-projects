@@ -7,7 +7,7 @@ const char *argVerbs[NUM_OF_ARG_VERBS] = {
     "EXAMINE", "GIVE",   "GO",   "KNOCK", "LOOK",  "MOVE",  "OPEN",
     "READ",    "SHOOT",  "SIT",  "TAKE",  "TELL",  "THROW", "USE"};
 
-const char *noArgVerbs[NUM_OF_NO_ARG_VERBS] = {"QUIT", "REFLECT", "SLEEP",
+const char *noArgVerbs[NUM_OF_NO_ARG_VERBS] = {"BEGIN", "QUIT", "REFLECT", "SLEEP",
                                                "WAIT"};
 
 handling handle;
@@ -57,7 +57,10 @@ void handling::splitInput(MainWindow *mainWindow, QString input) {
 
 void handling::handleVerb(MainWindow *mainWindow, QString verb, QString target,
                           QString location) {
-    if (verb == "LOOK") {
+    if (verb == "BEGIN") {
+        handling::begin(mainWindow, target, location);
+    }
+    else if (verb == "LOOK") {
         handling::look(mainWindow, target, location);
     } else if (verb == "GO" || verb == "MOVE") {
         handling::move(mainWindow, target, location);
@@ -74,6 +77,12 @@ void handling::handleVerb(MainWindow *mainWindow, QString verb, QString target,
     } else {
         mainWindow->setDescription(
             QString("You can't %1 here.").arg(verb.toLower()));
+    }
+}
+
+void handling::begin(MainWindow *mainWindow, QString target, QString location) {
+    if (location == "intro") {
+        mainWindow->setLocation(camp);
     }
 }
 
@@ -108,6 +117,8 @@ void handling::move(MainWindow *mainWindow, QString target, QString location) {
         moveValley(mainWindow, target);
     } else if (location == "caveEntrance") {
         moveCaveEntrance(mainWindow, target);
+    } else if (location == "cave") {
+        moveCave(mainWindow, target);
     } else {
         qDebug() << "Error ascertaining location";
     }
@@ -190,11 +201,6 @@ void handling::sleep(MainWindow *mainWindow, QString target, QString location) {
 }
 
 void handling::use(MainWindow *mainWindow, QString target, QString location) {
-    if (location == "intro") {
-        if (target == "JOURNAL") {
-            mainWindow->setLocation(camp);
-        }
-    }
     if (location == "camp") {
         if (target == "CHEST") {
             mainWindow->setDescription("Inventory menu will go here.\n");

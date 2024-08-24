@@ -12,7 +12,7 @@ Location cave = {"cave", "Entering the cave, you see nothing but darkness.\n\nEx
                          ":/images/cave.png"};
 Location intro = {
     "intro",
-    "You find a tattered journal at an abandoned camp in the mountains",
+    "HALFWAY ACROSS\n\nType BEGIN to continue.\n",
     ":/images/intro.png"};
 
 Location river = {"river",

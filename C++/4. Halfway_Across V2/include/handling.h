@@ -3,7 +3,7 @@
 #include "../include/mainwindow.h"
 
 #define NUM_OF_ARG_VERBS 21
-#define NUM_OF_NO_ARG_VERBS 4
+#define NUM_OF_NO_ARG_VERBS 5
 
 class handling {
 public:
@@ -11,6 +11,7 @@ public:
     void splitInput(MainWindow *mainWindow, QString input);
 private:
     void handleVerb(MainWindow *mainWindow, QString verb, QString target, QString location);
+    void begin(MainWindow *mainWindow, QString target, QString location);
     void look(MainWindow *mainWindow, QString target, QString location);
     void lookCamp(MainWindow *mainWindow, QString target);
     void move(MainWindow *mainWindow, QString target, QString location);
