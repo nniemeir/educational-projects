@@ -2,8 +2,6 @@
 #include "src/ui_mainwindow.h"
 #include "../include/handling.h"
 #include "../include/world.h"
-#include <QTimer>
-#include <QShowEvent>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
