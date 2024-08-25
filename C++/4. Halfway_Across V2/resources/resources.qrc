@@ -2,7 +2,7 @@
     <qresource prefix="/">
         <file>images/camp.png</file>
         <file>images/intro.png</file>
-        <file>images/river.png</file>
+        <file>images/lake.png</file>
         <file>stylesheets/stylesheet.qss</file>
         <file>images/valley.png</file>
         <file>images/campPath.png</file>

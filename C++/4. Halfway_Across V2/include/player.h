@@ -12,6 +12,7 @@ public:
     int warmth;
     int charm;
     QString constructReflection();
+    int constrainStat(int stat);
 };
 
 extern playerStats player;

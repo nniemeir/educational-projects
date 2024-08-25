@@ -1,6 +1,6 @@
 #include "../include/player.h"
 #include "../include/world.h"
-
+#include "QDebug"
 worldStats world = {
     "intro",
     1,
@@ -13,6 +13,7 @@ void worldStats::advanceDay() {
     world.day = world.day + 1;
     world.currentTemperature = generateTemperature();
     world.currentWeather = QString("%1").arg(generateWeather());
+    qDebug() << world.currentWeather;
     return;
 }
 

@@ -15,9 +15,9 @@ Location intro = {
     "HALFWAY ACROSS\n\nType BEGIN to continue.\n",
     ":/images/intro.png"};
 
-Location river = {"river",
-                  "You reach a river after a few hours journey.\n\nExit: East",
-                  ":/images/river.png"};
+Location lake = {"lake",
+                  "You reach a lake after an hour's journey.\n\nExit: East",
+                  ":/images/lake.png"};
 
 Location valley = {"valley",
                    "You reach a clearing. This could be a good spot for hunting.\n\nExit: South",

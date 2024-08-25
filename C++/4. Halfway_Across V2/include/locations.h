@@ -14,7 +14,7 @@ extern Location campPath;
 extern Location cave;
 extern Location caveEntrance;
 extern Location intro;
+extern Location lake;
 extern Location valley;
-extern Location river;
 
 #endif // LOCATIONS_H

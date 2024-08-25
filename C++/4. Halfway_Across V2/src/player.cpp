@@ -9,6 +9,10 @@ playerStats player = {
     100, 1, 100, 100, 50, 50
 };
 
+int playerStats::constrainStat(int stat) {
+    return std::max(0, std::min(stat, 100));
+}
+
 QString playerStats::constructReflection() {
     QString reflection;
     reflection.append(QString("Day %1 in the San Juan mountains.\n").arg(world.day));
