@@ -11,4 +11,4 @@
 1. OUI: use IEEE RA data to determine NIC manufacturer from MAC Address.
 2. Rot: encrypt or decrypt a plaintext file using Caesar shift.
 3. RotQt: graphical version of Rot
-4. Halfway Across V2 - switched to Qt user interface with graphical elements
+4. Halfway Across V2 (WIP) - switched to Qt user interface with graphical elements
