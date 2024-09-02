@@ -1,7 +1,8 @@
 #include "../include/mainwindow.h"
-#include "src/ui_mainwindow.h"
 #include "../include/handling.h"
+#include "../include/locations.h"
 #include "../include/world.h"
+#include "src/ui_mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
@@ -9,60 +10,57 @@ MainWindow::MainWindow(QWidget *parent)
   importStylesheet();
   setUiProperties();
   setWindowTitle("Halfway Across");
-  setLocation(intro);
+  setLocation(&intro);
 }
 
 void MainWindow::importStylesheet() {
-    QFile file(":/stylesheets/stylesheet.qss");
-    if (!file.open(QFile::ReadOnly)) {
-        qWarning() << "Failed to open stylesheet file:" << file.errorString();
-        return;
-    }
-    QString styleSheet = QLatin1String(file.readAll());
-    qApp->setStyleSheet(styleSheet);
+  QFile file(":/stylesheets/stylesheet.qss");
+  if (!file.open(QFile::ReadOnly)) {
+    qWarning() << "Failed to open stylesheet file:" << file.errorString();
+    return;
+  }
+  QString styleSheet = QLatin1String(file.readAll());
+  qApp->setStyleSheet(styleSheet);
 }
 
 void MainWindow::setUiProperties() {
-    ui->outputArea->setReadOnly(true);
-    ui->outputArea->setAlignment(Qt::AlignLeft);
-    ui->outputArea->setTextInteractionFlags(Qt::NoTextInteraction);
-    connect(ui->inputText, &QLineEdit::returnPressed, this,
-            &MainWindow::handleReturnPressed);
+  ui->outputArea->setReadOnly(true);
+  ui->outputArea->setAlignment(Qt::AlignLeft);
+  ui->outputArea->setTextInteractionFlags(Qt::NoTextInteraction);
+  connect(ui->inputText, &QLineEdit::returnPressed, this,
+          &MainWindow::handleReturnPressed);
 }
 
-void MainWindow::showEvent(QShowEvent *event)
-{
-    QMainWindow::showEvent(event);
+void MainWindow::showEvent(QShowEvent *event) {
+  QMainWindow::showEvent(event);
 
-    if (ui->inputText) {
-        QTimer::singleShot(0, this, [this]() {
-            ui->inputText->setFocus();
-        });
-    }
+  if (ui->inputText) {
+    QTimer::singleShot(0, this, [this]() { ui->inputText->setFocus(); });
+  }
 }
 
 void MainWindow::setDescription(QString text) { ui->outputArea->setText(text); }
 
-void MainWindow::closeProgram() {
-    QApplication::quit();
-}
+void MainWindow::closeProgram() { QApplication::quit(); }
 
-void MainWindow::setLocation(const Location &object) {
-  setDescription(object.description);
-  QPixmap pix(object.image);
+void MainWindow::setLocation(Location* object) {
+    if (object) {
+  setDescription(object->getDescription());
+  QPixmap pix(object->getImage());
   ui->settingImage->setPixmap(pix);
-  world.currentLocation = object.name;
+  world.setCurrentLocation(object);
+    }
 }
 
 void MainWindow::handleReturnPressed() {
   QString input = ui->inputText->text();
-    input = input.toUpper();
+  input = input.toUpper();
   if (handle.validateVerb(input)) {
     handle.splitInput(this, input);
   } else {
-      if (input != "") {
-          setDescription(QString("You don't know how to %1.").arg(input.toLower()));
-      }
+    if (input != "") {
+      setDescription(QString("You don't know how to %1.").arg(input.toLower()));
+    }
   }
   ui->inputText->clear();
 }

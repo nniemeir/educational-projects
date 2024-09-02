@@ -31,43 +31,47 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         src/locations.cpp
         src/player.cpp
         src/world.cpp
-        src/handling/ask.cpp
-        src/handling/attack.cpp
+
+
         src/handling/begin.cpp
         src/handling/begin.cpp
-        src/handling/burn.cpp
+
         src/handling/chisel.cpp
         src/handling/chisel.cpp
-        src/handling/cut.cpp
-        src/handling/die.cpp
+
+
         src/handling/drink.cpp
         src/handling/drink.cpp
         src/handling/drop.cpp
-        src/handling/eat.cpp
-        src/handling/examine.cpp
-        src/handling/give.cpp
+
+
+
         src/handling/handling.cpp
-        src/handling/inventory.cpp
-        src/handling/knock.cpp
+
+
         src/handling/look.cpp
         src/handling/look.cpp
         src/handling/move.cpp
         src/handling/move.cpp
-        src/handling/open.cpp
-        src/handling/read.cpp
-        src/handling/shoot.cpp
+
+
+
         src/handling/sit.cpp
         src/handling/sit.cpp
         src/handling/sleep.cpp
         src/handling/sleep.cpp
         src/handling/take.cpp
-        src/handling/tell.cpp
-        src/handling/toss.cpp
+
+
         src/handling/use.cpp
         src/handling/use.cpp
-        src/handling/wait.cpp
+
+
+
+        src/handling/stand.cpp
+        include/halfway.h
+        src/handling/remove.cpp
         src/handling/wear.cpp
-        src/handling/close.cpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET Halfway_Across APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR

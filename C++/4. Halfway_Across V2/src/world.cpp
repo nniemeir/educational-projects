@@ -1,60 +1,72 @@
-#include "../include/player.h"
 #include "../include/world.h"
-#include "QDebug"
-worldStats world = {
-    "intro",
-    1,
-    32,
-    "clear"
-};
+#include "../include/player.h"
+
+worldStats world;
+
+worldStats::worldStats()
+    : currentLocation(nullptr), day(1), currentTemperature(32),
+      currentWeather("clear"), chiseledIce(0) {}
 
 void worldStats::advanceDay() {
-    player.energy = 1;
-    world.day = world.day + 1;
-    world.currentTemperature = generateTemperature();
-    world.currentWeather = QString("%1").arg(generateWeather());
-    qDebug() << world.currentWeather;
-    return;
+  player.setEnergy(1);
+  world.setChiseledIce(0);
+  day++;
+  currentTemperature = generateTemperature();
+  currentWeather = generateWeather();
 }
+
+void worldStats::initializeLocation(Location* initialLocation) {
+    currentLocation = initialLocation;
+}
+
+int worldStats::getDay() const { return day; }
+
+Location* worldStats::getCurrentLocation() const { return currentLocation; }
+
+void worldStats::setCurrentLocation(Location* location) {
+  currentLocation = location;
+}
+
+int worldStats::getChiseledIce() const { return chiseledIce; }
+
+void worldStats::setChiseledIce(int newValue) { chiseledIce = newValue; }
+
+int worldStats::travelChecks() {
+  if (currentWeather == "snowing heavily") {
+    return TRAVEL_BLIZZARD;
+  } else if (player.getEnergy() == 0) {
+    return TRAVEL_TIRED;
+  } else {
+    return TRAVEL_YES;
+  }
+}
+
+int worldStats::getCurrentTemperature() const { return currentTemperature; }
+
+QString worldStats::getCurrentWeather() const { return currentWeather; }
 
 // A given day's temperature will have an effect on
 // how high the warmth stat must be to avoid losing health
 int worldStats::generateTemperature() {
-    int currentTemperature = rand() % (30 + 1);
-    return currentTemperature;
+  int temperature = rand() % (30 + 1);
+  return temperature;
 }
 
 // A given day's weather will have an effect on
 // what actions the player can take and how likely they are to succeed at them
 QString worldStats::generateWeather() {
-    float blizzardProb = 5;
-    float snowyProb = 20;
-    float cloudyProb = 50;
-    static char currentWeather[20];
-
-    int prob = rand() % 100;
-    if (prob <= blizzardProb) {
-        snprintf(currentWeather, sizeof(currentWeather), "snowing heavily");
-    } else if (prob > blizzardProb && prob <= snowyProb) {
-        snprintf(currentWeather, sizeof(currentWeather), "snowing");
-    } else if (prob > snowyProb && prob <= cloudyProb) {
-        snprintf(currentWeather, sizeof(currentWeather), "cloudy");
-    } else if (prob > cloudyProb) {
-        snprintf(currentWeather, sizeof(currentWeather), "clear");
-    } else {
-        printf("There was an issue generating weather conditions");
-        return NULL;
-    }
-    return currentWeather;
+  float blizzardProb = 5;
+  float snowyProb = 20;
+  float cloudyProb = 50;
+  QString weather;
+  int prob = rand() % 100;
+  if (prob < blizzardProb) {
+    return "snowing heavily";
+  } else if (prob < snowyProb) {
+    return "snowing";
+  } else if (prob < cloudyProb) {
+    return "cloudy";
+  } else {
+    return "clear";
+  }
 }
-
-int worldStats::travelChecks() {
-    if (world.currentWeather == "snowing heavily") {
-        return TRAVEL_BLIZZARD;
-    } else if (player.energy == 0) {
-        return TRAVEL_TIRED;
-    } else {
-        return TRAVEL_YES;
-    }
-}
-
