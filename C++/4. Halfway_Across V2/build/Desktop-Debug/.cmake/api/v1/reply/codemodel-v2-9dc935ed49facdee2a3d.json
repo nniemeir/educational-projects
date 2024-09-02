@@ -1,0 +1,79 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-Debug-7b45a1dbe427ce66049e.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.16"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "Halfway_Across",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "Halfway_Across::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Halfway_Across-Debug-f9a9ed30611051e1c8e0.json",
+					"name" : "Halfway_Across",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Halfway_Across_autogen::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Halfway_Across_autogen-Debug-f48f1da531ec754c8629.json",
+					"name" : "Halfway_Across_autogen",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Halfway_Across_autogen_timestamp_deps::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Halfway_Across_autogen_timestamp_deps-Debug-68901a95a7c7b929d5bc.json",
+					"name" : "Halfway_Across_autogen_timestamp_deps",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/home/noodle/MEGA/Educational_Projects/C++/4. Halfway_Across V2/build/Desktop-Debug",
+		"source" : "/home/noodle/MEGA/Educational_Projects/C++/4. Halfway_Across V2"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 7
+	}
+}

@@ -14,6 +14,7 @@ void handling::useLake(MainWindow *mainWindow, QString target) {
   if (target == "FISHING ROD") {
     if (player.searchInventory("FISHING ROD") != -1) {
         if (world.getChiseledIce()) {
+        world.setLineSet(1);
         mainWindow->setDescription(
           "You drop your line into the hole in the ice.\n");
     } else {

@@ -55,8 +55,12 @@ void MainWindow::setLocation(Location* object) {
 void MainWindow::handleReturnPressed() {
   QString input = ui->inputText->text();
   input = input.toUpper();
-  if (handle.validateVerb(input)) {
+
+  int validated = handle.validateVerb(input);
+  if (validated == 0) {
     handle.splitInput(this, input);
+  } else if (validated == 1){
+      handle.handleVerb(this, input, "", world.getCurrentLocation());
   } else {
     if (input != "") {
       setDescription(QString("You don't know how to %1.").arg(input.toLower()));

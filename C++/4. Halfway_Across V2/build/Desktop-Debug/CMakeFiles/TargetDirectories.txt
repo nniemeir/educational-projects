@@ -1,0 +1,9 @@
+/home/noodle/MEGA/Educational_Projects/C++/4. Halfway_Across V2/build/Desktop-Debug/CMakeFiles/Halfway_Across.dir
+/home/noodle/MEGA/Educational_Projects/C++/4. Halfway_Across V2/build/Desktop-Debug/CMakeFiles/edit_cache.dir
+/home/noodle/MEGA/Educational_Projects/C++/4. Halfway_Across V2/build/Desktop-Debug/CMakeFiles/rebuild_cache.dir
+/home/noodle/MEGA/Educational_Projects/C++/4. Halfway_Across V2/build/Desktop-Debug/CMakeFiles/list_install_components.dir
+/home/noodle/MEGA/Educational_Projects/C++/4. Halfway_Across V2/build/Desktop-Debug/CMakeFiles/install.dir
+/home/noodle/MEGA/Educational_Projects/C++/4. Halfway_Across V2/build/Desktop-Debug/CMakeFiles/install/local.dir
+/home/noodle/MEGA/Educational_Projects/C++/4. Halfway_Across V2/build/Desktop-Debug/CMakeFiles/install/strip.dir
+/home/noodle/MEGA/Educational_Projects/C++/4. Halfway_Across V2/build/Desktop-Debug/CMakeFiles/Halfway_Across_autogen_timestamp_deps.dir
+/home/noodle/MEGA/Educational_Projects/C++/4. Halfway_Across V2/build/Desktop-Debug/CMakeFiles/Halfway_Across_autogen.dir

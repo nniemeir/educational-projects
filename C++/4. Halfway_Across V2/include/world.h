@@ -24,6 +24,8 @@ public:
   QString getCurrentWeather() const;
   int getChiseledIce() const;
   void setChiseledIce(int newValue);
+  int getLineSet() const;
+  void setLineSet(int newValue);
   int travelChecks();
 
 private:
@@ -32,6 +34,7 @@ private:
   int currentTemperature;
   QString currentWeather;
   int chiseledIce;
+  int lineSet;
   int generateTemperature();
   QString generateWeather();
 };

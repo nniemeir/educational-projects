@@ -7,12 +7,12 @@
 
 class handling {
 public:
-  bool validateVerb(QString input);
+  int validateVerb(QString input);
   void splitInput(MainWindow *mainWindow, QString input);
-
-private:
   void handleVerb(MainWindow *mainWindow, QString verb, QString target,
                   Location* location);
+
+private:
   // Verb-specific handling
   void begin(MainWindow *mainWindow, QString target, Location* location);
   void chisel(MainWindow *mainWindow, QString target, Location* location);
@@ -44,6 +44,8 @@ private:
   void use(MainWindow *mainWindow, QString target, Location* location);
   void useCamp(MainWindow *mainWindow, QString target);
   void useLake(MainWindow *mainWindow, QString target);
+  void wait(MainWindow *mainWindow, Location* location);
+  void waitLake(MainWindow *mainWindow);
   void wear(MainWindow *mainWindow, QString target);
 };
 extern handling handle;

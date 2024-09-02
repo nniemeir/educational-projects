@@ -31,6 +31,12 @@ int worldStats::getChiseledIce() const { return chiseledIce; }
 
 void worldStats::setChiseledIce(int newValue) { chiseledIce = newValue; }
 
+
+int worldStats::getLineSet() const { return lineSet; }
+
+void worldStats::setLineSet(int newValue) { lineSet = newValue; }
+
+
 int worldStats::travelChecks() {
   if (currentWeather == "snowing heavily") {
     return TRAVEL_BLIZZARD;

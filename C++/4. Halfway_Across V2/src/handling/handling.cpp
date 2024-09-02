@@ -3,9 +3,8 @@
 #include "../../include/world.h"
 
 const char *argVerbs[NUM_OF_ARG_VERBS] = {
-    "ASK",   "ATTACK", "BURN", "CHISEL",  "CLOSE", "CUT",   "DIE",
-    "DRINK", "DROP",   "EAT",  "EXAMINE", "GIVE",  "GO",
-    "KNOCK", "LOOK",   "MOVE", "OPEN",    "READ",  "REMOVE", "SHOOT", "SIT",
+    "COOK", "CHISEL",
+    "DRINK", "DROP",   "EAT",  "EXAMINE", "GO", "LOOK", "MOVE", "OPEN", "REMOVE", "SIT",
     "STAND", "TAKE",   "TELL", "THROW",   "USE",   "WEAR"};
 
 const char *noArgVerbs[NUM_OF_NO_ARG_VERBS] = {"BEGIN", "QUIT", "REFLECT",
@@ -15,7 +14,7 @@ handling handle;
 
 // Inputted verb must match an element of argVerbs or noArgVerbs to be
 // considered valid
-bool handling::validateVerb(QString input) {
+int handling::validateVerb(QString input) {
   bool validArgVerb = false;
   bool validNoArgVerb = false;
   QString inputVerb = input.split(" ").at(0);
@@ -30,10 +29,13 @@ bool handling::validateVerb(QString input) {
     }
   }
 
-  if (validArgVerb || validNoArgVerb) {
-    return true;
+  if (validArgVerb) {
+    return 0;
   }
-  return false;
+  else if (validNoArgVerb) {
+      return 1;
+  }
+  return -1;
 }
 
 void handling::splitInput(MainWindow *mainWindow, QString input) {
@@ -53,7 +55,6 @@ void handling::splitInput(MainWindow *mainWindow, QString input) {
     mainWindow->setDescription(
         QString("You don't know what to %1.").arg(verb.toLower()));
   }
-
   handle.handleVerb(mainWindow, verb, target, world.getCurrentLocation());
 }
 
@@ -67,10 +68,14 @@ void handling::handleVerb(MainWindow *mainWindow, QString verb, QString target,
     handling::drink(mainWindow, target, location);
   } else if (verb == "DROP") {
     handling::drop(mainWindow, target, location);
-  } else if (verb == "LOOK") {
+  } else if (verb == "EXAMINE" || verb == "LOOK") {
     handling::look(mainWindow, target, location);
   } else if (verb == "GO" || verb == "MOVE") {
     handling::move(mainWindow, target, location);
+  } else if (verb == "QUIT") {
+    mainWindow->closeProgram();
+  } else if (verb == "REFLECT") {
+      mainWindow->setDescription(player.constructReflection());
   } else if (verb == "REMOVE") {
     handling::remove(mainWindow, target);
   } else if (verb == "SIT") {
@@ -83,10 +88,9 @@ void handling::handleVerb(MainWindow *mainWindow, QString verb, QString target,
     handling::take(mainWindow, target, location);
   } else if (verb == "USE") {
     handling::use(mainWindow, target, location);
-  } else if (verb == "REFLECT") {
-    mainWindow->setDescription(player.constructReflection());
-  } else if (verb == "QUIT") {
-    mainWindow->closeProgram();
+  } else if (verb == "WAIT") {
+      handling::wait(mainWindow, location);
+      qDebug() << "Verb is:" << verb;
   } else if (verb == "WEAR") {
     handling::wear(mainWindow, target);
   } else {

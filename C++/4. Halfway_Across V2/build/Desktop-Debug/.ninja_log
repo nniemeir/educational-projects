@@ -1,0 +1,46 @@
+# ninja log v5
+22	5160	1725263989237704642	CMakeFiles/Halfway_Across.dir/src/handling/wait.cpp.o	b0283378a30dd7bf
+8	11	0	clean	a31eedcededa8236
+20	5021	1725263989098704679	CMakeFiles/Halfway_Across.dir/src/handling/chisel.cpp.o	c0a5e69b890bd2b5
+21	5017	1725263989094704680	CMakeFiles/Halfway_Across.dir/src/handling/sleep.cpp.o	b23d1bc2058e9b83
+635	2020	1725263008930940677	CMakeFiles/Halfway_Across.dir/src/world.cpp.o	4fd66262cd732fc3
+21	5311	1725263989387704602	CMakeFiles/Halfway_Across.dir/src/handling/look.cpp.o	9e7f8755b2a74585
+4	18	1725263978429707516	/home/noodle/MEGA/Educational_Projects/C++/4. Halfway_Across V2/build/Desktop-Debug/Halfway_Across_autogen/mocs_compilation.cpp	1bc233730b042999
+634	2323	1725263009235942895	CMakeFiles/Halfway_Across.dir/src/player.cpp.o	86bb6c7163329924
+21	5115	1725263989191704654	CMakeFiles/Halfway_Across.dir/src/handling/move.cpp.o	61355810eb5b0830
+5341	5592	1725263989665704528	Halfway_Across	a177d6efca96a452
+4	18	1725263978429707516	/home/noodle/MEGA/Educational_Projects/C++/4. Halfway_Across V2/build/Desktop-Debug/Halfway_Across_autogen/timestamp	1bc233730b042999
+4	18	1725263978429707516	Halfway_Across_autogen/timestamp	1bc233730b042999
+22	5057	1725263989134704669	CMakeFiles/Halfway_Across.dir/src/handling/stand.cpp.o	d1bbd6881b3f8826
+363	634	1725263007535930531	Halfway_Across_autogen/3YJK5W5UP7/qrc_resources.cpp	d2bdfb22d67fb64e
+634	3373	1725263010283950517	CMakeFiles/Halfway_Across.dir/src/locations.cpp.o	f242cc1e04d33b30
+634	6415	1725263013326972648	CMakeFiles/Halfway_Across.dir/src/main.cpp.o	f372a08c6c3aff77
+21	5012	1725263989089704681	CMakeFiles/Halfway_Across.dir/src/handling/sit.cpp.o	981fcfdc98ed680e
+363	634	1725263007535930531	/home/noodle/MEGA/Educational_Projects/C++/4. Halfway_Across V2/build/Desktop-Debug/Halfway_Across_autogen/3YJK5W5UP7/qrc_resources.cpp	d2bdfb22d67fb64e
+20	4996	1725263989072704686	CMakeFiles/Halfway_Across.dir/src/handling/drink.cpp.o	d5cd0f2369cfa11e
+20	5123	1725263989200704652	CMakeFiles/Halfway_Across.dir/src/handling/begin.cpp.o	e8e676bddcf094c3
+5583	10865	1725263017777005012	CMakeFiles/Halfway_Across.dir/Halfway_Across_autogen/3YJK5W5UP7/qrc_resources.cpp.o	4ea597700f088403
+21	5017	1725263989093704680	CMakeFiles/Halfway_Across.dir/src/handling/drop.cpp.o	8a6433937f5ec8e3
+634	6068	1725263012978970117	CMakeFiles/Halfway_Across.dir/Halfway_Across_autogen/mocs_compilation.cpp.o	3af45334e764b6f4
+21	5002	1725263989078704684	CMakeFiles/Halfway_Across.dir/src/handling/take.cpp.o	845d3119ba3e3659
+20	5341	1725263989417704594	CMakeFiles/Halfway_Across.dir/src/mainwindow.cpp.o	a1313d12e0f8fe8c
+22	5079	1725263989155704664	CMakeFiles/Halfway_Across.dir/src/handling/wear.cpp.o	cd7665a18acabb1e
+21	5043	1725263989119704673	CMakeFiles/Halfway_Across.dir/src/handling/handling.cpp.o	db1eb754b66fb3ac
+21	5227	1725263989304704624	CMakeFiles/Halfway_Across.dir/src/handling/use.cpp.o	919c62bb577dfad0
+2	7	0	CMakeFiles/clean.additional	ef993b15a92b8f11
+4	18	1725263978429707516	Halfway_Across_autogen/mocs_compilation.cpp	1bc233730b042999
+22	5001	1725263989078704684	CMakeFiles/Halfway_Across.dir/src/handling/remove.cpp.o	9f8d89b174313db2
+5	19	1725264198399632629	Halfway_Across_autogen/timestamp	1bc233730b042999
+5	19	1725264198399632629	Halfway_Across_autogen/mocs_compilation.cpp	1bc233730b042999
+5	19	1725264198399632629	/home/noodle/MEGA/Educational_Projects/C++/4. Halfway_Across V2/build/Desktop-Debug/Halfway_Across_autogen/timestamp	1bc233730b042999
+5	19	1725264198399632629	/home/noodle/MEGA/Educational_Projects/C++/4. Halfway_Across V2/build/Desktop-Debug/Halfway_Across_autogen/mocs_compilation.cpp	1bc233730b042999
+21	2870	1725264203195631444	CMakeFiles/Halfway_Across.dir/src/handling/handling.cpp.o	db1eb754b66fb3ac
+21	3007	1725264203332631410	CMakeFiles/Halfway_Across.dir/src/mainwindow.cpp.o	a1313d12e0f8fe8c
+3007	3285	1725264203607631342	Halfway_Across	a177d6efca96a452
+4	17	1725264223601626402	Halfway_Across_autogen/timestamp	1bc233730b042999
+4	17	1725264223601626402	Halfway_Across_autogen/mocs_compilation.cpp	1bc233730b042999
+4	17	1725264223601626402	/home/noodle/MEGA/Educational_Projects/C++/4. Halfway_Across V2/build/Desktop-Debug/Halfway_Across_autogen/timestamp	1bc233730b042999
+4	17	1725264223601626402	/home/noodle/MEGA/Educational_Projects/C++/4. Halfway_Across V2/build/Desktop-Debug/Halfway_Across_autogen/mocs_compilation.cpp	1bc233730b042999
+19	2788	1725264229476624951	CMakeFiles/Halfway_Across.dir/src/handling/wait.cpp.o	b0283378a30dd7bf
+19	3001	1725264229689624899	CMakeFiles/Halfway_Across.dir/src/mainwindow.cpp.o	a1313d12e0f8fe8c
+3001	3273	1725264229958624832	Halfway_Across	a177d6efca96a452
