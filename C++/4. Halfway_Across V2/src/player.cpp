@@ -90,11 +90,13 @@ QString playerStats::constructReflection() const {
   return reflection;
 }
 
-// Since verb handling often involves checking if the player has a given item in their inventory,
-// this and its equivalent in Location will be altered later to use a hash table for the sake of performance
+// Since verb handling often involves checking if the player has a given item in
+// their inventory, this and its equivalent in Location will be altered later to
+// use a hash table for the sake of performance
 int playerStats::searchInventory(const QString &itemName) const {
-  auto it = std::find_if(inventory.begin(), inventory.end(),
-                           [&](const item &i) { return i.name == itemName.toUpper(); });
+  auto it =
+      std::find_if(inventory.begin(), inventory.end(),
+                   [&](const item &i) { return i.name == itemName.toUpper(); });
 
   if (it != inventory.end()) {
     int index = std::distance(inventory.begin(), it);
@@ -106,21 +108,43 @@ int playerStats::searchInventory(const QString &itemName) const {
 
 QString playerStats::clothesInventory() {
   QString inventoryText;
-  inventoryText.append("You are wearing:\n");
-
   for (const auto &item : inventory) {
     if (item.type == "clothing" && item.active == 1) {
+      inventoryText.append(QString("%1\n").arg(item.name));
+    }
+  }
+  if (inventoryText != "") {
+      inventoryText.prepend("You are wearing:\n");
+  }
+  else {
+      inventoryText.append("You are not wearing anything.");
+  }
+  return inventoryText;
+}
+
+QString playerStats::bagInventory() {
+  QString inventoryText;
+  for (const auto &item : inventory) {
+    if (item.type != "clothing" && item.type != "") {
       inventoryText.append(QString("%1: %2\n").arg(item.name).arg(item.amount));
     }
+  }
+  if (inventoryText != "") {
+  inventoryText.prepend("You have:\n");
+  }
+  else {
+      inventoryText.append("Your possibles bag is empty.");
   }
   return inventoryText;
 }
 
 const item &playerStats::getInventoryItem(int index) const {
-    return inventory[index];
+  return inventory[index];
 }
 
-void playerStats::addItem(const item itemToAdd) { inventory.push_back(itemToAdd); }
+void playerStats::addItem(const item itemToAdd) {
+  inventory.push_back(itemToAdd);
+}
 
 void playerStats::removeItem(int index) {
   inventory.erase(inventory.begin() + index);
@@ -135,7 +159,7 @@ int playerStats::getItemEquipped(int index) const {
 }
 
 int playerStats::getItemEffect(int index) const {
-    return inventory[index].effects;
+  return inventory[index].effects;
 }
 
 void playerStats::setItemEquipped(int index, int value) {

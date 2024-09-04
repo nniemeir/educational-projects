@@ -1,8 +1,9 @@
 #include "../../include/handling.h"
 #include "../../include/player.h"
 
-void handling::drink(MainWindow *mainWindow, QString target, Location* location) {
-    if (location->getName() == "lake") {
+void handling::drink(MainWindow *mainWindow, QString target,
+                     Location *location) {
+  if (location->getName() == "lake") {
     drinkLake(mainWindow, target);
   } else {
     mainWindow->setDescription("You can't do that here.");

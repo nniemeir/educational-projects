@@ -6,12 +6,15 @@ class Location {
 public:
   Location();
   Location(const QString &name, const QString &description,
-           const QString &image, const std::vector<item> &inventory);
+           const QString &image, const QString &musicPath,
+           const QString &ambiencePath, const std::vector<item> &inventory);
 
   // Location
   QString getName() const;
   QString getDescription() const;
   QString getImage() const;
+  QString getAmbiencePath() const;
+  QString getMusicPath() const;
 
   // Inventory
   int searchInventory(const QString &itemName) const;
@@ -29,6 +32,8 @@ private:
   QString name;
   QString description;
   QString image;
+  QString musicPath;
+  QString ambiencePath;
   std::vector<item> inventory;
 };
 
@@ -38,6 +43,7 @@ extern Location cave;
 extern Location caveEntrance;
 extern Location intro;
 extern Location lake;
+extern Location perished;
 extern Location valley;
 
 #endif // LOCATIONS_H

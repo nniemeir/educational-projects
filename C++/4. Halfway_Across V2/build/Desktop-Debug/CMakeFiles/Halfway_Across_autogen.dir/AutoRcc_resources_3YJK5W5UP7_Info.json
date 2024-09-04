@@ -10,14 +10,23 @@
 	"INPUTS" : 
 	[
 		"/home/noodle/MEGA/Educational_Projects/C++/4. Halfway_Across V2/resources/images/cave.png",
+		"/home/noodle/MEGA/Educational_Projects/C++/4. Halfway_Across V2/resources/images/perished.png",
 		"/home/noodle/MEGA/Educational_Projects/C++/4. Halfway_Across V2/resources/images/camp.png",
 		"/home/noodle/MEGA/Educational_Projects/C++/4. Halfway_Across V2/resources/images/valley.png",
 		"/home/noodle/MEGA/Educational_Projects/C++/4. Halfway_Across V2/resources/images/lake.png",
-		"/home/noodle/MEGA/Educational_Projects/C++/4. Halfway_Across V2/resources/images/dream.png",
 		"/home/noodle/MEGA/Educational_Projects/C++/4. Halfway_Across V2/resources/images/caveEntrance.png",
 		"/home/noodle/MEGA/Educational_Projects/C++/4. Halfway_Across V2/resources/images/campPath.png",
 		"/home/noodle/MEGA/Educational_Projects/C++/4. Halfway_Across V2/resources/images/intro.png",
-		"/home/noodle/MEGA/Educational_Projects/C++/4. Halfway_Across V2/resources/stylesheets/stylesheet.qss"
+		"/home/noodle/MEGA/Educational_Projects/C++/4. Halfway_Across V2/resources/stylesheets/stylesheet.qss",
+		"/home/noodle/MEGA/Educational_Projects/C++/4. Halfway_Across V2/resources/audio/music/placeholder.mp3",
+		"/home/noodle/MEGA/Educational_Projects/C++/4. Halfway_Across V2/resources/audio/sfx/chiselLake.mp3",
+		"/home/noodle/MEGA/Educational_Projects/C++/4. Halfway_Across V2/resources/audio/sfx/moveStone.mp3",
+		"/home/noodle/MEGA/Educational_Projects/C++/4. Halfway_Across V2/resources/audio/sfx/take.mp3",
+		"/home/noodle/MEGA/Educational_Projects/C++/4. Halfway_Across V2/resources/audio/sfx/fishReel.mp3",
+		"/home/noodle/MEGA/Educational_Projects/C++/4. Halfway_Across V2/resources/audio/sfx/lanternRustle.mp3",
+		"/home/noodle/MEGA/Educational_Projects/C++/4. Halfway_Across V2/resources/audio/sfx/fishSet.mp3",
+		"/home/noodle/MEGA/Educational_Projects/C++/4. Halfway_Across V2/resources/audio/sfx/moveSnow.mp3",
+		"/home/noodle/MEGA/Educational_Projects/C++/4. Halfway_Across V2/resources/audio/ambience/mountainWind.mp3"
 	],
 	"LOCK_FILE" : "/home/noodle/MEGA/Educational_Projects/C++/4. Halfway_Across V2/build/Desktop-Debug/CMakeFiles/Halfway_Across_autogen.dir/AutoRcc_resources_3YJK5W5UP7_Lock.lock",
 	"MULTI_CONFIG" : false,

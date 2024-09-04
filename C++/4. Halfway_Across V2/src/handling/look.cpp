@@ -2,9 +2,9 @@
 #include "../../include/player.h"
 #include "../../include/world.h"
 
-
-void handling::look(MainWindow *mainWindow, QString target, Location* location) {
-    if (location->getName() == "camp") {
+void handling::look(MainWindow *mainWindow, QString target,
+                    Location *location) {
+  if (location->getName() == "camp") {
     lookCamp(mainWindow, target);
   } else if (location->getName() == "campPath") {
     lookCampPath(mainWindow, target, location);
@@ -22,12 +22,13 @@ void handling::look(MainWindow *mainWindow, QString target, Location* location) 
 }
 
 void handling::lookCamp(MainWindow *mainWindow, QString target) {
-    QMap<QString, QString> descriptions = {
+  QMap<QString, QString> descriptions = {
       {"AROUND", camp.getDescription()},
       {"AT FIRE", "The fire burns low."},
       {"AT BED", "The bed seems to be quite worn."},
       {"AT CHEST", "The rusty chest contains your belongings."},
       {"AT GROUND", camp.locInventory()},
+      {"IN BAG", player.bagInventory()},
       {"AT SELF", player.clothesInventory()},
       {"OUTSIDE",
        QString("It is %1 outside.").arg(world.getCurrentWeather().toLower())}};
@@ -35,47 +36,51 @@ void handling::lookCamp(MainWindow *mainWindow, QString target) {
   if (descriptions.contains(target)) {
     mainWindow->setDescription(descriptions.value(target));
   } else {
-    mainWindow->setDescription("That is not an item you are aware of.\n");
+      mainWindow->setDescription(QString("You can't look %1 here.\n").arg(target.toLower()));
   }
 }
 
-void handling::lookCampPath(MainWindow *mainWindow, QString target, Location* location) {
+void handling::lookCampPath(MainWindow *mainWindow, QString target,
+                            Location *location) {
   QMap<QString, QString> descriptions = {
       {"AROUND", location->getDescription()},
       {"AT GROUND", location->locInventory()},
       {"AT PATH", "The other branches of the path go off into the distance.\n"},
+      {"IN BAG", player.bagInventory()},
       {"AT SELF", player.clothesInventory()}};
 
   if (descriptions.contains(target)) {
     mainWindow->setDescription(descriptions.value(target));
   } else {
-    mainWindow->setDescription("That is not an item you are aware of.\n");
+      mainWindow->setDescription(QString("You can't look %1 here.\n").arg(target.toLower()));
   }
 }
 
 void handling::lookCave(MainWindow *mainWindow, QString target) {
-    QMap<QString, QString> descriptions = {
+  QMap<QString, QString> descriptions = {
       {"AROUND", valley.getDescription()},
-        {"AT GROUND", cave.locInventory()},
+      {"AT GROUND", cave.locInventory()},
 
+      {"IN BAG", player.bagInventory()},
       {"AT SELF", player.clothesInventory()}};
   if (descriptions.contains(target)) {
     mainWindow->setDescription(descriptions.value(target));
   } else {
-    mainWindow->setDescription("That is not an item you are aware of.\n");
+    mainWindow->setDescription(QString("You can't look %1 here.\n").arg(target.toLower()));
   }
 }
 
 void handling::lookCaveEntrance(MainWindow *mainWindow, QString target) {
   QMap<QString, QString> descriptions = {
       {"AROUND", caveEntrance.getDescription()},
-        {"AT GROUND", caveEntrance.locInventory()},
+      {"AT GROUND", caveEntrance.locInventory()},
 
+      {"IN BAG", player.bagInventory()},
       {"AT SELF", player.clothesInventory()}};
   if (descriptions.contains(target)) {
     mainWindow->setDescription(descriptions.value(target));
   } else {
-    mainWindow->setDescription("That is not an item you are aware of.\n");
+      mainWindow->setDescription(QString("You can't look %1 here.\n").arg(target.toLower()));
   }
 }
 
@@ -85,12 +90,14 @@ void handling::lookLake(MainWindow *mainWindow, QString target) {
       {"AT GROUND", lake.locInventory()},
       {"AT LAKE", "The lake has frozen over.\n"},
       {"AT MOUNTAIN", "Who knows what that mountain holds?\n"},
+
+      {"IN BAG", player.bagInventory()},
       {"AT SELF", player.clothesInventory()}};
 
   if (descriptions.contains(target)) {
     mainWindow->setDescription(descriptions.value(target));
   } else {
-    mainWindow->setDescription("That is not an item you are aware of.\n");
+      mainWindow->setDescription(QString("You can't look %1 here.\n").arg(target.toLower()));
   }
 }
 
@@ -99,10 +106,12 @@ void handling::lookValley(MainWindow *mainWindow, QString target) {
       {"AROUND", valley.getDescription()},
       {"AT GROUND", valley.locInventory()},
       {"AT TREES", "The trees are covered in snow."},
+
+      {"IN BAG", player.bagInventory()},
       {"AT SELF", player.clothesInventory()}};
   if (descriptions.contains(target)) {
     mainWindow->setDescription(descriptions.value(target));
   } else {
-    mainWindow->setDescription("That is not an item you are aware of.\n");
+      mainWindow->setDescription(QString("You can't look %1 here.\n").arg(target.toLower()));
   }
 }

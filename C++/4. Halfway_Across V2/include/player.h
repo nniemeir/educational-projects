@@ -5,7 +5,7 @@
 class playerStats {
 public:
   playerStats();
-  
+
   // Stats
   int getHealth() const;
   void setHealth(int health);
@@ -27,6 +27,7 @@ public:
   // Inventory
   int searchInventory(const QString &itemName) const;
   QString clothesInventory();
+  QString bagInventory();
   const item &getInventoryItem(int index) const;
   void addItem(item itemToAdd);
   void removeItem(int index);

@@ -22,7 +22,8 @@ class MainWindow : public QMainWindow {
 public:
   MainWindow(QWidget *parent = nullptr);
   ~MainWindow();
-  void setLocation(Location* object);
+  void setLocation(QString currentMusic, QString currentAmbience,
+                   Location *object);
   void setDescription(QString text);
   void closeProgram();
 

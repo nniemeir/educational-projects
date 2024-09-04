@@ -1,13 +1,22 @@
 <RCC>
     <qresource prefix="/">
+        <file>audio/ambience/mountainWind.mp3</file>
+        <file>audio/music/placeholder.mp3</file>
+        <file>audio/sfx/chiselLake.mp3</file>
+        <file>audio/sfx/fishReel.mp3</file>
+        <file>audio/sfx/fishSet.mp3</file>
+        <file>audio/sfx/lanternRustle.mp3</file>
+        <file>audio/sfx/moveSnow.mp3</file>
+        <file>audio/sfx/moveStone.mp3</file>
+        <file>audio/sfx/take.mp3</file>
         <file>images/camp.png</file>
+        <file>images/campPath.png</file>
+        <file>images/cave.png</file>
+        <file>images/caveEntrance.png</file>
         <file>images/intro.png</file>
         <file>images/lake.png</file>
-        <file>stylesheets/stylesheet.qss</file>
         <file>images/valley.png</file>
-        <file>images/campPath.png</file>
-        <file>images/caveEntrance.png</file>
-        <file>images/dream.png</file>
-        <file>images/cave.png</file>
+        <file>stylesheets/stylesheet.qss</file>
+        <file>images/perished.png</file>
     </qresource>
 </RCC>

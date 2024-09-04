@@ -380,6 +380,56 @@
 		"/usr/lib/x86_64-linux-gnu/cmake/Qt6Widgets/Qt6WidgetsVersionlessTargets.cmake",
 		"/usr/lib/x86_64-linux-gnu/cmake/Qt6Widgets/Qt6WidgetsMacros.cmake",
 		"/usr/lib/x86_64-linux-gnu/cmake/Qt6Widgets/Qt6WidgetsPlugins.cmake",
+		"/usr/lib/x86_64-linux-gnu/cmake/Qt6Multimedia/Qt6MultimediaConfigVersion.cmake",
+		"/usr/lib/x86_64-linux-gnu/cmake/Qt6Multimedia/Qt6MultimediaConfigVersionImpl.cmake",
+		"/usr/lib/x86_64-linux-gnu/cmake/Qt6Multimedia/Qt6MultimediaConfig.cmake",
+		"/usr/share/cmake-3.29/Modules/CMakeFindDependencyMacro.cmake",
+		"/usr/lib/x86_64-linux-gnu/cmake/Qt6Multimedia/Qt6MultimediaDependencies.cmake",
+		"/usr/lib/x86_64-linux-gnu/cmake/Qt6Network/Qt6NetworkConfigVersion.cmake",
+		"/usr/lib/x86_64-linux-gnu/cmake/Qt6Network/Qt6NetworkConfigVersionImpl.cmake",
+		"/usr/lib/x86_64-linux-gnu/cmake/Qt6Network/Qt6NetworkConfig.cmake",
+		"/usr/share/cmake-3.29/Modules/CMakeFindDependencyMacro.cmake",
+		"/usr/lib/x86_64-linux-gnu/cmake/Qt6Network/Qt6NetworkDependencies.cmake",
+		"/usr/lib/x86_64-linux-gnu/cmake/Qt6Network/Qt6NetworkTargets.cmake",
+		"/usr/lib/x86_64-linux-gnu/cmake/Qt6Network/Qt6NetworkTargets-release.cmake",
+		"/usr/lib/x86_64-linux-gnu/cmake/Qt6Network/Qt6NetworkAdditionalTargetInfo.cmake",
+		"/usr/lib/x86_64-linux-gnu/cmake/Qt6Network/Qt6NetworkVersionlessTargets.cmake",
+		"/usr/lib/x86_64-linux-gnu/cmake/Qt6Network/Qt6NetworkPlugins.cmake",
+		"/usr/lib/x86_64-linux-gnu/cmake/Qt6Network/Qt6QGlibNetworkInformationPluginConfig.cmake",
+		"/usr/share/cmake-3.29/Modules/CMakeFindDependencyMacro.cmake",
+		"/usr/lib/x86_64-linux-gnu/cmake/Qt6Network/Qt6QGlibNetworkInformationPluginTargets.cmake",
+		"/usr/lib/x86_64-linux-gnu/cmake/Qt6Network/Qt6QGlibNetworkInformationPluginTargets-release.cmake",
+		"/usr/lib/x86_64-linux-gnu/cmake/Qt6Network/Qt6QGlibNetworkInformationPluginAdditionalTargetInfo.cmake",
+		"/usr/lib/x86_64-linux-gnu/cmake/Qt6Network/Qt6QNetworkManagerNetworkInformationPluginConfig.cmake",
+		"/usr/share/cmake-3.29/Modules/CMakeFindDependencyMacro.cmake",
+		"/usr/lib/x86_64-linux-gnu/cmake/Qt6Network/Qt6QNetworkManagerNetworkInformationPluginTargets.cmake",
+		"/usr/lib/x86_64-linux-gnu/cmake/Qt6Network/Qt6QNetworkManagerNetworkInformationPluginTargets-release.cmake",
+		"/usr/lib/x86_64-linux-gnu/cmake/Qt6Network/Qt6QNetworkManagerNetworkInformationPluginAdditionalTargetInfo.cmake",
+		"/usr/lib/x86_64-linux-gnu/cmake/Qt6Network/Qt6QTlsBackendCertOnlyPluginConfig.cmake",
+		"/usr/share/cmake-3.29/Modules/CMakeFindDependencyMacro.cmake",
+		"/usr/lib/x86_64-linux-gnu/cmake/Qt6Network/Qt6QTlsBackendCertOnlyPluginTargets.cmake",
+		"/usr/lib/x86_64-linux-gnu/cmake/Qt6Network/Qt6QTlsBackendCertOnlyPluginTargets-release.cmake",
+		"/usr/lib/x86_64-linux-gnu/cmake/Qt6Network/Qt6QTlsBackendCertOnlyPluginAdditionalTargetInfo.cmake",
+		"/usr/lib/x86_64-linux-gnu/cmake/Qt6Network/Qt6QTlsBackendOpenSSLPluginConfig.cmake",
+		"/usr/share/cmake-3.29/Modules/CMakeFindDependencyMacro.cmake",
+		"/usr/lib/x86_64-linux-gnu/cmake/Qt6Network/Qt6QTlsBackendOpenSSLPluginTargets.cmake",
+		"/usr/lib/x86_64-linux-gnu/cmake/Qt6Network/Qt6QTlsBackendOpenSSLPluginTargets-release.cmake",
+		"/usr/lib/x86_64-linux-gnu/cmake/Qt6Network/Qt6QTlsBackendOpenSSLPluginAdditionalTargetInfo.cmake",
+		"/usr/lib/x86_64-linux-gnu/cmake/Qt6Multimedia/Qt6MultimediaTargets.cmake",
+		"/usr/lib/x86_64-linux-gnu/cmake/Qt6Multimedia/Qt6MultimediaTargets-release.cmake",
+		"/usr/lib/x86_64-linux-gnu/cmake/Qt6Multimedia/Qt6MultimediaAdditionalTargetInfo.cmake",
+		"/usr/lib/x86_64-linux-gnu/cmake/Qt6Multimedia/Qt6MultimediaVersionlessTargets.cmake",
+		"/usr/lib/x86_64-linux-gnu/cmake/Qt6Multimedia/Qt6MultimediaPlugins.cmake",
+		"/usr/lib/x86_64-linux-gnu/cmake/Qt6Multimedia/Qt6QFFmpegMediaPluginConfig.cmake",
+		"/usr/share/cmake-3.29/Modules/CMakeFindDependencyMacro.cmake",
+		"/usr/lib/x86_64-linux-gnu/cmake/Qt6Multimedia/Qt6QFFmpegMediaPluginTargets.cmake",
+		"/usr/lib/x86_64-linux-gnu/cmake/Qt6Multimedia/Qt6QFFmpegMediaPluginTargets-release.cmake",
+		"/usr/lib/x86_64-linux-gnu/cmake/Qt6Multimedia/Qt6QFFmpegMediaPluginAdditionalTargetInfo.cmake",
+		"/usr/lib/x86_64-linux-gnu/cmake/Qt6Multimedia/Qt6QGstreamerMediaPluginConfig.cmake",
+		"/usr/share/cmake-3.29/Modules/CMakeFindDependencyMacro.cmake",
+		"/usr/lib/x86_64-linux-gnu/cmake/Qt6Multimedia/Qt6QGstreamerMediaPluginTargets.cmake",
+		"/usr/lib/x86_64-linux-gnu/cmake/Qt6Multimedia/Qt6QGstreamerMediaPluginTargets-release.cmake",
+		"/usr/lib/x86_64-linux-gnu/cmake/Qt6Multimedia/Qt6QGstreamerMediaPluginAdditionalTargetInfo.cmake",
 		"/usr/share/cmake-3.29/Modules/GNUInstallDirs.cmake",
 		"/home/noodle/MEGA/Educational_Projects/C++/4. Halfway_Across V2/resources/resources.qrc"
 	],
@@ -389,6 +439,12 @@
 	"DEP_FILE_RULE_NAME" : "Halfway_Across_autogen/timestamp",
 	"HEADERS" : 
 	[
+		[
+			"/home/noodle/MEGA/Educational_Projects/C++/4. Halfway_Across V2/include/audio.h",
+			"MU",
+			"6YEA5652QU/moc_audio.cpp",
+			null
+		],
 		[
 			"/home/noodle/MEGA/Educational_Projects/C++/4. Halfway_Across V2/include/halfway.h",
 			"MU",
@@ -429,7 +485,14 @@
 	"HEADER_EXTENSIONS" : [ "h", "hh", "h++", "hm", "hpp", "hxx", "in", "txx" ],
 	"INCLUDE_DIR" : "/home/noodle/MEGA/Educational_Projects/C++/4. Halfway_Across V2/build/Desktop-Debug/Halfway_Across_autogen/include",
 	"MOC_COMPILATION_FILE" : "/home/noodle/MEGA/Educational_Projects/C++/4. Halfway_Across V2/build/Desktop-Debug/Halfway_Across_autogen/mocs_compilation.cpp",
-	"MOC_DEFINITIONS" : [ "QT_CORE_LIB", "QT_GUI_LIB", "QT_WIDGETS_LIB" ],
+	"MOC_DEFINITIONS" : 
+	[
+		"QT_CORE_LIB",
+		"QT_GUI_LIB",
+		"QT_MULTIMEDIA_LIB",
+		"QT_NETWORK_LIB",
+		"QT_WIDGETS_LIB"
+	],
 	"MOC_DEPEND_FILTERS" : 
 	[
 		[
@@ -443,6 +506,8 @@
 		"/usr/mkspecs/linux-g++",
 		"/usr/include/QtWidgets",
 		"/usr/include/QtGui",
+		"/usr/include/QtMultimedia",
+		"/usr/include/QtNetwork",
 		"/usr/include",
 		"/usr/include/c++/13.2.0",
 		"/usr/include/c++/13.2.0/x86_64-unknown-linux-gnu",
@@ -485,12 +550,12 @@
 	"SOURCES" : 
 	[
 		[
-			"/home/noodle/MEGA/Educational_Projects/C++/4. Halfway_Across V2/src/handling/begin.cpp",
+			"/home/noodle/MEGA/Educational_Projects/C++/4. Halfway_Across V2/src/handling/audio.cpp",
 			"MU",
 			null
 		],
 		[
-			"/home/noodle/MEGA/Educational_Projects/C++/4. Halfway_Across V2/src/handling/chisel.cpp",
+			"/home/noodle/MEGA/Educational_Projects/C++/4. Halfway_Across V2/src/handling/begin.cpp",
 			"MU",
 			null
 		],

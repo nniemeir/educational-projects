@@ -1,4 +1,5 @@
 #include "../include/mainwindow.h"
+#include "../include/audio.h"
 #include "../include/handling.h"
 #include "../include/locations.h"
 #include "../include/world.h"
@@ -10,7 +11,7 @@ MainWindow::MainWindow(QWidget *parent)
   importStylesheet();
   setUiProperties();
   setWindowTitle("Halfway Across");
-  setLocation(&intro);
+  setLocation("", "", &intro);
 }
 
 void MainWindow::importStylesheet() {
@@ -43,13 +44,22 @@ void MainWindow::setDescription(QString text) { ui->outputArea->setText(text); }
 
 void MainWindow::closeProgram() { QApplication::quit(); }
 
-void MainWindow::setLocation(Location* object) {
-    if (object) {
-  setDescription(object->getDescription());
-  QPixmap pix(object->getImage());
-  ui->settingImage->setPixmap(pix);
-  world.setCurrentLocation(object);
+void MainWindow::setLocation(QString currentMusic, QString currentAmbience,
+                             Location *object) {
+  if (object) {
+    setDescription(object->getDescription());
+    QPixmap pix(object->getImage());
+    ui->settingImage->setPixmap(pix);
+    QString musicPath = object->getMusicPath();
+    QString ambiencePath = object->getAmbiencePath();
+    if (currentMusic != musicPath) {
+      musicPlayer.play(musicPath, 1);
     }
+    if (currentAmbience != ambiencePath) {
+      ambiencePlayer.play(ambiencePath, 1);
+    }
+    world.setCurrentLocation(object);
+  }
 }
 
 void MainWindow::handleReturnPressed() {
@@ -59,8 +69,8 @@ void MainWindow::handleReturnPressed() {
   int validated = handle.validateVerb(input);
   if (validated == 0) {
     handle.splitInput(this, input);
-  } else if (validated == 1){
-      handle.handleVerb(this, input, "", world.getCurrentLocation());
+  } else if (validated == 1) {
+    handle.handleVerb(this, input, "", world.getCurrentLocation());
   } else {
     if (input != "") {
       setDescription(QString("You don't know how to %1.").arg(input.toLower()));
