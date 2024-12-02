@@ -20,6 +20,6 @@
 #define NULL_TERMINATOR_LENGTH 1
 #define PORT 8080
 
-char *create_response(char *buffer);
+char *generate_response(char *buffer);
 
 #endif
