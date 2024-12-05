@@ -41,17 +41,17 @@ void normalize_path(char *file_request) {
 size_t get_file_size(const char *file_request) {
   FILE *file = fopen(file_request, "r");
   if (!file) {
-    perror("Failed to open file to determine size.");
+    fprintf(stderr, "Failed to open file to determine size.\n");
     return (size_t)-1;
   }
   if (fseek(file, 0, SEEK_END) == -1) {
-    perror("fseek failed");
+    fprintf(stderr, "fseek failed.\n");
     fclose(file);
     return (size_t)-1;
   }
   size_t size = ftell(file);
   if (size == (size_t)-1) {
-    perror("ftell failed.");
+    fprintf(stderr, "ftell failed.\n");
     fclose(file);
     return (size_t)-1;
   }
@@ -88,7 +88,7 @@ char *add_file_to_response(char *method, char *metadata, char *file_request,
           fread(response + metadata_length + bytes_read, 1, chunk_size, file);
       if (read == 0) {
         if (ferror(file)) {
-          perror("Failed to read file.");
+          fprintf(stderr, "Failed to read file.\n");
           fclose(file);
           return NULL;
         }
@@ -129,7 +129,7 @@ char *generate_response(char *buffer) {
   // Allocate memory for response string
   char *response = malloc(BUFFER_SIZE);
   if (!response) {
-    perror("Failed to allocate memory.");
+    fprintf(stderr, "Failed to allocate memory for response.\n");
     return NULL;
   }
   memset(response, 0, BUFFER_SIZE);

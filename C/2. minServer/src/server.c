@@ -9,46 +9,29 @@ void SSL_cleanup(SSL *ssl, SSL_CTX *ctx) {
   }
 }
 
-void handle_client(int clientfd) {
-  SSL_CTX *ctx = SSL_CTX_new(TLS_server_method());
-  if (ctx == NULL) {
-    perror("Failed to create SSL context.");
-    return;
-  }
-
+void handle_client(SSL_CTX *ctx, int clientfd) {
   SSL *ssl = SSL_new(ctx);
   if (ssl == NULL) {
-    perror("Failed to create SSL structure.");
+    fprintf(stderr, "Failed to create SSL structure.\n");
     SSL_cleanup(ssl, ctx);
     return;
   }
 
   if (!SSL_set_fd(ssl, clientfd)) {
-    perror("Failed to set file descriptor for SSL object.\n");
+    fprintf(stderr, "Failed to set file descriptor for SSL object.\n");
     SSL_cleanup(ssl, ctx);
     return;
   }
 
-  if (!SSL_use_certificate_chain_file(ssl, "cert")) {
-    perror("Failed to set certificate");
-    SSL_cleanup(ssl, ctx);
-    return;
-  }
-
-  if (!SSL_use_PrivateKey_file(ssl, "key", SSL_FILETYPE_PEM)) {
-    perror("Failed to set private key");
-    SSL_cleanup(ssl, ctx);
-    return;
-  }
   if (SSL_accept(ssl) <= 0) {
-    perror("TLS/SSL handshake failed");
+    fprintf(stderr, "TLS/SSL handshake failed.\n");
     SSL_cleanup(ssl, ctx);
     return;
   }
 
   char buffer[BUFFER_SIZE];
   if (SSL_read(ssl, buffer, sizeof(buffer) - NULL_TERMINATOR_LENGTH) <= 0) {
-    perror("Failed to read from connection.");
+    fprintf(stderr, "Failed to read from connection.\n");
     SSL_cleanup(ssl, ctx);
     return;
   }
@@ -60,7 +43,7 @@ void handle_client(int clientfd) {
   }
 
   if (SSL_write(ssl, response, strlen(response)) <= 0) {
-    perror("Failed to write to connection");
+    fprintf(stderr, "Failed to write to connection.\n");
     free(response);
     SSL_cleanup(ssl, ctx);
     return;
@@ -69,7 +52,7 @@ void handle_client(int clientfd) {
   free(response);
 
   if (SSL_shutdown(ssl) < 0) {
-    perror("Failed to shutdown connection");
+    fprintf(stderr, "Failed to shutdown connection.\n");
   }
 
   SSL_cleanup(ssl, ctx);
@@ -92,7 +75,7 @@ int main(int argc, char *argv[]) {
       if (optarg) {
         port = atoi(optarg);
       } else {
-        fprintf(stderr, "No argument given for -p, defaulting to 8080");
+        fprintf(stderr, "No argument given for -p, defaulting to 8080.\n");
         break;
       }
       break;
@@ -106,47 +89,66 @@ int main(int argc, char *argv[]) {
   if (!OPENSSL_init_ssl(OPENSSL_INIT_LOAD_SSL_STRINGS |
                             OPENSSL_INIT_LOAD_CRYPTO_STRINGS,
                         NULL)) {
-    printf("Failed to initialize OpenSSL globally.");
+    printf("Failed to initialize OpenSSL globally.\n");
     return EXIT_FAILURE;
   }
+
+  SSL_CTX *ctx = SSL_CTX_new(TLS_server_method());
+  if (ctx == NULL) {
+    fprintf(stderr, "Failed to create SSL context.\n");
+    return EXIT_FAILURE;
+  }
+
+  if (!SSL_CTX_use_certificate_chain_file(ctx, "cert")) {
+    fprintf(stderr, "Failed to set certificate.\n");
+    SSL_cleanup(NULL, ctx);
+    return EXIT_FAILURE;
+  }
+
+  if (!SSL_CTX_use_PrivateKey_file(ctx, "key", SSL_FILETYPE_PEM)) {
+    fprintf(stderr, "Failed to set private key.\n");
+    SSL_cleanup(NULL, ctx);
+    return EXIT_FAILURE;
+  }
+
   int sockfd = socket(AF_INET, SOCK_STREAM, 0);
   if (sockfd == -1) {
-    perror("Failed to create socket");
+    fprintf(stderr, "Failed to create socket.\n");
     return EXIT_FAILURE;
   }
 
-  struct sockaddr_in addr;
-  addr.sin_family = AF_INET;
-  addr.sin_port = htons(port);
-  addr.sin_addr.s_addr = INADDR_ANY;
+  struct sockaddr_in socket_address;
+  socket_address.sin_family = AF_INET;
+  socket_address.sin_port = htons(port);
+  socket_address.sin_addr.s_addr = INADDR_ANY;
 
-  if (bind(sockfd, (struct sockaddr *)&addr, sizeof(addr)) == -1) {
-    perror("Failed to bind socket.");
+  if (bind(sockfd, (struct sockaddr *)&socket_address, sizeof(socket_address)) == -1) {
+    fprintf(stderr, "Failed to bind socket.\n");
     return EXIT_FAILURE;
   }
 
   if (listen(sockfd, BACKLOG_SIZE) == -1) {
-    perror("Failed to start listening");
+    fprintf(stderr, "Failed to start listening.\n");
     return EXIT_FAILURE;
   }
 
   while (1) {
     int clientfd = accept(sockfd, NULL, NULL);
     if (clientfd == -1) {
-      perror("Failed to accept connection.");
+      fprintf(stderr, "Failed to accept connection.\n");
       continue;
     }
 
     pid_t pid = fork();
     if (pid == -1) {
-      perror("Failed to fork process.");
+      fprintf(stderr, "Failed to fork process.\n");
       close(clientfd);
       continue;
     }
 
     if (pid == 0) {
       close(sockfd);
-      handle_client(clientfd);
+      handle_client(ctx, clientfd);
       return EXIT_SUCCESS;
     } else {
       close(clientfd);
