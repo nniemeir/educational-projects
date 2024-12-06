@@ -17,6 +17,6 @@
 
 int patternRename(const char *directoryPath, const char *pattern,
                   const char *filteredExtension, long mode);
-void helpMsg();
+void printHelpMsg();
 
 #endif

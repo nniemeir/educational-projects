@@ -35,6 +35,13 @@ char *constructNewFilePath(const char *directoryPath, const char *pattern,
   size_t fileExtensionLength = strlen(fileExtension);
 
   char *newFilePath;
+  if (mode != MODE_PREPEND && mode != MODE_APPEND) {
+    fprintf(stderr, "Invalid mode selection, this is likely a problem in the "
+                    "modePrompt function");
+    free(baseName);
+    free(newFilePath);
+    return NULL;
+  }
   if (mode == MODE_PREPEND) {
     size_t totalLength = directoryPathLength + SLASH_LENGTH + patternLength +
                          baseNameLength + fileExtensionLength +
@@ -49,7 +56,8 @@ char *constructNewFilePath(const char *directoryPath, const char *pattern,
                  baseNameLength + strlen(fileExtension) +
                  NULL_TERMINATOR_LENGTH,
              "%s/%s%s", directoryPath, pattern, fileName);
-  } else if (mode == MODE_APPEND) {
+  }
+  if (mode == MODE_APPEND) {
     size_t totalLength = directoryPathLength + SLASH_LENGTH + patternLength +
                          baseNameLength + fileExtensionLength +
                          NULL_TERMINATOR_LENGTH;
@@ -63,12 +71,6 @@ char *constructNewFilePath(const char *directoryPath, const char *pattern,
                  baseNameLength + strlen(fileExtension) +
                  NULL_TERMINATOR_LENGTH,
              "%s/%s%s%s", directoryPath, baseName, pattern, fileExtension);
-  } else {
-    fprintf(stderr, "Invalid mode selection, this is likely a problem in the "
-                    "modePrompt function");
-    free(baseName);
-    free(newFilePath);
-    return NULL;
   }
   free(baseName);
   return newFilePath;
@@ -96,33 +98,31 @@ int patternRename(const char *directoryPath, const char *pattern,
     return 0;
   }
 
-  while ((entry = readdir(dir)) != NULL) {
-    if (entry->d_type == DT_REG) {
-      const char dot = '.';
-      char *fileExtension = strrchr(entry->d_name, dot);
-      if (fileExtension == NULL || fileExtension[0] == '\0') {
-        continue;
-      }
-
-      size_t length = strlen(fileExtension);
-      char modifiedExtension[length + NULL_TERMINATOR_LENGTH];
-      snprintf(modifiedExtension, length, "%s", fileExtension);
-
-      if (strcmp(modifiedExtension, filteredExtension) == 0 ||
-          strcmp(filteredExtension, "None") == 0) {
-        char *oldFilePath = constructFilePath(directoryPath, entry->d_name);
-        char *newFilePath =
-            constructNewFilePath(directoryPath, pattern, entry->d_name, mode);
-
-        if (newFilePath != NULL) {
-          renameFile(oldFilePath, newFilePath);
-        }
-
-        free(oldFilePath);
-        free(newFilePath);
-      }
+  while ((entry = readdir(dir))) {
+    if (entry->d_type != DT_REG) {
+      continue;
     }
-  }
-  closedir(dir);
-  return 1;
+    const char dot = '.';
+    char *fileExtension = strrchr(entry->d_name, dot) + 1;
+    if (!fileExtension || fileExtension[0] == '\0') {
+      continue;
+    }
+    size_t extensionLength = strlen(fileExtension) + NULL_TERMINATOR_LENGTH;
+    char modifiedExtension[extensionLength];
+    snprintf(modifiedExtension, extensionLength, "%s", fileExtension);
+    if (strcmp(modifiedExtension, filteredExtension) == 1 ||
+        strcmp(filteredExtension, "None") == 1) {
+      continue;
+    }
+    char *oldFilePath = constructFilePath(directoryPath, entry->d_name);
+    char *newFilePath =
+        constructNewFilePath(directoryPath, pattern, entry->d_name, mode);
+    if (newFilePath) {
+      renameFile(oldFilePath, newFilePath);
+    }
+    free(oldFilePath);
+    free(newFilePath);
+}
+closedir(dir);
+return 1;
 }
