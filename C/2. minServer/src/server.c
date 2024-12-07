@@ -122,7 +122,8 @@ int main(int argc, char *argv[]) {
   socket_address.sin_port = htons(port);
   socket_address.sin_addr.s_addr = INADDR_ANY;
 
-  if (bind(sockfd, (struct sockaddr *)&socket_address, sizeof(socket_address)) == -1) {
+  if (bind(sockfd, (struct sockaddr *)&socket_address,
+           sizeof(socket_address)) == -1) {
     fprintf(stderr, "Failed to bind socket.\n");
     return EXIT_FAILURE;
   }
@@ -131,6 +132,9 @@ int main(int argc, char *argv[]) {
     fprintf(stderr, "Failed to start listening.\n");
     return EXIT_FAILURE;
   }
+  
+  fprintf(stdout, "Listening on port %d...\n\n", port);
+  fflush(stdout);
 
   while (1) {
     int clientfd = accept(sockfd, NULL, NULL);

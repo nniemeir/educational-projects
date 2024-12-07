@@ -1,5 +1,10 @@
 #include "../include/server.h"
 
+int file_exists(char *filename) {
+  struct stat buffer;
+  return stat(filename, &buffer) == 0 ? 1 : 0;
+}
+
 // Restrict file access to website directory
 int is_path_valid(const char *file_request) {
   // Reject file paths containing directory traversal patterns
@@ -60,11 +65,28 @@ size_t get_file_size(const char *file_request) {
 }
 
 // Serve the requested file and corresponding metadata
-char *add_file_to_response(char *method, char *metadata, char *file_request,
-                 char *response) {
+char *add_file_to_response(char *method, char *file_request, char *response,
+                           int *response_code) {
   FILE *file = fopen(file_request, "r");
   if (file == NULL) {
+    fprintf(stderr, "Unable to open file %s", file_request);
     return NULL;
+  }
+  char *metadata;
+  // Set metadata based on response_code
+  switch (*response_code) {
+  case 200:
+    metadata = HTTP_200;
+    break;
+  case 404:
+    metadata = HTTP_404;
+    break;
+  case 405:
+    metadata = HTTP_405;
+    break;
+  case 413:
+    metadata = HTTP_413;
+    break;
   }
   size_t file_size = get_file_size(file_request);
   size_t metadata_length = strlen(metadata);
@@ -72,8 +94,10 @@ char *add_file_to_response(char *method, char *metadata, char *file_request,
   if (file_size > available_space) {
     fprintf(stderr, "File content exceeds buffer size!\n");
     fclose(file);
+    *response_code = 413;
     return NULL;
   }
+
   memcpy(response, metadata, metadata_length);
   // See Mozilla's documentation for a list of HTTP request methods
   // https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods
@@ -116,18 +140,12 @@ int validate_path(char *file_request) {
   return is_path_valid(file_request);
 }
 
-char *get_metadata(int valid_path, int valid_method) {
-  if (valid_path) {
-    return HTTP_200;
-  }
-  return HTTP_404;
-}
-
 // Generate response to HTTP requests based on the method specified in the
 // header
 char *generate_response(char *buffer) {
   // Allocate memory for response string
   char *response = malloc(BUFFER_SIZE);
+  int response_code;
   if (!response) {
     fprintf(stderr, "Failed to allocate memory for response.\n");
     return NULL;
@@ -138,19 +156,28 @@ char *generate_response(char *buffer) {
   char *method = get_method(buffer);
   if (!method) {
     free(response);
-    return add_file_to_response(method, "website/405.html", HTTP_405, response);
+    response_code = 405;
+    response = add_file_to_response(method, "website/405.html", response,
+                                    &response_code);
+    return response;
   }
 
   // Isolate file_request
-  char *file_request = buffer + METHOD_LENGTH;
+  char *buffer_copy = strdup(buffer);
+  char *file_request = buffer_copy + METHOD_LENGTH;
   char *space_position = strchr(file_request, ' ');
   if (space_position) {
     *space_position = '\0';
   }
 
-  // Serve the response
   int valid_path = validate_path(file_request);
-  char *metadata = get_metadata(valid_path, method != NULL);
-  return add_file_to_response(method, metadata,
-                    valid_path ? file_request : "website/404.html", response);
+  response_code = 200;
+
+  if (!valid_path || !file_exists(file_request)) {
+    file_request = "website/404.html";
+    response_code = 404;
+  }
+  response =
+      add_file_to_response(method, file_request, response, &response_code);
+  return response;
 }
