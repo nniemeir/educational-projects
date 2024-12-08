@@ -132,7 +132,7 @@ int main(int argc, char *argv[]) {
     fprintf(stderr, "Failed to start listening.\n");
     return EXIT_FAILURE;
   }
-  
+
   fprintf(stdout, "Listening on port %d...\n\n", port);
   fflush(stdout);
 

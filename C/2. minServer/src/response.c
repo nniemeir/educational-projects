@@ -140,6 +140,44 @@ int validate_path(char *file_request) {
   return is_path_valid(file_request);
 }
 
+int log_request(char *buffer, int response_code, int response_size) {
+  char *host = strdup(buffer);
+  char *substring = NULL;
+  char *first_line_end = strchr(host, '\n');
+  if (!first_line_end) {
+    free(host);
+    return -1;
+  }
+  substring = first_line_end + 1;
+  char *host_position = strstr(substring, "Host:");
+  if (!host_position) {
+    fprintf(stderr, "No host found.\n");
+    free(host);
+    return -1;
+  }
+  host_position += 6;
+  char *host_end = strchr(host_position, ':');
+  if (host_end) {
+    *host_end = '\0';
+  }
+  printf("%s\n", host_position);
+
+  time_t t = time(NULL);
+  struct tm tm = *localtime(&t);
+
+  char *header_line = strdup(buffer);
+  char *carriage_position = strchr(header_line, '\r');
+  if (carriage_position) {
+    *carriage_position = '\0';
+  }
+
+  printf("[%d-%02d-%02d %02d:%02d:%02d] \"%s\" %d %d\n\n", tm.tm_year + 1900,
+         tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec,
+         header_line, response_code, response_size);
+  free(header_line);
+  return 1;
+}
+
 // Generate response to HTTP requests based on the method specified in the
 // header
 char *generate_response(char *buffer) {
@@ -179,5 +217,10 @@ char *generate_response(char *buffer) {
   }
   response =
       add_file_to_response(method, file_request, response, &response_code);
+  int response_size =
+      (strlen(response) + NULL_TERMINATOR_LENGTH) * sizeof(response);
+  if (!log_request(buffer, response_code, response_size)) {
+    fprintf(stderr, "Failed to log request.");
+  }
   return response;
 }
