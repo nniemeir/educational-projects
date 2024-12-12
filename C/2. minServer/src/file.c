@@ -1,4 +1,4 @@
-#include "../include/server.h"
+#include "../include/file.h"
 
 int file_exists(char *filename) {
   struct stat buffer;

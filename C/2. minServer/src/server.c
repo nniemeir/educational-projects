@@ -1,3 +1,4 @@
+#include "../include/response.h"
 #include "../include/server.h"
 
 void SSL_cleanup(SSL *ssl, SSL_CTX *ctx) {

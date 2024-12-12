@@ -1,4 +1,6 @@
-#include "../include/server.h"
+#include "../include/file.h"
+#include "../include/response.h"
+#include "../include/utils.h"
 
 char *get_metadata(int response_code) {
   switch (response_code) {
@@ -87,7 +89,6 @@ char *generate_response(char *buffer) {
   // Ensure method is supported by the server
   char *method = get_method(buffer);
   if (!method) {
-    free(response);
     response_code = 405;
     response = add_file_to_response(method, "website/405.html", response,
                                     &response_code);

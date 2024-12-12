@@ -1,4 +1,5 @@
-#include "../include/server.h"
+#include "../include/file.h"
+#include "../include/utils.h"
 
 char *get_method(char *buffer) {
   if (strncmp(buffer, "GET", 3) == 0) {

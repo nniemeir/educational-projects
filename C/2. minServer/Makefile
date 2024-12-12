@@ -26,12 +26,14 @@ CC = gcc
 
 OBJS=	$(SRC:.c=.o)
 
+CFLAGS = -Wall
+
 LDFLAGS = -lssl
 
 all: $(NAME)
 
 $(NAME): $(OBJS)
-	$(CC) -g -o $(NAME) $(OBJS) $(LDFLAGS)
+	$(CC) -g -o $(NAME) $(OBJS) $(CFLAGS) $(LDFLAGS)
 
 clean:
 	$(RM) $(OBJS)
