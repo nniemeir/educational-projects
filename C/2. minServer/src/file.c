@@ -11,7 +11,7 @@ int is_path_valid(const char *file_request) {
   char *traversal_patterns[] = {
       "../",      "%2e%2e%2f", "%2e%2e/",         "..%2f",   "%2e%2e%5c",
       "%2e%2e\\", "..% 5c ",   "%252e%252e%255c", "..%255c", "..\\"};
-  for (int i = 0;
+  for (size_t i = 0;
        i < sizeof(traversal_patterns) / sizeof(traversal_patterns[0]); ++i) {
     if (strstr(file_request, traversal_patterns[i]) != NULL) {
       return 0;
