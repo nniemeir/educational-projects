@@ -1,5 +1,5 @@
-#include "../include/file.h"
 #include "../include/response.h"
+#include "../include/file.h"
 #include "../include/utils.h"
 
 char *get_metadata(int response_code) {
@@ -23,7 +23,6 @@ char *get_metadata(int response_code) {
   return NULL;
 }
 
-// Serve the requested file and corresponding metadata
 char *add_file_to_response(char *method, char *file_request, char *response,
                            int *response_code) {
   FILE *file = fopen(file_request, "r");
@@ -48,8 +47,6 @@ char *add_file_to_response(char *method, char *file_request, char *response,
   }
 
   memcpy(response, metadata, metadata_length);
-  // See Mozilla's documentation for a list of HTTP request methods
-  // https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods
   if (strcmp(method, "GET") == 0) {
     size_t bytes_read = 0;
     while (bytes_read < file_size) {
@@ -74,8 +71,6 @@ char *add_file_to_response(char *method, char *file_request, char *response,
   return response;
 }
 
-// Generate response to HTTP requests based on the method specified in the
-// header
 char *generate_response(char *buffer) {
   // Allocate memory for response string
   char *response = malloc(BUFFER_SIZE);
@@ -86,7 +81,6 @@ char *generate_response(char *buffer) {
   }
   memset(response, 0, BUFFER_SIZE);
 
-  // Ensure method is supported by the server
   char *method = get_method(buffer);
   if (!method) {
     response_code = 405;

@@ -7,7 +7,6 @@ int file_exists(char *filename) {
 
 // Restrict file access to website directory
 int is_path_valid(const char *file_request) {
-  // Reject file paths containing directory traversal patterns
   char *traversal_patterns[] = {
       "../",      "%2e%2e%2f", "%2e%2e/",         "..%2f",   "%2e%2e%5c",
       "%2e%2e\\", "..% 5c ",   "%252e%252e%255c", "..%255c", "..\\"};
@@ -17,14 +16,12 @@ int is_path_valid(const char *file_request) {
       return 0;
     }
   }
-  // Reject file paths that do not begin with website/
   if (strncmp(file_request, "website/", 8) != 0) {
     return -1;
   }
   return 1;
 }
 
-// Remove trailing and redundant slashes from request
 void normalize_path(char *file_request) {
   char *src = file_request, *dst = file_request;
   while (*src) {
@@ -35,14 +32,14 @@ void normalize_path(char *file_request) {
       *dst++ = *src++;
     }
   }
-  // Remove trailing slash
   if (dst != file_request && *(dst - 1) == '/') {
     dst--;
   }
   *dst = '\0';
 }
 
-// Get the file size of the request in bytes
+// Get the size of the requested file in bytes to know how many bytes to
+// read into response string
 size_t get_file_size(const char *file_request) {
   FILE *file = fopen(file_request, "r");
   if (!file) {
