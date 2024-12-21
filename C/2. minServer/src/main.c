@@ -5,7 +5,7 @@ void process_args(int argc, char *argv[], int *port) {
   while ((c = getopt(argc, argv, "h::p:")) != -1) {
     switch (c) {
     case 'h':
-      printf("Usage: simpleHTTPS [options]\n");
+      printf("Usage: minserver [options]\n");
       printf("Options:\n");
       printf("  -h               Show this help message\n");
       printf("  -p               Specify port to listen on\n");
