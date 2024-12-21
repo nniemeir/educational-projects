@@ -1,4 +1,4 @@
-SRC = src/file.c src/response.c src/server.c src/utils.c
+SRC = src/file.c src/main.c src/response.c src/server.c src/utils.c
 
 CFLAGS += -I./include
 

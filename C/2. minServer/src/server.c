@@ -1,5 +1,5 @@
-#include "../include/response.h"
 #include "../include/server.h"
+#include "../include/response.h"
 
 void SSL_cleanup(SSL *ssl, SSL_CTX *ctx) {
   if (ssl) {
@@ -66,32 +66,6 @@ void handle_client(SSL_CTX *ctx, int clientfd) {
 
   SSL_cleanup(ssl, ctx);
   close(clientfd);
-}
-
-void process_args(int argc, char *argv[], int *port) {
-  int c;
-  while ((c = getopt(argc, argv, "h::p:")) != -1) {
-    switch (c) {
-    case 'h':
-      printf("Usage: simpleHTTPS [options]\n");
-      printf("Options:\n");
-      printf("  -h               Show this help message\n");
-      printf("  -p               Specify port to listen on\n");
-      exit(EXIT_SUCCESS);
-    case 'p':
-      if (optarg) {
-        *port = atoi(optarg);
-      } else {
-        fprintf(stderr, "No argument given for -p, defaulting to 8080.\n");
-        break;
-      }
-      break;
-    case '?':
-      fprintf(stderr, "Unknown option '-%c'. Run with -h for options.\n",
-              optopt);
-      exit(EXIT_FAILURE);
-    }
-  }
 }
 
 int init_socket(int port) {
@@ -164,11 +138,7 @@ int client_loop(SSL_CTX *ctx, int sockfd) {
   return 1;
 }
 
-int main(int argc, char *argv[]) {
-  // Default to port 8080 if port argument not given
-  int port = 8080;
-  process_args(argc, argv, &port);
-
+int init_server(int *port) {
   if (!OPENSSL_init_ssl(OPENSSL_INIT_LOAD_SSL_STRINGS |
                             OPENSSL_INIT_LOAD_CRYPTO_STRINGS,
                         NULL)) {
@@ -182,14 +152,14 @@ int main(int argc, char *argv[]) {
     return EXIT_FAILURE;
   }
 
-  int sockfd = init_socket(port);
+  int sockfd = init_socket(*port);
 
   if (sockfd == -1) {
     fprintf(stderr, "Failed to create socket.\n");
     return EXIT_FAILURE;
   }
 
-  fprintf(stdout, "Listening on port %d...\n\n", port);
+  fprintf(stdout, "Listening on port %d...\n\n", *port);
   fflush(stdout);
 
   int serving_clients = 1;
