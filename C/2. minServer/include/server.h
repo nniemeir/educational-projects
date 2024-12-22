@@ -8,6 +8,6 @@
 #define BUFFER_SIZE 16384
 #define NULL_TERMINATOR_LENGTH 1
 
-int init_server(int *port);
+int init_server(int *port, char **cert_path, char **key_path);
 
 #endif

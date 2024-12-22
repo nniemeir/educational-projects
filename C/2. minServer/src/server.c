@@ -93,20 +93,20 @@ int init_socket(int port) {
   return sockfd;
 }
 
-SSL_CTX *init_ssl_ctx() {
+SSL_CTX *init_ssl_ctx(char **cert_path, char **key_path) {
   SSL_CTX *ctx = SSL_CTX_new(TLS_server_method());
   if (ctx == NULL) {
     fprintf(stderr, "Failed to create SSL context.\n");
     return NULL;
   }
 
-  if (!SSL_CTX_use_certificate_chain_file(ctx, "cert")) {
+  if (!SSL_CTX_use_certificate_chain_file(ctx, *cert_path)) {
     fprintf(stderr, "Failed to set certificate.\n");
     SSL_cleanup(NULL, ctx);
     return NULL;
   }
 
-  if (!SSL_CTX_use_PrivateKey_file(ctx, "key", SSL_FILETYPE_PEM)) {
+  if (!SSL_CTX_use_PrivateKey_file(ctx, *key_path, SSL_FILETYPE_PEM)) {
     fprintf(stderr, "Failed to set private key.\n");
     SSL_cleanup(NULL, ctx);
     return NULL;
@@ -138,7 +138,7 @@ int client_loop(SSL_CTX *ctx, int sockfd) {
   return 1;
 }
 
-int init_server(int *port) {
+int init_server(int *port, char **cert_path, char **key_path) {
   if (!OPENSSL_init_ssl(OPENSSL_INIT_LOAD_SSL_STRINGS |
                             OPENSSL_INIT_LOAD_CRYPTO_STRINGS,
                         NULL)) {
@@ -146,7 +146,7 @@ int init_server(int *port) {
     return EXIT_FAILURE;
   }
 
-  SSL_CTX *ctx = init_ssl_ctx();
+  SSL_CTX *ctx = init_ssl_ctx(cert_path, key_path);
 
   if (!ctx) {
     return EXIT_FAILURE;
