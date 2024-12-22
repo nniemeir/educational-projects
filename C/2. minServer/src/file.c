@@ -7,16 +7,18 @@ int file_exists(char *filename) {
 
 // Restrict file access to website directory
 int is_path_valid(const char *file_request) {
+  char resolved_path[PATH_MAX];
+  char *resolved_file = realpath(file_request, resolved_path);
   char *traversal_patterns[] = {
       "../",      "%2e%2e%2f", "%2e%2e/",         "..%2f",   "%2e%2e%5c",
       "%2e%2e\\", "..% 5c ",   "%252e%252e%255c", "..%255c", "..\\"};
   for (size_t i = 0;
        i < sizeof(traversal_patterns) / sizeof(traversal_patterns[0]); ++i) {
-    if (strstr(file_request, traversal_patterns[i]) != NULL) {
+    if (strstr(resolved_file, traversal_patterns[i]) != NULL) {
       return 0;
     }
   }
-  if (strncmp(file_request, "website/", 8) != 0) {
+  if (strncmp(resolved_file, "website/", 8) != 0) {
     return -1;
   }
   return 1;

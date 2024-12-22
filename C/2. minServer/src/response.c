@@ -1,6 +1,7 @@
 #include "../include/response.h"
 #include "../include/file.h"
 #include "../include/utils.h"
+#include <linux/limits.h>
 
 char *get_metadata(int response_code) {
   switch (response_code) {
