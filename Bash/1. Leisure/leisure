@@ -41,7 +41,7 @@ promptMediaType() {
 
 fzfPrompt() {
 	local libraryFiles="$1"
-	selection=$(echo -e "$libraryFiles" | xargs -I {} basename "{}" | sed 's/\.[^.]*$//' | fzf --height=80% --delimiter , --layout=reverse --cycle --preview '
+	selection=$(echo -e "$libraryFiles" | xargs -I {} basename "{}" | sed 's/\.[^.]*$//' | fzf --height=80% --delimiter ';' --layout=reverse --cycle --preview '
         preview_file=$HOME/.config/leisure/previews/{}.png
         if [[ -f $preview_file ]]; then
             kitty icat --clear --transfer-mode=stream --stdin=no --place=50x50@30x30 $preview_file
@@ -55,7 +55,7 @@ fzfPrompt() {
 promptBooks() {
 	finished="0"
 	while [ $finished == "0" ]; do
-		bookFiles=$(ls "$BOOKS_PATH/"*.{epub,pdf} 2>/dev/null)
+		bookFiles=$(find "$BOOKS_PATH" -type f \( -name "*.epub" -o -name "*.pdf" \) | sort )
 		selection=$(fzfPrompt "$bookFiles")
 		if [ -z "$selection" ]; then
 			promptMediaType
@@ -68,7 +68,7 @@ promptBooks() {
 promptFilms() {
 	finished="0"
 	while [ $finished == "0" ]; do
-		filmFiles=$(ls "$MOVIES_PATH/"*.{mkv,mp4} 2>/dev/null)
+		filmFiles=$(find "$MOVIES_PATH" -type f \( -name "*.mkv" -o -name "*.mp4" \) | sort)
 		selection=$(fzfPrompt "$filmFiles")
 		if [ -z "$selection" ]; then
 			promptMediaType
@@ -222,7 +222,7 @@ availableRunnersDisplay="All\n$availableRunners"
 
 promptTV() {
 	clear
-	shows=$(ls $SHOWS_PATH)
+	shows=$(find "$SHOWS_PATH" -mindepth 1 -maxdepth 1 -type d | sort | sed "s|$SHOWS_PATH/||")
 	showSelection=$(fzfPrompt "$shows")
 
 	export showSelection
@@ -236,7 +236,7 @@ promptTV() {
 
 promptSeason() {
 	clear
-	seasons=$(ls "$SHOWS_PATH/$showSelection")
+	seasons=$(find "$SHOWS_PATH/$showSelection" -mindepth 1 -maxdepth 1 -type d | sort | sed "s|$SHOWS_PATH/$showSelection/||")
 	seasonSelection=$(fzfPrompt "$seasons")
 	if [ -z "$seasonSelection" ]; then
 		promptTV
@@ -249,7 +249,7 @@ promptEpisode() {
 	finished="0"
 	while [ $finished == "0" ]; do
 		clear
-		episodeFiles=$(ls "$SHOWS_PATH/$showSelection/$seasonSelection/"*.{mkv,mp4} 2>/dev/null)
+ 		episodeFiles=$(find "$SHOWS_PATH/$showSelection/$seasonSelection" -type f \( -name "*.mkv" -o -name "*.mp4" \) | sort)
 		episodeSelection=$(fzfPrompt "$episodeFiles")
 		if [ -z "$episodeSelection" ]; then
 			promptSeason
