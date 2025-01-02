@@ -1,19 +1,19 @@
 #!/bin/bash
 # Author: Jacob Niemeir <nniemeir@protonmail.com>
-# Browse media library efficiently using fzf
+# Consolidate media library browsing using fzf
 
-# Ensure configuration file is present
-source preferences.conf || {
+gamesCsvPath="$HOME/.config/leisure/games.csv"
+
+source $HOME/.config/leisure/preferences.conf || {
 	echo "Error: No configuration file found."
 	exit 1
 }
 
-if ! [ -f game_collection.csv ]; then
-	echo "game_collection.csv not found."
+if ! [ -f "$gamesCsvPath" ]; then
+	echo "games.csv not found."
 	exit 1
 fi
 
-# Ensure fzf is installed
 command -v fzf >/dev/null 2>&1 || {
 	echo >&2 "Error: fzf not found"
 	exit 1
@@ -41,8 +41,14 @@ promptMediaType() {
 
 fzfPrompt() {
 	local libraryFiles="$1"
-	# Define the preview command
-	selection=$(echo -e "$libraryFiles" | xargs -I {} basename "{}" | sed 's/\.[^.]*$//' | fzf --height=80% --delimiter , --layout=reverse --cycle)
+	selection=$(echo -e "$libraryFiles" | xargs -I {} basename "{}" | sed 's/\.[^.]*$//' | fzf --height=80% --delimiter , --layout=reverse --cycle --preview '
+        preview_file=$HOME/.config/leisure/previews/{}.png
+        if [[ -f $preview_file ]]; then
+            kitty icat --clear --transfer-mode=stream --stdin=no --place=50x50@30x30 $preview_file
+        else
+            kitty icat --clear --transfer-mode=stream --stdin=no --place=50x50@30x30 $HOME/.config/leisure/previews/default.png
+        fi
+    ')
 	echo $selection
 }
 
@@ -54,7 +60,7 @@ promptBooks() {
 		if [ -z "$selection" ]; then
 			promptMediaType
 		else
-			zathura "$BOOKS_PATH/$selection".* 2>/dev/null
+			zathura "$BOOKS_PATH/$selection".* 2>/dev/null &
 		fi
 	done
 }
@@ -62,9 +68,7 @@ promptBooks() {
 promptFilms() {
 	finished="0"
 	while [ $finished == "0" ]; do
-		# Add any other extensions if present in your library
 		filmFiles=$(ls "$MOVIES_PATH/"*.{mkv,mp4} 2>/dev/null)
-		# Create the primary and preview fzf window
 		selection=$(fzfPrompt "$filmFiles")
 		if [ -z "$selection" ]; then
 			promptMediaType
@@ -74,7 +78,6 @@ promptFilms() {
 	done
 }
 
-# It is determined which supported runners are installed
 enumerateRunners() {
 	case $runner in
 	BlastEm) flatpak list | grep "com.retrodev.blastem" ;;
@@ -97,7 +100,6 @@ enumerateRunners() {
 	esac
 }
 
-# The command used to launch the selected game is determined from the matching line's second field
 launch() {
 	case $runner in
 	BlastEm)
@@ -150,19 +152,17 @@ promptFilter() {
 	while [ $finished == "0" ]; do
 
 		filter=$(fzfPrompt "$availableRunnersDisplay")
-		# If input not given for filter, exit script
 		if [ -z "$filter" ]; then
 			clear
 			promptMediaType
 		fi
 
-		# If filter is All, the variable is emptied
 		if [ "$filter" == "All" ]; then
 			filter=""
 		fi
 
-		# Each line that fits our filter criteria is saved to this variable
 		filtered=$(awk -v filter="$filter" -v availableRunners="$availableRunners" 'BEGIN { FS = "," } {
+	if (NR == 1) { next }
 	if (filter == "") {
 		if (index(availableRunners, $2) > 0) {
 		print $1;
@@ -176,7 +176,7 @@ else {
 	   }
 	}
 }
-}' game_collection.csv)
+}' "$gamesCsvPath")
 
 		clear
 		break
@@ -188,16 +188,13 @@ promptGame() {
 	while [ $finished == "0" ]; do
 		selection=$(fzfPrompt "$filtered")
 
-		# The loop breaks if no game is selected
 		if [ -z "$selection" ]; then
 			break
 		fi
 
-		# Grab the other fields of the line in our collection whose first field is the same as the selected game
-		runner=$(awk 'BEGIN { FS = "," } /'"$selection"'/ { print $2 }' game_collection.csv)
-		gameID=$(awk 'BEGIN { FS = "," } /'"$selection"'/ { print $3 }' game_collection.csv)
+		runner=$(awk 'BEGIN { FS = "," } /'"$selection"'/ { print $2 }' "$gamesCsvPath")
+		gameID=$(awk 'BEGIN { FS = "," } /'"$selection"'/ { print $3 }' "$gamesCsvPath")
 
-		# Launch the selected game
 		launch
 
 		clear
@@ -213,7 +210,6 @@ for runner in $(echo -e "$SUPPORTED_RUNNERS"); do
 	fi
 done
 
-# If a runner in SUPPORTED_RUNNERS is installed, it is appended to availableRunners
 availableRunners=""
 for runner in $(echo -e "$SUPPORTED_RUNNERS"); do
 	if [[ ! "$unavailableRunners" =~ "$runner" ]]; then
@@ -221,10 +217,8 @@ for runner in $(echo -e "$SUPPORTED_RUNNERS"); do
 	fi
 done
 
-# Strip trailing newline and prepend "All" option before creating fzf windows
 availableRunners=$(echo -e "$availableRunners" | sed -e '$!b' -e '/^\n*$/d')
 availableRunnersDisplay="All\n$availableRunners"
-
 
 promptTV() {
 	clear
