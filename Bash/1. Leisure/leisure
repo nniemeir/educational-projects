@@ -161,7 +161,7 @@ promptFilter() {
 			filter=""
 		fi
 
-		filtered=$(awk -v filter="$filter" -v availableRunners="$availableRunners" 'BEGIN { FS = "," } {
+		filtered=$(awk -v filter="$filter" -v availableRunners="$availableRunners" 'BEGIN { FS = ";" } {
 	if (NR == 1) { next }
 	if (filter == "") {
 		if (index(availableRunners, $2) > 0) {
@@ -192,8 +192,8 @@ promptGame() {
 			break
 		fi
 
-		runner=$(awk 'BEGIN { FS = "," } /'"$selection"'/ { print $2 }' "$gamesCsvPath")
-		gameID=$(awk 'BEGIN { FS = "," } /'"$selection"'/ { print $3 }' "$gamesCsvPath")
+		runner=$(awk 'BEGIN { FS = ";" } /'"$selection"'/ { print $2 }' "$gamesCsvPath")
+		gameID=$(awk 'BEGIN { FS = ";" } /'"$selection"'/ { print $3 }' "$gamesCsvPath")
 
 		launch
 
