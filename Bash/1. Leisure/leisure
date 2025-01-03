@@ -2,48 +2,21 @@
 # Author: Jacob Niemeir <nniemeir@protonmail.com>
 # Consolidate media library browsing using fzf
 
-gamesCsvPath="$HOME/.config/leisure/games.csv"
+GAMES_CSV_PATH="$HOME/.config/leisure/games.csv"
 
-source $HOME/.config/leisure/preferences.conf || {
-	echo "Error: No configuration file found."
-	exit 1
-}
+SUPPORTED_RUNNERS="BlastEm\nbsnes\nDeSmuME\nDolphin\nFlycast\nHeroic\nLutris\nmGBA\nNestopia\nPCSX2\nPPSSPP\nRPCS3\nSteam"
 
-if ! [ -f "$gamesCsvPath" ]; then
-	echo "games.csv not found."
-	exit 1
-fi
-
-command -v fzf >/dev/null 2>&1 || {
-	echo >&2 "Error: fzf not found"
-	exit 1
-}
-
-promptMediaType() {
-	clear
-	mediaSections="Books\nFilms\nGames\nTelevision"
-	mediaType=$(fzfPrompt "$mediaSections")
-	case "$mediaType" in
-	Books) promptBooks ;;
-	Films) promptFilms ;;
-	Games) while true; do
-		promptFilter
-		promptGame
-	done ;;
-	Television) promptTV ;;
-	*)
-		kitty icat --clear
-		clear
-		exit 0
-		;;
-	esac
-}
-
-fzfPrompt() {
-	local libraryFiles="$1"
-	selection=$(echo -e "$libraryFiles" | xargs -I {} basename "{}" | sed 's/\.[^.]*$//' | fzf --height=80% --delimiter ';' --layout=reverse --cycle --preview '
-        preview_file=$HOME/.config/leisure/previews/{}.png
-        if [[ -f $preview_file ]]; then
+fzf_prompt() {
+	local library_files="$1"
+	local show_selection="$2"
+	export show_selection
+	local selection=$(echo -e "$library_files" | xargs -I {} basename "{}" | sed 's/\.[^.]*$//' | fzf --height=80% --delimiter ';' --layout=reverse --cycle --preview '
+        if [ -z "$show_selection" ]; then
+			preview_file=$HOME/.config/leisure/previews/{}.png
+        else
+			preview_file=$HOME/.config/leisure/previews/$show_selection.png
+		fi
+		if [[ -f $preview_file ]]; then
             kitty icat --clear --transfer-mode=stream --stdin=no --place=50x50@30x30 $preview_file
         else
             kitty icat --clear --transfer-mode=stream --stdin=no --place=50x50@30x30 $HOME/.config/leisure/previews/default.png
@@ -52,33 +25,159 @@ fzfPrompt() {
 	echo $selection
 }
 
-promptBooks() {
-	finished="0"
+prompt_media_type() {
+	clear
+	local media_sections="Books\nFilms\nGames\nTelevision"
+	local media_type=$(fzf_prompt "$media_sections")
+	case "$media_type" in
+	Books) prompt_books ;;
+	Films) prompt_films ;;
+	Games) prompt_runner ;;
+	Television) prompt_tv ;;
+	*)
+		kitty icat --clear
+		clear
+		exit 0
+		;;
+	esac
+}
+
+prompt_books() {
+	local finished="0"
 	while [ $finished == "0" ]; do
-		bookFiles=$(find "$BOOKS_PATH" -type f \( -name "*.epub" -o -name "*.pdf" \) | sort )
-		selection=$(fzfPrompt "$bookFiles")
-		if [ -z "$selection" ]; then
-			promptMediaType
+		local book_files=$(find "$BOOKS_PATH" -type f \( -name "*.epub" -o -name "*.pdf" \) | sort)
+		local book_selection=$(fzf_prompt "$book_files")
+		if [ -z "$book_selection" ]; then
+			prompt_media_type
 		else
-			zathura "$BOOKS_PATH/$selection".* 2>/dev/null &
+			zathura "$BOOKS_PATH/$book_selection".* 2>/dev/null &
 		fi
 	done
 }
 
-promptFilms() {
-	finished="0"
+prompt_films() {
+	local finished="0"
 	while [ $finished == "0" ]; do
-		filmFiles=$(find "$MOVIES_PATH" -type f \( -name "*.mkv" -o -name "*.mp4" \) | sort)
-		selection=$(fzfPrompt "$filmFiles")
-		if [ -z "$selection" ]; then
-			promptMediaType
+		local film_files=$(find "$MOVIES_PATH" -type f \( -name "*.mkv" -o -name "*.mp4" \) | sort)
+		local film_selection=$(fzf_prompt "$film_files")
+		if [ -z "$film_selection" ]; then
+			prompt_media_type
 		else
-			mpv "$MOVIES_PATH/$selection".* --fullscreen >/dev/null 2>&1 &
+			mpv "$MOVIES_PATH/$film_selection".* --fullscreen >/dev/null 2>&1 &
 		fi
 	done
 }
 
-enumerateRunners() {
+prompt_runner() {
+	local unavailable_runners=""
+	for runner in $(echo -e "$SUPPORTED_RUNNERS"); do
+		if [[ ! $(enumerate_runners "$runner") ]]; then
+			local unavailable_runners="$unavailable_runners$runner"
+		fi
+	done
+
+	local available_runners=""
+	for runner in $(echo -e "$SUPPORTED_RUNNERS"); do
+		if [[ ! "$unavailable_runners" =~ "$runner" ]]; then
+			local available_runners="$available_runners$runner\n"
+		fi
+	done
+
+	local available_runners=$(echo -e "$available_runners" | sed -e '$!b' -e '/^\n*$/d')
+	local available_runners_display="All\n$available_runners"
+	local finished="0"
+	while [ $finished == "0" ]; do
+
+		local runner_selection=$(fzf_prompt "$available_runners_display")
+		if [ -z "$runner_selection" ]; then
+			clear
+			prompt_media_type
+		fi
+
+		if [ "$runner_selection" == "All" ]; then
+			runner_selection=""
+		fi
+
+		local runner_games=$(awk -v filter="$runner_selection" -v available_runners="$available_runners" 'BEGIN { FS = ";" } {
+	if (NR == 1) { next }
+	if (runner_selection == "") {
+		if (index(available_runners, $2) > 0) {
+		print $1;
+	}
+	}
+else {
+	split(runner_selection, runners, /\n/);
+	for (i in runners) {
+		if ($2 == runners[i]) {
+		print $1;
+	   }
+	}
+}
+}' "$GAMES_CSV_PATH")
+
+		clear
+		break
+	done
+
+	prompt_game "$runner_games"
+}
+
+prompt_game() {
+	local runner_games="$1"
+	local finished="0"
+	while [ $finished == "0" ]; do
+		local selection=$(fzf_prompt "$runner_games")
+		if [ -z "$selection" ]; then
+			prompt_runner
+		else
+			local runner=$(awk 'BEGIN { FS = ";" } /'"$selection"'/ { print $2 }' "$GAMES_CSV_PATH")
+			local game_id=$(awk 'BEGIN { FS = ";" } /'"$selection"'/ { print $3 }' "$GAMES_CSV_PATH")
+			launch_game $runner $game_id
+		fi
+	done
+}
+
+prompt_tv() {
+	clear
+	local shows=$(find "$SHOWS_PATH" -mindepth 1 -maxdepth 1 -type d | sort | sed "s|$SHOWS_PATH/||")
+	local show_selection=$(fzf_prompt "$shows")
+
+	if [ -z "$show_selection" ]; then
+		prompt_media_type
+	else
+		prompt_season "$show_selection"
+	fi
+}
+
+prompt_season() {
+	clear
+	local show_selection="$1"
+	local seasons=$(find "$SHOWS_PATH/$show_selection" -mindepth 1 -maxdepth 1 -type d | sort | sed "s|$SHOWS_PATH/$show_selection/||")
+	local season_selection=$(fzf_prompt "$seasons" "$show_selection")
+	if [ -z "$season_selection" ]; then
+		prompt_tv
+	else
+		prompt_episode "$show_selection" "$season_selection"
+	fi
+}
+
+prompt_episode() {
+	local show_selection="$1"
+	local season_selection="$2"
+	local finished="0"
+	while [ $finished == "0" ]; do
+		clear
+		local episode_files=$(find "$SHOWS_PATH/$show_selection/$season_selection" -type f \( -name "*.mkv" -o -name "*.mp4" \) | sort)
+		local episode_selection=$(fzf_prompt "$episode_files" "$show_selection")
+		if [ -z "$episode_selection" ]; then
+			prompt_season "$show_selection"
+		else
+			mpv "$SHOWS_PATH/$show_selection/$season_selection/$episode_selection".* --fullscreen >/dev/null 2>&1 &
+		fi
+	done
+}
+
+enumerate_runners() {
 	case $runner in
 	BlastEm) flatpak list | grep "com.retrodev.blastem" ;;
 	bsnes) flatpak list | grep "dev.bsnes.bsnes" ;;
@@ -100,46 +199,48 @@ enumerateRunners() {
 	esac
 }
 
-launch() {
+launch_game() {
+	local runner="$1"
+	local game_id="$2"
 	case $runner in
 	BlastEm)
-		flatpak run com.retrodev.blastem "$MD_ROMS/$gameID" >/dev/null 2>&1 &
+		flatpak run com.retrodev.blastem "$MD_ROMS/$game_id" >/dev/null 2>&1 &
 		;;
 	bsnes)
-		flatpak run dev.bsnes.bsnes "$SNES_ROMS/$gameID" >/dev/null 2>&1 &
+		flatpak run dev.bsnes.bsnes "$SNES_ROMS/$game_id" >/dev/null 2>&1 &
 		;;
 	DeSmuME)
-		flatpak run org.desmume.DeSmuME "$DS_ROMS/$gameID" >/dev/null 2>&1 &
+		flatpak run org.desmume.DeSmuME "$DS_ROMS/$game_id" >/dev/null 2>&1 &
 		;;
 	Dolphin)
-		flatpak run org.DolphinEmu.dolphin-emu "$GAMECUBE_WII_ROMS/$gameID" >/dev/null 2>&1 &
+		flatpak run org.DolphinEmu.dolphin-emu "$GAMECUBE_WII_ROMS/$game_id" >/dev/null 2>&1 &
 		;;
 	Flycast)
-		flatpak run org.flycast.Flycast "$DREAMCAST_ROMS/$gameID" >/dev/null 2>&1 &
+		flatpak run org.flycast.Flycast "$DREAMCAST_ROMS/$game_id" >/dev/null 2>&1 &
 		;;
 	Heroic)
-		xdg-open heroic://launch/legendary/"$gameID" >/dev/null 2>&1 &
+		xdg-open heroic://launch/legendary/"$game_id" >/dev/null 2>&1 &
 		;;
 	Lutris)
-		env LUTRIS_SKIP_INIT=1 lutris "lutris:rungameid/$gameID" >/dev/null 2>&1 &
+		env LUTRIS_SKIP_INIT=1 lutris "lutris:rungame_id/$game_id" >/dev/null 2>&1 &
 		;;
 	mGBA)
-		flatpak run io.mgba.mGBA "$GBA_ROMS/$gameID" >/dev/null 2>&1 &
+		flatpak run io.mgba.mGBA "$GBA_ROMS/$game_id" >/dev/null 2>&1 &
 		;;
 	Nestopia)
-		flatpak run ca._0ldsk00l.Nestopia "$NES_ROMS/$gameID" >/dev/null 2>&1 &
+		flatpak run ca._0ldsk00l.Nestopia "$NES_ROMS/$game_id" >/dev/null 2>&1 &
 		;;
 	PCSX2)
-		flatpak run net.pcsx2.PCSX2 "$PS2_ROMS/$gameID" >/dev/null 2>&1 &
+		flatpak run net.pcsx2.PCSX2 "$PS2_ROMS/$game_id" >/dev/null 2>&1 &
 		;;
 	PPSSPP)
-		flatpak run org.ppsspp.PPSSPP "$PSP_ROMS/$gameID" >/dev/null 2>&1 &
+		flatpak run org.ppsspp.PPSSPP "$PSP_ROMS/$game_id" >/dev/null 2>&1 &
 		;;
 	RPCS3)
-		flatpak run net.rpcs3.RPCS3 "$PS3_ROMS/$gameID" >/dev/null 2>&1 &
+		flatpak run net.rpcs3.RPCS3 "$PS3_ROMS/$game_id" >/dev/null 2>&1 &
 		;;
 	Steam)
-		steam steam://rungameid/"$gameID" >/dev/null 2>&1 &
+		steam steam://rungame_id/"$game_id" >/dev/null 2>&1 &
 		;;
 	*)
 		echo "The runner $runner is not currently supported"
@@ -147,121 +248,24 @@ launch() {
 	esac
 }
 
-promptFilter() {
-	finished="0"
-	while [ $finished == "0" ]; do
-
-		filter=$(fzfPrompt "$availableRunnersDisplay")
-		if [ -z "$filter" ]; then
-			clear
-			promptMediaType
-		fi
-
-		if [ "$filter" == "All" ]; then
-			filter=""
-		fi
-
-		filtered=$(awk -v filter="$filter" -v availableRunners="$availableRunners" 'BEGIN { FS = ";" } {
-	if (NR == 1) { next }
-	if (filter == "") {
-		if (index(availableRunners, $2) > 0) {
-		print $1;
+main() {
+	source $HOME/.config/leisure/preferences.conf || {
+		echo "Error: No configuration file found."
+		exit 1
 	}
+
+	if ! [ -f "$GAMES_CSV_PATH" ]; then
+		echo "games.csv not found."
+		exit 1
+	fi
+
+	command -v fzf >/dev/null 2>&1 || {
+		echo >&2 "Error: fzf not found"
+		exit 1
 	}
-else {
-	split(filter, runners, /\n/);
-	for (i in runners) {
-		if ($2 == runners[i]) {
-		print $1;
-	   }
-	}
-}
-}' "$gamesCsvPath")
 
-		clear
-		break
-	done
+	prompt_media_type
+	exit 0
 }
 
-promptGame() {
-	finished="0"
-	while [ $finished == "0" ]; do
-		selection=$(fzfPrompt "$filtered")
-
-		if [ -z "$selection" ]; then
-			break
-		fi
-
-		runner=$(awk 'BEGIN { FS = ";" } /'"$selection"'/ { print $2 }' "$gamesCsvPath")
-		gameID=$(awk 'BEGIN { FS = ";" } /'"$selection"'/ { print $3 }' "$gamesCsvPath")
-
-		launch
-
-		clear
-	done
-}
-
-SUPPORTED_RUNNERS="BlastEm\nbsnes\nDeSmuME\nDolphin\nFlycast\nHeroic\nLutris\nmGBA\nNestopia\nPCSX2\nPPSSPP\nRPCS3\nSteam"
-
-unavailableRunners=""
-for runner in $(echo -e "$SUPPORTED_RUNNERS"); do
-	if [[ ! $(enumerateRunners "$runner") ]]; then
-		unavailableRunners="$unavailableRunners$runner"
-	fi
-done
-
-availableRunners=""
-for runner in $(echo -e "$SUPPORTED_RUNNERS"); do
-	if [[ ! "$unavailableRunners" =~ "$runner" ]]; then
-		availableRunners="$availableRunners$runner\n"
-	fi
-done
-
-availableRunners=$(echo -e "$availableRunners" | sed -e '$!b' -e '/^\n*$/d')
-availableRunnersDisplay="All\n$availableRunners"
-
-promptTV() {
-	clear
-	shows=$(find "$SHOWS_PATH" -mindepth 1 -maxdepth 1 -type d | sort | sed "s|$SHOWS_PATH/||")
-	showSelection=$(fzfPrompt "$shows")
-
-	export showSelection
-
-	if [ -z "$showSelection" ]; then
-		promptMediaType
-	else
-		promptSeason
-	fi
-}
-
-promptSeason() {
-	clear
-	seasons=$(find "$SHOWS_PATH/$showSelection" -mindepth 1 -maxdepth 1 -type d | sort | sed "s|$SHOWS_PATH/$showSelection/||")
-	seasonSelection=$(fzfPrompt "$seasons")
-	if [ -z "$seasonSelection" ]; then
-		promptTV
-	else
-		promptEpisode
-	fi
-}
-
-promptEpisode() {
-	finished="0"
-	while [ $finished == "0" ]; do
-		clear
- 		episodeFiles=$(find "$SHOWS_PATH/$showSelection/$seasonSelection" -type f \( -name "*.mkv" -o -name "*.mp4" \) | sort)
-		episodeSelection=$(fzfPrompt "$episodeFiles")
-		if [ -z "$episodeSelection" ]; then
-			promptSeason
-		else
-			mpv "$SHOWS_PATH/$showSelection/$seasonSelection/$episodeSelection".* --fullscreen >/dev/null 2>&1 &
-		fi
-	done
-}
-
-preview_file=""
-
-promptMediaType
-kitty icat --clear
-clear
-exit 0
+main "$@"

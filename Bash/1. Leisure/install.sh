@@ -17,7 +17,7 @@ if [ ! -d "$CONFIG_DIR" ]; then
         echo "Failed to make configuration directory."
         exit 1
     fi
-    if ! cp -f config/previews/ "$CONFIG_DIR/"; then
+    if ! cp config/previews/ "$CONFIG_DIR/"; then
         echo "Failed to copy previews directory."
         exit 1
     fi
