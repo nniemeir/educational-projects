@@ -17,18 +17,27 @@ if [ ! -d "$CONFIG_DIR" ]; then
         echo "Failed to make configuration directory."
         exit 1
     fi
-    if ! cp config/previews/ "$CONFIG_DIR/"; then
+    if ! cp -r config/previews/ "$CONFIG_DIR/"; then
         echo "Failed to copy previews directory."
         exit 1
     fi
 fi
 
-if ! cp config/preferences.conf config/games.csv "$CONFIG_DIR"; then
-    echo "Failed to copy configuration files to configuration directory."
-    exit 1
+if ! [ -f "$CONFIG_DIR/preferences.conf" ]; then
+    if ! cp config/preferences.conf "$CONFIG_DIR"; then
+        echo "Failed to copy preferences.conf to configuration directory"
+        exit 1
+    fi
 fi
 
-if ! gzip <man/leisure.1 > man/leisure.1.gz; then
+if ! [ -f "$CONFIG_DIR/games.csv" ]; then
+    if ! cp config/games.conf "$CONFIG_DIR"; then
+        echo "Failed to copy games.csv template to configuration directory"
+        exit 1
+    fi
+fi
+
+if ! gzip < man/leisure.1 > man/leisure.1.gz; then
     echo "Failed to compress manpage."
 fi
 

@@ -1,10 +1,79 @@
-.TH LEISURE "1" "January 2025" "Jacob Niemeir" "User Commands"
+.TH LEISURE 1 "January 3, 2025" "1.7" "User Commands"
 .SH NAME
 leisure \- Consolidate media library browsing using fzf
 .SH SYNOPSIS
 .B leisure
-
-.SH CONFIGURATION
-To use leisure, the paths to each media library must be set in preferences.conf.
-.br
-Due to the number of supported runners, games must be defined in games.csv.
+[\fIoptions\fR]
+.SH DESCRIPTION
+.TP
+Browse book, film, game, and television libraries using fzf. Image previews supported under kitty.
+.SH "SUPPORTED FILETYPES"
+.TP
+.B Books\fR
+EPUB, PDF
+.TP
+.B Games\fR
+Handled by runner
+.TP
+.B Video\fR
+MKV, MP4
+.SH OPTIONS
+.TP
+.B \-h
+Display this message
+.TP
+.B \-n
+Disable preview images
+.TP
+.B \-v
+Display version number
+.SH SUPPORTED RUNNERS
+.TP
+Emulators must be installed via flatpak.
+.TP
+\- BlastEm
+.TP
+\- bsnes
+.TP
+\- DeSmuME
+.TP
+\- Dolphin
+.TP
+\- Flycast
+.TP
+\- Heroic
+.TP
+\- Lutris
+.TP
+\- mGBA
+.TP
+\- Nestopia
+.TP
+\- PCSX2
+.TP
+\- PPSSPP
+.TP
+\- RPCS3
+.TP
+\- Steam
+.SH FILES
+.B $HOME/.config/leisure/games.csv \fR- contains user-provided game entries, each including:
+.RS 4
+.TP
+  \- Title
+.TP
+  \- Runner (The program being used to launch the game)
+.TP
+  \- ID (For emulated games, the name of the ROM is used)
+.RE
+.TP
+.B $HOME/.config/leisure/preferences.conf \fR- Used to configure media library paths.
+.TP
+.B $HOME/.config/leisure/previews \fR- PNG files put in this directory will be used as preview images for titles with the same basename.
+.SH "SEE ALSO" 
+.BR fzf (1),
+.BR kitty (1),
+.BR flatpak (1), 
+.BR mpv (1),
+.BR zathura (1),
+.BR awk (1)

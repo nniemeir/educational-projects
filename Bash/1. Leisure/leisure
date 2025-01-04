@@ -2,7 +2,7 @@
 # Author: Jacob Niemeir <nniemeir@protonmail.com>
 # Consolidate media library browsing using fzf
 
-LEISURE_VERSION="1.66"
+LEISURE_VERSION="1.8"
 
 GAMES_CSV_PATH="$HOME/.config/leisure/games.csv"
 
@@ -12,30 +12,34 @@ fzf_prompt() {
 	local library_files="$1"
 	local show_selection="$2"
 	export show_selection
-	local selection=$(echo -e "$library_files" | xargs -I {} basename "{}" | sed 's/\.[^.]*$//' | fzf --height=80% --delimiter ';' --layout=reverse --cycle --preview '
-        if [ -z "$show_selection" ]; then
-			preview_file=$HOME/.config/leisure/previews/{}.png
-        else
-			preview_file=$HOME/.config/leisure/previews/$show_selection.png
-		fi
-		if [[ -f $preview_file ]]; then
-            kitty icat --clear --transfer-mode=stream --stdin=no --place=50x50@30x30 $preview_file
-        else
-            kitty icat --clear --transfer-mode=stream --stdin=no --place=50x50@30x30 $HOME/.config/leisure/previews/default.png
-        fi
-    ')
+	if [ "$disable_previews" -eq 1 ]; then
+		local selection=$(echo -e "$library_files" | xargs -I {} basename "{}" | sed 's/\.[^.]*$//' | fzf --height=80% --delimiter ';' --layout=reverse --cycle)
+	else
+		local selection=$(echo -e "$library_files" | xargs -I {} basename "{}" | sed 's/\.[^.]*$//' | fzf --height=80% --delimiter ';' --layout=reverse --cycle --preview '
+			if [ -z "$show_selection" ]; then
+				preview_file=$HOME/.config/leisure/previews/{}.png
+			else
+				preview_file=$HOME/.config/leisure/previews/$show_selection.png
+			fi
+			if [[ -f $preview_file ]]; then
+				kitty icat --clear --transfer-mode=stream --stdin=no --place=50x50@30x30 $preview_file
+			else
+				kitty icat --clear --transfer-mode=stream --stdin=no --place=50x50@30x30 $HOME/.config/leisure/previews/default.png
+			fi
+		')
+	fi
 	echo $selection
 }
 
 prompt_media_type() {
 	clear
 	local media_sections=""
-	[ -n "${BOOKS_PATH}" ] && media_sections="$media_sections Books\n"
-	[ -n "${MOVIES_PATH}" ] && media_sections="$media_sections Films\n"
-	[ -n "${GAMES_CSV_PATH}" ] && media_sections="$media_sections Games\n"
-	[ -n "${SHOWS_PATH}" ] && media_sections="$media_sections Television"
+	[ -d "${BOOKS_PATH}" ] && media_sections="$media_sections Books\n"
+	[ -d "${MOVIES_PATH}" ] && media_sections="$media_sections Films\n"
+	[ -f "${GAMES_CSV_PATH}" ] && media_sections="$media_sections Games\n"
+	[ -d "${SHOWS_PATH}" ] && media_sections="$media_sections Television"
 	if [ -z "$media_sections" ]; then
-		echo "No media paths defined, check your configuration."
+		echo "No valid media paths found, check your configuration."
 		exit 1
 	fi
 	local type_selection=$(fzf_prompt "$media_sections")
@@ -263,17 +267,26 @@ main() {
 		echo "Error: No configuration file found."
 		exit 1
 	}
+	disable_previews=0
+	
+	if [[ "$TERM" != *"kitty"* ]]; then
+		disable_previews=1
+	fi
 
-	while getopts "hvf:" flag; do
+	while getopts "hnv" flag; do
 		case $flag in
 		h)
 			echo "Usage: leisure [options]"
 			echo "Options:"
 			echo "  -h               Display this message"
+			echo "  -n               Disable preview images"
 			echo "  -v               Display version number"
 			exit 0
 			;;
-		v) # Handle the -v flag
+		n)
+			disable_previews=1
+			;;
+		v)
 			echo "Leisure $LEISURE_VERSION"
 			exit 0
 			;;
