@@ -2,7 +2,7 @@
 # Author: Jacob Niemeir <nniemeir@protonmail.com>
 # Consolidate media library browsing using fzf
 
-LEISURE_VERSION="1.8.2"
+LEISURE_VERSION="1.8.3"
 
 GAMES_CSV_PATH="$HOME/.config/leisure/games.csv"
 
@@ -283,7 +283,7 @@ launch_game() {
 }
 
 main() {
-	source "$HOME/.config/leisure/preferences.conf" || {
+	source "$HOME/.config/leisure/paths.conf" || {
 		echo "Error: No configuration file found."
 		exit 1
 	}

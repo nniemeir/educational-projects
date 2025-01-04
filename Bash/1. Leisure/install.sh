@@ -23,9 +23,9 @@ if [ ! -d "$CONFIG_DIR" ]; then
     fi
 fi
 
-if ! [ -f "$CONFIG_DIR/preferences.conf" ]; then
-    if ! cp config/preferences.conf "$CONFIG_DIR"; then
-        echo "Failed to copy preferences.conf to configuration directory"
+if ! [ -f "$CONFIG_DIR/paths.conf" ]; then
+    if ! cp config/paths.conf "$CONFIG_DIR"; then
+        echo "Failed to copy paths.conf template to configuration directory"
         exit 1
     fi
 fi
