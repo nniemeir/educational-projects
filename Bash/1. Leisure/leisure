@@ -2,6 +2,8 @@
 # Author: Jacob Niemeir <nniemeir@protonmail.com>
 # Consolidate media library browsing using fzf
 
+LEISURE_VERSION="1.66"
+
 GAMES_CSV_PATH="$HOME/.config/leisure/games.csv"
 
 SUPPORTED_RUNNERS="BlastEm\nbsnes\nDeSmuME\nDolphin\nFlycast\nHeroic\nLutris\nmGBA\nNestopia\nPCSX2\nPPSSPP\nRPCS3\nSteam"
@@ -27,9 +29,17 @@ fzf_prompt() {
 
 prompt_media_type() {
 	clear
-	local media_sections="Books\nFilms\nGames\nTelevision"
-	local media_type=$(fzf_prompt "$media_sections")
-	case "$media_type" in
+	local media_sections=""
+	[ -n "${BOOKS_PATH}" ] && media_sections="$media_sections Books\n"
+	[ -n "${MOVIES_PATH}" ] && media_sections="$media_sections Films\n"
+	[ -n "${GAMES_CSV_PATH}" ] && media_sections="$media_sections Games\n"
+	[ -n "${SHOWS_PATH}" ] && media_sections="$media_sections Television"
+	if [ -z "$media_sections" ]; then
+		echo "No media paths defined, check your configuration."
+		exit 1
+	fi
+	local type_selection=$(fzf_prompt "$media_sections")
+	case "$type_selection" in
 	Books) prompt_books ;;
 	Films) prompt_films ;;
 	Games) prompt_runner ;;
@@ -253,6 +263,25 @@ main() {
 		echo "Error: No configuration file found."
 		exit 1
 	}
+
+	while getopts "hvf:" flag; do
+		case $flag in
+		h)
+			echo "Usage: leisure [options]"
+			echo "Options:"
+			echo "  -h               Display this message"
+			echo "  -v               Display version number"
+			exit 0
+			;;
+		v) # Handle the -v flag
+			echo "Leisure $LEISURE_VERSION"
+			exit 0
+			;;
+		\?)
+			exit 1
+			;;
+		esac
+	done
 
 	if ! [ -f "$GAMES_CSV_PATH" ]; then
 		echo "games.csv not found."
