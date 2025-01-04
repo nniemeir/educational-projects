@@ -2,7 +2,7 @@
 # Author: Jacob Niemeir <nniemeir@protonmail.com>
 # Consolidate media library browsing using fzf
 
-LEISURE_VERSION="1.8"
+LEISURE_VERSION="1.8.2"
 
 GAMES_CSV_PATH="$HOME/.config/leisure/games.csv"
 
@@ -12,10 +12,11 @@ fzf_prompt() {
 	local library_files="$1"
 	local show_selection="$2"
 	export show_selection
+	local selection
 	if [ "$disable_previews" -eq 1 ]; then
-		local selection=$(echo -e "$library_files" | xargs -I {} basename "{}" | sed 's/\.[^.]*$//' | fzf --height=80% --delimiter ';' --layout=reverse --cycle)
+		selection=$(echo -e "$library_files" | xargs -I {} basename "{}" | sed 's/\.[^.]*$//' | fzf --height=80% --delimiter ';' --layout=reverse --cycle)
 	else
-		local selection=$(echo -e "$library_files" | xargs -I {} basename "{}" | sed 's/\.[^.]*$//' | fzf --height=80% --delimiter ';' --layout=reverse --cycle --preview '
+		selection=$(echo -e "$library_files" | xargs -I {} basename "{}" | sed 's/\.[^.]*$//' | fzf --height=80% --delimiter ';' --layout=reverse --cycle --preview '
 			if [ -z "$show_selection" ]; then
 				preview_file=$HOME/.config/leisure/previews/{}.png
 			else
@@ -28,7 +29,7 @@ fzf_prompt() {
 			fi
 		')
 	fi
-	echo $selection
+	echo "$selection"
 }
 
 prompt_media_type() {
@@ -42,7 +43,8 @@ prompt_media_type() {
 		echo "No valid media paths found, check your configuration."
 		exit 1
 	fi
-	local type_selection=$(fzf_prompt "$media_sections")
+	local type_selection
+	type_selection=$(fzf_prompt "$media_sections")
 	case "$type_selection" in
 	Books) prompt_books ;;
 	Films) prompt_films ;;
@@ -59,8 +61,10 @@ prompt_media_type() {
 prompt_books() {
 	local finished="0"
 	while [ $finished == "0" ]; do
-		local book_files=$(find "$BOOKS_PATH" -type f \( -name "*.epub" -o -name "*.pdf" \) | sort)
-		local book_selection=$(fzf_prompt "$book_files")
+		local book_files
+		book_files=$(find "$BOOKS_PATH" -type f \( -name "*.epub" -o -name "*.pdf" \) | sort)
+		local book_selection
+		book_selection=$(fzf_prompt "$book_files")
 		if [ -z "$book_selection" ]; then
 			prompt_media_type
 		else
@@ -72,8 +76,10 @@ prompt_books() {
 prompt_films() {
 	local finished="0"
 	while [ $finished == "0" ]; do
-		local film_files=$(find "$MOVIES_PATH" -type f \( -name "*.mkv" -o -name "*.mp4" \) | sort)
-		local film_selection=$(fzf_prompt "$film_files")
+		local film_files
+		film_files=$(find "$MOVIES_PATH" -type f \( -name "*.mkv" -o -name "*.mp4" \) | sort)
+		local film_selection
+		film_selection=$(fzf_prompt "$film_files")
 		if [ -z "$film_selection" ]; then
 			prompt_media_type
 		else
@@ -92,17 +98,21 @@ prompt_runner() {
 
 	local available_runners=""
 	for runner in $(echo -e "$SUPPORTED_RUNNERS"); do
-		if [[ ! "$unavailable_runners" =~ "$runner" ]]; then
-			local available_runners="$available_runners$runner\n"
+		if [[ ! "$unavailable_runners" =~ $runner ]]; then
+			local available_runners
+			available_runners="$available_runners$runner\n"
 		fi
 	done
 
-	local available_runners=$(echo -e "$available_runners" | sed -e '$!b' -e '/^\n*$/d')
-	local available_runners_display="All\n$available_runners"
+	local available_runners
+	available_runners=$(echo -e "$available_runners" | sed -e '$!b' -e '/^\n*$/d')
+	local available_runners_display
+	available_runners_display="All\n$available_runners"
 	local finished="0"
 	while [ $finished == "0" ]; do
 
-		local runner_selection=$(fzf_prompt "$available_runners_display")
+		local runner_selection
+		runner_selection=$(fzf_prompt "$available_runners_display")
 		if [ -z "$runner_selection" ]; then
 			clear
 			prompt_media_type
@@ -112,7 +122,8 @@ prompt_runner() {
 			runner_selection=""
 		fi
 
-		local runner_games=$(awk -v filter="$runner_selection" -v available_runners="$available_runners" 'BEGIN { FS = ";" } {
+		local runner_games
+		runner_games=$(awk -v filter="$runner_selection" -v available_runners="$available_runners" 'BEGIN { FS = ";" } {
 	if (NR == 1) { next }
 	if (runner_selection == "") {
 		if (index(available_runners, $2) > 0) {
@@ -140,21 +151,26 @@ prompt_game() {
 	local runner_games="$1"
 	local finished="0"
 	while [ $finished == "0" ]; do
-		local selection=$(fzf_prompt "$runner_games")
-		if [ -z "$selection" ]; then
+		local game_selection
+		game_selection=$(fzf_prompt "$runner_games")
+		if [ -z "$game_selection" ]; then
 			prompt_runner
 		else
-			local runner=$(awk 'BEGIN { FS = ";" } /'"$selection"'/ { print $2 }' "$GAMES_CSV_PATH")
-			local game_id=$(awk 'BEGIN { FS = ";" } /'"$selection"'/ { print $3 }' "$GAMES_CSV_PATH")
-			launch_game $runner $game_id
+			local runner
+			runner=$(awk 'BEGIN { FS = ";" } /'"$game_selection"'/ { print $2 }' "$GAMES_CSV_PATH")
+			local game_id
+			game_id=$(awk 'BEGIN { FS = ";" } /'"$game_selection"'/ { print $3 }' "$GAMES_CSV_PATH")
+			launch_game "$runner" "$game_id"
 		fi
 	done
 }
 
 prompt_tv() {
 	clear
-	local shows=$(find "$SHOWS_PATH" -mindepth 1 -maxdepth 1 -type d | sort | sed "s|$SHOWS_PATH/||")
-	local show_selection=$(fzf_prompt "$shows")
+	local shows
+	shows=$(find "$SHOWS_PATH" -mindepth 1 -maxdepth 1 -type d | sort | sed "s|$SHOWS_PATH/||")
+	local show_selection
+	show_selection=$(fzf_prompt "$shows")
 
 	if [ -z "$show_selection" ]; then
 		prompt_media_type
@@ -166,8 +182,10 @@ prompt_tv() {
 prompt_season() {
 	clear
 	local show_selection="$1"
-	local seasons=$(find "$SHOWS_PATH/$show_selection" -mindepth 1 -maxdepth 1 -type d | sort | sed "s|$SHOWS_PATH/$show_selection/||")
-	local season_selection=$(fzf_prompt "$seasons" "$show_selection")
+	local seasons
+	seasons=$(find "$SHOWS_PATH/$show_selection" -mindepth 1 -maxdepth 1 -type d | sort | sed "s|$SHOWS_PATH/$show_selection/||")
+	local season_selection
+	season_selection=$(fzf_prompt "$seasons" "$show_selection")
 	if [ -z "$season_selection" ]; then
 		prompt_tv
 	else
@@ -181,8 +199,10 @@ prompt_episode() {
 	local finished="0"
 	while [ $finished == "0" ]; do
 		clear
-		local episode_files=$(find "$SHOWS_PATH/$show_selection/$season_selection" -type f \( -name "*.mkv" -o -name "*.mp4" \) | sort)
-		local episode_selection=$(fzf_prompt "$episode_files" "$show_selection")
+		local episode_files
+		episode_files=$(find "$SHOWS_PATH/$show_selection/$season_selection" -type f \( -name "*.mkv" -o -name "*.mp4" \) | sort)
+		local episode_selection
+		episode_selection=$(fzf_prompt "$episode_files" "$show_selection")
 		if [ -z "$episode_selection" ]; then
 			prompt_season "$show_selection"
 		else
@@ -263,12 +283,13 @@ launch_game() {
 }
 
 main() {
-	source $HOME/.config/leisure/preferences.conf || {
+	source "$HOME/.config/leisure/preferences.conf" || {
 		echo "Error: No configuration file found."
 		exit 1
 	}
+
 	disable_previews=0
-	
+
 	if [[ "$TERM" != *"kitty"* ]]; then
 		disable_previews=1
 	fi
