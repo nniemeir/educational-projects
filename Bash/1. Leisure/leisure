@@ -2,39 +2,55 @@
 # Author: Jacob Niemeir <nniemeir@protonmail.com>
 # Consolidate media library browsing using fzf
 
-LEISURE_VERSION="1.8.4"
+LEISURE_VERSION="1.9"
 
 GAMES_CSV_PATH="$HOME/.config/leisure/games.csv"
 
 SUPPORTED_RUNNERS="BlastEm\nbsnes\nDeSmuME\nDolphin\nFlycast\nHeroic\nLutris\nmGBA\nNestopia\nPCSX2\nPPSSPP\nRPCS3\nSteam"
 
-# Adjust this part of your fzf_prompt function
 fzf_prompt() {
-    local library_files="$1"
-    local show_selection="$2"
-    export show_selection
-    local selection
-    if [ "$disable_previews" -eq 1 ]; then
-        selection=$(echo -e "$library_files" | xargs -I {} basename "{}" | sed 's/\.[^.]*$//' | fzf --height=80% --delimiter ';' --layout=reverse --cycle)
-    else
-        selection=$(echo -e "$library_files" | xargs -I {} basename "{}" | sed 's/\.[^.]*$//' | fzf --height=80% --delimiter ';' --layout=reverse --cycle --preview-window noborder --preview '
-			local cols=$(tput cols)
-			local rows=$(tput lines)
+	local library_files="$1"
+	local show_selection="$2"
+	export show_selection
+	local selection
+	if [ "$disable_previews" -eq 1 ]; then
+		selection=$(echo -e "$library_files" | xargs -I {} basename "{}" | sed 's/\.[^.]*$//' | fzf --height=80% --delimiter ';' --layout=reverse --cycle)
+	else
+		selection=$(echo -e "$library_files" | xargs -I {} basename "{}" | sed 's/\.[^.]*$//' | fzf --height=80% --delimiter ';' --layout=reverse --cycle --preview-window noborder --preview '
+            local terminal_cols
+			local terminal_rows
+			local img_cols
+			local img_rows
+			local aspect_ratio
+			local preview_file
+			terminal_cols=$(tput cols)
+			terminal_rows=$(tput lines)
+            aspect_ratio=$((terminal_cols * 100 / terminal_rows))
+			
+            if [ $aspect_ratio -ge 150 ]; then
+                img_cols=$((terminal_cols*50/100))
+                img_rows=$((terminal_rows*80/100))
+            elif [ $aspect_ratio -le 75 ]; then
+                img_cols=$((terminal_cols*80/100))
+                img_rows=$((terminal_rows*50/100))
+            else
+                img_cols=$((terminal_cols*80/100))
+                img_rows=$((terminal_rows*80/100))
+            fi
             if [ -z "$show_selection" ]; then
                 preview_file=$HOME/.config/leisure/previews/{}.png
             else
                 preview_file=$HOME/.config/leisure/previews/$show_selection.png
             fi
             if [[ -f $preview_file ]]; then
-                kitty icat --clear --transfer-mode=stream --stdin=no --place=$((cols*80/100))x$((rows*80/100))@10x10 $preview_file
+                kitty icat --clear --transfer-mode=stream --stdin=no --place=${img_cols}x${img_rows}@$(((cols-img_cols)/2))x$(((rows-img_rows)/2)) $preview_file
             else
-                kitty icat --clear --transfer-mode=stream --stdin=no --place=$((cols*80/100))x$((rows*80/100))@10x10 $HOME/.config/leisure/previews/default.png
+                kitty icat --clear --transfer-mode=stream --stdin=no --place=${img_cols}x${img_rows}@$(((cols-img_cols)/2))x$(((rows-img_rows)/2)) $HOME/.config/leisure/previews/default.png
             fi
         ')
-    fi
-    echo "$selection"
+	fi
+	echo "$selection"
 }
-
 
 prompt_media_type() {
 	clear
@@ -128,22 +144,21 @@ prompt_runner() {
 
 		local runner_games
 		runner_games=$(awk -v filter="$runner_selection" -v available_runners="$available_runners" 'BEGIN { FS = ";" } {
-	if (NR == 1) { next }
-	if (runner_selection == "") {
-		if (index(available_runners, $2) > 0) {
-		print $1;
-	}
-	}
-else {
-	split(runner_selection, runners, /\n/);
-	for (i in runners) {
-		if ($2 == runners[i]) {
-		print $1;
-	   }
-	}
-}
-}' "$GAMES_CSV_PATH")
-
+			if (NR == 1) { next }
+			if (filter == "") {
+				if (index(available_runners, $2) > 0) {
+				print $1;
+			}
+			}
+		else {
+			split(filter, runners, /\n/);
+			for (i in runners) {
+				if ($2 == runners[i]) {
+				print $1;
+			}
+			}
+		}
+		}' "$GAMES_CSV_PATH")
 		clear
 		break
 	done
