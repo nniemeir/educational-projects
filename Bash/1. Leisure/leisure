@@ -2,7 +2,7 @@
 # Author: Jacob Niemeir <nniemeir@protonmail.com>
 # Consolidate media library browsing using fzf
 
-LEISURE_VERSION="1.9.1"
+LEISURE_VERSION="1.9.2"
 
 GAMES_CSV_PATH="$HOME/.config/leisure/games.csv"
 
