@@ -10,4 +10,9 @@ if ! sudo rm -rf /usr/bin/leisure; then
     exit 1
 fi
 
+if ! sudo rm -rf /etc/leisure/; then
+    echo "Failed to remove config templates from /etc."
+    exit 1
+fi
+
 echo "Uninstall successful."
