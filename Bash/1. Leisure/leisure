@@ -232,18 +232,18 @@ prompt_episode() {
 
 enumerate_runners() {
 	case $runner in
-	BlastEm) flatpak list | grep "com.retrodev.blastem" ;;
-	bsnes) flatpak list | grep "dev.bsnes.bsnes" ;;
-	DeSmuME) flatpak list | grep "org.desmume.DeSmuME" ;;
-	Dolphin) flatpak list | grep "org.DolphinEmu.dolphin-emu" ;;
-	Flycast) flatpak list | grep "org.flycast.Flycast" ;;
+	BlastEm) [ -d "$MD_ROMS" ] && flatpak list | grep "com.retrodev.blastem" ;;
+	bsnes) [ -d "$SNES_ROMS" ] && flatpak list | grep "dev.bsnes.bsnes" ;;
+	DeSmuME) [ -d "$DS_ROMS" ] && flatpak list | grep "org.desmume.DeSmuME" ;;
+	Dolphin) [ -d "$GAMECUBE_WII_ROMS" ] && flatpak list | grep "org.DolphinEmu.dolphin-emu" ;;
+	Flycast) [ -d "$DREAMCAST_ROMS" ] && flatpak list | grep "org.flycast.Flycast" ;;
 	Heroic) command -v heroic ;;
 	Lutris) command -v lutris ;;
-	mGBA) flatpak list | grep "io.mgba.mGBA" ;;
-	Nestopia) flatpak list | grep "ca._0ldsk00l.Nestopia" ;;
-	PCSX2) flatpak list | grep "net.pcsx2.PCSX2" ;;
-	PPSSPP) flatpak list | grep "org.ppsspp.PPSSPP" ;;
-	RPCS3) flatpak list | grep "net.rpcs3.RPCS3" ;;
+	mGBA) [ -d "$GBA_ROMS" ] && flatpak list | grep "io.mgba.mGBA" ;;
+	Nestopia) [ -d "$NES_ROMS" ] && flatpak list | grep "ca._0ldsk00l.Nestopia" ;;
+	PCSX2) [ -d "$PS2_ROMS" ] && flatpak list | grep "net.pcsx2.PCSX2" ;;
+	PPSSPP) [ -d "$PSP_ROMS" ] && flatpak list | grep "org.ppsspp.PPSSPP" ;;
+	RPCS3) [ -d "$PS3_ROMS" ] && flatpak list | grep "net.rpcs3.RPCS3" ;;
 	Steam) command -v steam ;;
 	*)
 		echo "Error: Invalid Runner"
