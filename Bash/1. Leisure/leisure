@@ -2,9 +2,7 @@
 # Author: Jacob Niemeir <nniemeir@protonmail.com>
 # Consolidate media library browsing using fzf
 
-LEISURE_VERSION="1.9.4"
-
-GAMES_CSV_PATH="$HOME/.config/leisure/games.csv"
+LEISURE_VERSION="1.9.8"
 
 SUPPORTED_RUNNERS="BlastEm\nbsnes\nDeSmuME\nDolphin\nFlycast\nHeroic\nLutris\nmGBA\nNestopia\nPCSX2\nPPSSPP\nRPCS3\nSteam"
 
@@ -12,6 +10,7 @@ fzf_prompt() {
 	local library_files="$1"
 	local show_selection="$2"
 	export show_selection
+	export config_dir
 	local selection
 	if [ "$disable_previews" -eq 1 ]; then
 		selection=$(echo -e "$library_files" | xargs -I {} basename "{}" | sed 's/\.[^.]*$//' | fzf --height=80% --delimiter ';' --layout=reverse --cycle)
@@ -38,14 +37,14 @@ fzf_prompt() {
                 img_rows=$((terminal_rows*80/100))
             fi
             if [ -z "$show_selection" ]; then
-                preview_file=$HOME/.config/leisure/previews/{}.png
+                preview_file=$config_dir/previews/{}.png
             else
-                preview_file=$HOME/.config/leisure/previews/$show_selection.png
+                preview_file=$config_dir/previews/$show_selection.png
             fi
             if [[ -f $preview_file ]]; then
                 kitty icat --clear --transfer-mode=stream --stdin=no --place=${img_cols}x${img_rows}@$(((cols-img_cols)/2))x$(((rows-img_rows)/2)) $preview_file
             else
-                kitty icat --clear --transfer-mode=stream --stdin=no --place=${img_cols}x${img_rows}@$(((cols-img_cols)/2))x$(((rows-img_rows)/2)) $HOME/.config/leisure/previews/default.png
+                kitty icat --clear --transfer-mode=stream --stdin=no --place=${img_cols}x${img_rows}@$(((cols-img_cols)/2))x$(((rows-img_rows)/2)) $config_dir/previews/default.png
             fi
         ')
 	fi
@@ -57,7 +56,7 @@ prompt_media_type() {
 	local media_sections=""
 	[ -d "${BOOKS_PATH}" ] && media_sections="$media_sections Books\n"
 	[ -d "${MOVIES_PATH}" ] && media_sections="$media_sections Films\n"
-	[ -f "${GAMES_CSV_PATH}" ] && media_sections="$media_sections Games\n"
+	[ -f "${games_csv_path}" ] && media_sections="$media_sections Games\n"
 	[ -d "${SHOWS_PATH}" ] && media_sections="$media_sections Television"
 	if [ -z "$media_sections" ]; then
 		echo "No valid media paths found, check your configuration."
@@ -158,7 +157,7 @@ prompt_runner() {
 			}
 			}
 		}
-		}' "$GAMES_CSV_PATH")
+		}' "$games_csv_path")
 		clear
 		break
 	done
@@ -176,9 +175,9 @@ prompt_game() {
 			prompt_runner
 		else
 			local runner
-			runner=$(awk 'BEGIN { FS = ";" } /'"$game_selection"'/ { print $2 }' "$GAMES_CSV_PATH")
+			runner=$(awk 'BEGIN { FS = ";" } /'"$game_selection"'/ { print $2 }' "$games_csv_path")
 			local game_id
-			game_id=$(awk 'BEGIN { FS = ";" } /'"$game_selection"'/ { print $3 }' "$GAMES_CSV_PATH")
+			game_id=$(awk 'BEGIN { FS = ";" } /'"$game_selection"'/ { print $3 }' "$games_csv_path")
 			launch_game "$runner" "$game_id"
 		fi
 	done
@@ -302,10 +301,7 @@ launch_game() {
 }
 
 main() {
-	source "$HOME/.config/leisure/paths.conf" || {
-		echo "Error: No configuration file found."
-		exit 1
-	}
+	config_dir="$HOME/.config/leisure/"
 
 	disable_previews=0
 
@@ -313,14 +309,18 @@ main() {
 		disable_previews=1
 	fi
 
-	while getopts "hnv" flag; do
+	while getopts "c:hnv" flag; do
 		case $flag in
+		c)
+			config_dir="$OPTARG"
+			;;
 		h)
 			echo "Usage: leisure [options]"
 			echo "Options:"
-			echo "  -h               Display this message"
-			echo "  -n               Disable preview images"
-			echo "  -v               Display version number"
+			echo "  -c <directory>          Specify a configuration directory"
+			echo "  -h                      Display this message"
+			echo "  -n                      Disable preview images"
+			echo "  -v                      Display version number"
 			exit 0
 			;;
 		n)
@@ -336,7 +336,14 @@ main() {
 		esac
 	done
 
-	if ! [ -f "$GAMES_CSV_PATH" ]; then
+	games_csv_path="$config_dir/games.csv"
+
+	source "$config_dir/paths.conf" || {
+		echo "Error: No configuration file found."
+		exit 1
+	}
+
+	if ! [ -f "$games_csv_path" ]; then
 		echo "games.csv not found."
 		exit 1
 	fi

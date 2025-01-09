@@ -2,8 +2,7 @@
 .SH NAME
 leisure \- Consolidate media library browsing using fzf
 .SH SYNOPSIS
-.B leisure
-[\fIoptions\fR]
+.B leisure [-c \fI\,CONFIG_DIR\/\fR]
 .SH DESCRIPTION
 .TP
 Browse book, film, game, and television libraries using fzf. Image previews supported under kitty.
@@ -18,6 +17,9 @@ Handled by runner
 .B Video\fR
 MKV, MP4
 .SH OPTIONS
+.TP
+.B \-c
+Specify a configuration directory
 .TP
 .B \-h
 Display this message
@@ -57,7 +59,9 @@ Emulators must be installed via flatpak.
 .TP
 \- Steam
 .SH FILES
-.B $HOME/.config/leisure/games.csv \fR- contains user-provided game entries, each including:
+CONFIG_DIR is $HOME/.config/leisure unless set to another directory using the -c flag.
+.PP
+.B $CONFIG_DIR/games.csv \fR- contains user-provided game entries, each including:
 .RS 4
 .TP
   \- Title
@@ -67,9 +71,9 @@ Emulators must be installed via flatpak.
   \- ID (For emulated games, the name of the ROM is used)
 .RE
 .TP
-.B $HOME/.config/leisure/paths.conf \fR- Used to configure media library paths.
+.B $CONFIG_DIR/paths.conf \fR- Used to configure media library paths.
 .TP
-.B $HOME/.config/leisure/previews \fR- PNG files put in this directory will be used as preview images for titles with the same basename.
+.B $CONFIG_DIR/previews \fR- PNG files put in this directory will be used as preview images for titles with the same basename.
 .SH "SEE ALSO" 
 .BR fzf (1),
 .BR kitty (1),
