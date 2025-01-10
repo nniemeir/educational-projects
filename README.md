@@ -4,7 +4,7 @@
 1. C64DosMsg - changes display colors to those of MS-DOS and prints a string
 
 ### Bash
-1. Leisure (WIP) - Browse book, film, game, and television libraries efficiently using [fzf](https://github.com/junegunn/fzf)
+1. Leisure - Browse book, film, game, and television libraries efficiently using [fzf](https://github.com/junegunn/fzf)
 
 ### C
 1. PreSuff - POSIX program to prepend or append a string to the name of all files in a directory with specified extension
