@@ -23,7 +23,7 @@ Additionally, you can filter for a specific runner in the case of games.
 * TV Shows
 
 ## Dependencies
-* fzf - searching
+* fzf - prompt interface
 * kitty - for image previews (optional)
 * mpv - for playing videos (optional)
 * zathura - for viewing ebooks (optional)
