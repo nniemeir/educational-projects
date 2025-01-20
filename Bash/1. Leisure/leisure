@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # Author: Jacob Niemeir <nniemeir@protonmail.com>
 # Consolidate media library browsing using fzf
 
@@ -15,9 +15,10 @@ main() {
 	config_dir="$HOME/.config/leisure/"
 	disable_previews=0
 
-	if [[ "$TERM" != *"kitty"* ]]; then
-		disable_previews=1
-	fi
+	case "$TERM" in
+	*kitty*) ;;
+	*) disable_previews=1 ;;
+	esac
 
 	process_args "$@"
 
@@ -106,7 +107,7 @@ fzf_prompt() {
                 preview_file=$config_dir/previews/$show_selection.png
             fi
 			
-            if [[ -f $preview_file ]]; then
+            if [ -f $preview_file ]; then
                 kitty icat --clear --transfer-mode=stream --stdin=no --place=${img_cols}x${img_rows}@$(((cols-img_cols)/2))x$(((rows-img_rows)/2)) $preview_file
             else
                 kitty icat --clear --transfer-mode=stream --stdin=no --place=${img_cols}x${img_rows}@$(((cols-img_cols)/2))x$(((rows-img_rows)/2)) $config_dir/previews/default.png
@@ -291,14 +292,14 @@ enumerate_runners() {
 get_available_runners() {
 	local unavailable_runners=""
 	for runner in $(echo -e "$SUPPORTED_RUNNERS"); do
-		if [[ ! $(enumerate_runners "$runner") ]]; then
+		if [ ! $(enumerate_runners "$runner") ]; then
 			local unavailable_runners="$unavailable_runners$runner"
 		fi
 	done
 
 	local available_runners=""
 	for runner in $(echo -e "$SUPPORTED_RUNNERS"); do
-		if [[ ! "$unavailable_runners" =~ $runner ]]; then
+		if [ ! "$unavailable_runners" =~ "$runner" ]; then
 			local available_runners
 			available_runners="$available_runners$runner\n"
 		fi
