@@ -26,7 +26,7 @@ CC = gcc
 
 OBJS=	$(SRC:.c=.o)
 
-CFLAGS = -Wall -Wextra -pedantic
+CFLAGS = -Wall -Wextra -pedantic -g
 
 LDFLAGS = -lssl
 
