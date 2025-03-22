@@ -85,7 +85,7 @@ void handle_client(SSL_CTX *ctx, int clientfd)
 
 int init_socket(int port)
 {
-  int sockfd = socket(AF_INET, SOCK_STREAM, 0);
+  sockfd = socket(AF_INET, SOCK_STREAM, 0);
   if (sockfd == -1)
   {
     fprintf(stderr, "Failed to create socket.\n");
@@ -169,6 +169,7 @@ int client_loop(SSL_CTX *ctx, int sockfd)
 
 int init_server(int *port, char **cert_path, char **key_path)
 {
+
   if (!OPENSSL_init_ssl(OPENSSL_INIT_LOAD_SSL_STRINGS |
                             OPENSSL_INIT_LOAD_CRYPTO_STRINGS,
                         NULL))
@@ -184,7 +185,7 @@ int init_server(int *port, char **cert_path, char **key_path)
     return EXIT_FAILURE;
   }
 
-  int sockfd = init_socket(*port);
+  sockfd = init_socket(*port);
 
   if (sockfd == -1)
   {

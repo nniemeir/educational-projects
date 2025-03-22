@@ -1,5 +1,14 @@
 #include "../include/server.h"
 
+int sockfd;
+
+void handler()
+{
+  write(STDOUT_FILENO, "\nInterrupt given, closing socket..\n", 36);
+  close(sockfd);
+  exit(EXIT_SUCCESS);
+}
+
 char *construct_path_in_home(char *file_name)
 {
   const char *home = getenv("HOME");
@@ -94,6 +103,12 @@ int main(int argc, char *argv[])
   }
 
   process_args(argc, argv, &port, &cert_path, &key_path);
+
+  struct sigaction sa;
+  memset(&sa, 0, sizeof(sa));
+  sa.sa_handler = handler;
+  sigaction(SIGINT, &sa, NULL);
+
   int server_exit_status = init_server(&port, &cert_path, &key_path);
   free(cert_path);
   free(key_path);
