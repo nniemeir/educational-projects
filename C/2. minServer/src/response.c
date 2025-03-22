@@ -77,7 +77,7 @@ char *add_file_to_response(char *method, char *file_request, char *response,
   if (!metadata)
   {
     fclose(file);
-    fprintf(stderr, "Failed to match error code to string.\n");
+    fprintf(stderr, "Failed to match response code to string.\n");
     return NULL;
   }
 
