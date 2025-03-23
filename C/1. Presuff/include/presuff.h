@@ -15,8 +15,8 @@
 #define NULL_TERMINATOR_LENGTH 1
 #define SLASH_LENGTH 1
 
-int patternRename(const char *directoryPath, const char *pattern,
+int pattern_rename(const char *directoryPath, const char *pattern,
                   const char *filteredExtension, long mode);
-void printHelpMsg();
+void print_help_msg();
 
 #endif

@@ -1,114 +1,114 @@
 #include "../include/presuff.h"
 
-char *constructFilePath(const char *directoryPath, const char *fileName)
+char *construct_original_file_path(const char *dir_path, const char *filename)
 {
-  char *filePath = malloc(strlen(directoryPath) + SLASH_LENGTH +
-                          strlen(fileName) + NULL_TERMINATOR_LENGTH);
-  if (filePath == NULL)
+  char *file_path = malloc(strlen(dir_path) + SLASH_LENGTH +
+                          strlen(filename) + NULL_TERMINATOR_LENGTH);
+  if (file_path == NULL)
   {
     fprintf(stderr, "Error allocating memory for file path");
     return NULL;
   }
-  snprintf(filePath,
-           strlen(directoryPath) + SLASH_LENGTH + strlen(fileName) +
+  snprintf(file_path,
+           strlen(dir_path) + SLASH_LENGTH + strlen(filename) +
                NULL_TERMINATOR_LENGTH,
-           "%s/%s", directoryPath, fileName);
-  return filePath;
+           "%s/%s", dir_path, filename);
+  return file_path;
 }
 
-char *constructNewFilePath(const char *directoryPath, const char *pattern,
-                           const char *fileName, long mode)
+char *construct_new_file_path(const char *dir_path, const char *pattern,
+                           const char *filename, long mode)
 {
   const char dot = '.';
-  char *fileExtension = strrchr(fileName, dot);
-  if (fileExtension == NULL || fileExtension[0] == '\0')
+  char *file_extension = strrchr(filename, dot);
+  if (file_extension == NULL || file_extension[0] == '\0')
   {
     return NULL;
   }
 
-  size_t baseNameLength = strlen(fileName) - strlen(fileExtension);
-  char *baseName = malloc(baseNameLength + NULL_TERMINATOR_LENGTH);
-  if (baseName == NULL)
+  size_t basename_length = strlen(filename) - strlen(file_extension);
+  char *basename = malloc(basename_length + NULL_TERMINATOR_LENGTH);
+  if (basename == NULL)
   {
     fprintf(stderr, "Error allocating memory for basename");
     return NULL;
   }
-  snprintf(baseName, baseNameLength + NULL_TERMINATOR_LENGTH, "%s", fileName);
+  snprintf(basename, basename_length + NULL_TERMINATOR_LENGTH, "%s", filename);
 
-  size_t directoryPathLength = strlen(directoryPath);
-  size_t patternLength = strlen(pattern);
-  size_t fileExtensionLength = strlen(fileExtension);
+  size_t dir_path_length = strlen(dir_path);
+  size_t pattern_length = strlen(pattern);
+  size_t file_extension_length = strlen(file_extension);
 
   if (mode != MODE_PREPEND && mode != MODE_APPEND)
   {
     fprintf(stderr, "Invalid mode selection, this is likely a problem in the "
                     "modePrompt function");
-    free(baseName);
+    free(basename);
     return NULL;
   }
-  char *newFilePath;
+  char *new_file_path;
   if (mode == MODE_PREPEND)
   {
-    size_t totalLength = directoryPathLength + SLASH_LENGTH + patternLength +
-                         baseNameLength + fileExtensionLength +
+    size_t total_length = dir_path_length + SLASH_LENGTH + pattern_length +
+                         basename_length + file_extension_length +
                          NULL_TERMINATOR_LENGTH;
-    newFilePath = malloc(totalLength);
-    if (newFilePath == NULL)
+    new_file_path = malloc(total_length);
+    if (new_file_path == NULL)
     {
       fprintf(stderr, "Error allocating memory for basename");
       return NULL;
     }
-    snprintf(newFilePath,
-             strlen(directoryPath) + SLASH_LENGTH + strlen(pattern) +
-                 baseNameLength + strlen(fileExtension) +
+    snprintf(new_file_path,
+             strlen(dir_path) + SLASH_LENGTH + strlen(pattern) +
+                 basename_length + strlen(file_extension) +
                  NULL_TERMINATOR_LENGTH,
-             "%s/%s%s", directoryPath, pattern, fileName);
+             "%s/%s%s", dir_path, pattern, filename);
   }
   if (mode == MODE_APPEND)
   {
-    size_t totalLength = directoryPathLength + SLASH_LENGTH + patternLength +
-                         baseNameLength + fileExtensionLength +
+    size_t total_length = dir_path_length + SLASH_LENGTH + pattern_length +
+                         basename_length + file_extension_length +
                          NULL_TERMINATOR_LENGTH;
-    newFilePath = malloc(totalLength);
-    if (newFilePath == NULL)
+    new_file_path = malloc(total_length);
+    if (new_file_path == NULL)
     {
       fprintf(stderr, "Error allocating memory for new file path");
       return NULL;
     }
-    snprintf(newFilePath,
-             strlen(directoryPath) + SLASH_LENGTH + strlen(pattern) +
-                 baseNameLength + strlen(fileExtension) +
+    snprintf(new_file_path,
+             strlen(dir_path) + SLASH_LENGTH + strlen(pattern) +
+                 basename_length + strlen(file_extension) +
                  NULL_TERMINATOR_LENGTH,
-             "%s/%s%s%s", directoryPath, baseName, pattern, fileExtension);
+             "%s/%s%s%s", dir_path, basename, pattern, file_extension);
   }
-  free(baseName);
-  return newFilePath;
+  free(basename);
+  return new_file_path;
 }
 
-void renameFile(const char *oldFilePath, const char *newFilePath)
+void rename_file(const char *original_file_path, const char *new_file_path)
 {
-  if (strlen(newFilePath) >= PATH_MAX)
+  if (strlen(new_file_path) >= PATH_MAX)
   {
-    fprintf(stderr, "Maximum filename length exceeded for %s\n", oldFilePath);
+    fprintf(stderr, "Maximum filename length exceeded for %s\n", original_file_path);
     return;
   }
 
-  if (rename(oldFilePath, newFilePath) != 0)
+  if (rename(original_file_path, new_file_path) != 0)
   {
-    fprintf(stderr, "Error renaming file %s to %s\n", oldFilePath, newFilePath);
+    fprintf(stderr, "Error renaming file %s to %s\n", original_file_path, new_file_path);
   }
 }
 
-int patternRename(const char *directoryPath, const char *pattern,
-                  const char *filteredExtension, long mode)
+int pattern_rename(const char *dir_path, const char *pattern,
+                  const char *filtered_extension, long mode)
 {
   DIR *dir;
   struct dirent *entry;
 
-  dir = opendir(directoryPath);
+  dir = opendir(dir_path);
   if (dir == NULL)
   {
-    fprintf(stderr, "Error opening directory: %s\n", directoryPath);
+    fprintf(stderr, "Error opening directory: %s\n", dir_path);
     return 0;
   }
 
@@ -119,28 +119,28 @@ int patternRename(const char *directoryPath, const char *pattern,
       continue;
     }
     const char dot = '.';
-    char *fileExtension = strrchr(entry->d_name, dot) + 1;
-    if (!fileExtension || fileExtension[0] == '\0')
+    char *file_extension = strrchr(entry->d_name, dot) + 1;
+    if (!file_extension || file_extension[0] == '\0')
     {
       continue;
     }
-    size_t extensionLength = strlen(fileExtension) + NULL_TERMINATOR_LENGTH;
-    char modifiedExtension[extensionLength];
-    snprintf(modifiedExtension, extensionLength, "%s", fileExtension);
-    if (strcmp(modifiedExtension, filteredExtension) == 1 ||
-        strcmp(filteredExtension, "None") == 1)
+    size_t extension_length = strlen(file_extension) + NULL_TERMINATOR_LENGTH;
+    char modified_extension[extension_length];
+    snprintf(modified_extension, extension_length, "%s", file_extension);
+    if (strcmp(modified_extension, filtered_extension) == 1 ||
+        strcmp(filtered_extension, "None") == 1)
     {
       continue;
     }
-    char *oldFilePath = constructFilePath(directoryPath, entry->d_name);
-    char *newFilePath =
-        constructNewFilePath(directoryPath, pattern, entry->d_name, mode);
-    if (newFilePath)
+    char *original_file_path = construct_original_file_path(dir_path, entry->d_name);
+    char *new_file_path =
+        construct_new_file_path(dir_path, pattern, entry->d_name, mode);
+    if (new_file_path)
     {
-      renameFile(oldFilePath, newFilePath);
+      rename_file(original_file_path, new_file_path);
     }
-    free(oldFilePath);
-    free(newFilePath);
+    free(original_file_path);
+    free(new_file_path);
   }
   closedir(dir);
   return 1;

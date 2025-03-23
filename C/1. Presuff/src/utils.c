@@ -1,6 +1,6 @@
 #include "../include/presuff.h"
 
-void printHelpMsg()
+void print_help_msg()
 {
   printf("Usage: presuff [options]\n");
   printf("Options:\n");
