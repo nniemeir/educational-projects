@@ -5,12 +5,12 @@
 std::optional<record> searchRecords(std::ifstream &csvFile,
                                     std::string search_term) {
   record targetRecord;
-  bool found_record = false;
+  bool foundRecord = false;
   std::string manufacturerIDField;
   std::string manufacturerNameField;
   // Search the first field of each line in the CSV file until a match is found
   // or end of file
-  while (std::getline(csvFile, manufacturerIDField, ',') && !found_record) {
+  while (std::getline(csvFile, manufacturerIDField, ',') && !foundRecord) {
     std::getline(csvFile, manufacturerNameField, '\n');
     if (manufacturerIDField == search_term) {
       // Assign the contents of each field in the line to the corresponding

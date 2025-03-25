@@ -42,11 +42,12 @@ of the difference between the index value of the most common letter in target
 and e in alphabet.
 */
 int findKey(const std::string &target) {
+  std::string caseInsensitiveTarget = target.tolower();
   const char alphabet[] = "abcdefghijklmnopqrstuvwxyz";
   std::vector<int> letterOccurrences;
   for (char i : alphabet) {
     std::string::size_type charFreq =
-        std::count(target.begin(), target.end(), i);
+        std::count(caseInsensitiveTarget.begin(), caseInsensitiveTarget.end(), i);
     letterOccurrences.push_back(charFreq);
   }
   auto it =

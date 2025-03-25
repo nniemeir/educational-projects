@@ -3,6 +3,20 @@
 
 #include "../include/rot.h"
 
+int outputResult(int printToFile, std::string postText, std::string outputFile,
+                 int key) {
+  if (printToFile == 1) {
+    writeFile(postText, outputFile);
+    return EXIT_SUCCESS;
+  }
+
+  std::cout << "Key: " << key << "\n";
+  std::cout << "~~~" << "\n";
+  std::cout << postText;
+  std::cout << "~~~\n";
+  return EXIT_SUCCESS;
+}
+
 long convertInputToLong(char *numericInput) {
   char *endptr;
   long selection = strtol(numericInput, &endptr, 10);
@@ -14,65 +28,54 @@ long convertInputToLong(char *numericInput) {
   return selection;
 }
 
-
-int main(int argc, char *argv[]) {
-  std::string inputFile;
-  std::string outputFile;
-  std::string inputArg;
-  std::string outputArg;
-  std::string postText;
-  int printToFile;
-  int shiftMode;
-  int modeArgsGiven;
-  int index;
+void processArgs(int argc, char *argv[], int *shiftMode, std::string *inputFile,
+                 std::string *outputFile, long *key, int *printToFile) {
   int c;
-  long key;
-  printToFile = 0;
-  key = 0;
-  opterr = 0;
-  shiftMode = 0;
+  int modeArgsGiven;
   modeArgsGiven = 0;
+  std::string inputArg;
+
   while ((c = getopt(argc, argv, "e::d::h::i:k:o:")) != -1) {
     switch (c) {
     case 'e':
       modeArgsGiven++;
-      shiftMode = 1;
+      *shiftMode = 1;
       break;
     case 'd':
       modeArgsGiven++;
-      shiftMode = 2;
+      *shiftMode = 2;
       break;
     case 'h':
-      helpMsg();
-      return EXIT_SUCCESS;
+      printHelpMsg();
+      exit(EXIT_SUCCESS);
       break;
     case 'i':
       if (optarg) {
         inputArg = optarg;
       } else {
         fprintf(stderr, "Option -i requires an argument.\n");
-        return EXIT_FAILURE;
+        exit(EXIT_FAILURE);
       }
       break;
     case 'k':
       if (optarg) {
-        key = convertInputToLong(optarg);
-        if (key <= 0) {
+        *key = convertInputToLong(optarg);
+        if (*key <= 0) {
           std::cout << "Key must be an integer greater than zero.\n";
-          return EXIT_FAILURE;
+          exit(EXIT_FAILURE);
         }
       } else {
         fprintf(stderr, "Option -k requires an argument.\n");
-        return EXIT_FAILURE;
+        exit(EXIT_FAILURE);
       }
       break;
     case 'o':
       if (optarg) {
-        printToFile = 1;
-        outputArg = optarg;
+        *printToFile = 1;
+        *outputFile = optarg;
       } else {
         fprintf(stderr, "Option -o requires an argument.\n");
-        return EXIT_FAILURE;
+        exit(EXIT_FAILURE);
       }
       break;
     case '?':
@@ -83,12 +86,11 @@ int main(int argc, char *argv[]) {
       } else {
         fprintf(stderr, "Unknown option character `\\x%x'.\n", optopt);
       }
-      return EXIT_FAILURE;
-    default:
-      abort();
+      exit(EXIT_FAILURE);
     }
   }
 
+  int index;
   for (index = optind; index < argc; index++)
     std::cout << "Non-option argument %s\n", argv[index];
 
@@ -103,38 +105,49 @@ int main(int argc, char *argv[]) {
   }
 
   if (std::filesystem::exists(inputArg)) {
-    inputFile = inputArg;
+    *inputFile = inputArg;
   } else {
     std::cout << "Input directory not found.\n";
-    return EXIT_FAILURE;
+    exit(EXIT_FAILURE);
   }
 
-  outputFile = outputArg;
-  std::string target = readFile(inputFile);
-
-  if (shiftMode == 1) {
+  if (*shiftMode == 1) {
     if (key == 0) {
       std::cout << "Key required for encryption.\n";
-      return EXIT_FAILURE;
+      exit(EXIT_FAILURE);
     }
+  }
+}
+
+int main(int argc, char *argv[]) {
+  std::string inputFile;
+  std::string outputFile;
+  int printToFile = 0;
+  int shiftMode = 0;
+  int index;
+  long key = 0;
+
+  processArgs(argc, argv, &shiftMode, &inputFile, &outputFile, &key,
+              &printToFile);
+
+  std::string target = readFile(inputFile);
+  std::string postText;
+
+  if (shiftMode == 1) {
     postText = encrypt(target, key);
-  } else if (shiftMode == 2) {
-    if (key == 0) {
-      key = findKey(target);
-      if (key == 0) {
-        std::cout << "The text does not appear to be encrypted\n";
-        return EXIT_SUCCESS;
-      }
-    }
-    postText = decrypt(target, key);
+    return outputResult(printToFile, postText, outputFile, key);
   }
-  if (printToFile == 1) {
-    writeFile(postText, outputFile);
-  } else {
-    std::cout << "Key: " << key << "\n";
-    std::cout << "~~~" << "\n";
-    std::cout << postText;
-    std::cout << "~~~\n";
+
+  // If key is not provided by user, frequency analysis is used to find it
+  if (key == 0) {
+    key = findKey(target);
   }
-  return EXIT_SUCCESS;
+
+  if (key == 0) {
+    std::cout << "The text does not appear to be encrypted\n";
+    return EXIT_SUCCESS;
+  }
+
+  postText = decrypt(target, key);
+  return outputResult(printToFile, postText, outputFile, key);
 }

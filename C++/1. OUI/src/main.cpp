@@ -20,6 +20,7 @@ int main(int argc, char *argv[]) {
     std::cout << "Unable to access " << FILE_NAME << "\n";
     return EXIT_FAILURE;
   }
+
   if (MAC.length() >= MIN_MAC_LENGTH && MAC.length() <= MAX_MAC_LENGTH) {
     std::string searchTerm = formatMAC(MAC);
     // Our manufacturer ID table and the target string are passed to the

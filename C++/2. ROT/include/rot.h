@@ -18,7 +18,7 @@ std::string encrypt(const std::string &target, int key);
 std::string decrypt(const std::string &target, int key);
 int findKey(const std::string &target);
 std::string readFile(const std::string &fileName);
-void helpMsg();
+void printHelpMsg();
 int writeFile(std::string &outputText, std::string &outputFile);
 
 #endif
