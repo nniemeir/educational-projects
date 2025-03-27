@@ -23,7 +23,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(RotQt
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
-        src/file.cpp src/logic.cpp
+        src/file.cpp src/rotUtils.cpp
         include/rot.h
         resources/resources.qrc
     )

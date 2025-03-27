@@ -1,26 +1,19 @@
 * {
-    background: #282828;
-    color: #ebdbb2;
-    selection-background-color: rgb(147, 153, 178);
+    background: #202020;
+    color: white;
+    selection-background-color: rgb(80, 80, 80);
 }
 
 #label_outputArea {
-    border: 3px solid #a89984;
+    border: 3px solid #404040;
     background-color: #504945;
 }
 
 QLineEdit {
-border: 3px solid #a89984;
+border: 3px solid #404040;
 }
 
 QPushButton {
-    background-color: #504945;
+    background-color: #505050;
 }
 
-#pushButton_encrypt:disabled {
-color: rgb(17, 17, 27);
-}
-
-#pushButton_decrypt:disabled {
-color: rgb(17, 17, 27);
-}

@@ -18,21 +18,23 @@ public:
     ~MainWindow();
 
 private slots:
-    void on_pushButton_decrypt_clicked();
+    void on_decryptButton_clicked();
 
-    void on_actionOpen_File_triggered();
+    void on_encryptButton_clicked();
 
-    void on_actionSave_triggered();
+    void on_fileButton_clicked();
 
-    void on_pushButton_encrypt_clicked();
+    void on_saveButton_clicked();
+
 
 private:
     Ui::MainWindow *ui;
-    QString file_name;
-    QString postText;
-    int numKey;
+    QString inputFileName;
+    QString processedFileContents;
+    int currentKey;
     int setKey();
     void noFileMsg();
     int setKey(QString target);
+    void processFile(bool isEncrypting);
 };
 #endif // MAINWINDOW_H
