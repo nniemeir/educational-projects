@@ -1,7 +1,6 @@
 #include "../include/presuff.h"
 
-void print_help_msg()
-{
+void print_help_msg() {
   printf("Usage: presuff [options]\n");
   printf("Options:\n");
   printf("  -b               Prepend pattern to basenames\n");

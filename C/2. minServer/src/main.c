@@ -2,26 +2,22 @@
 
 int sockfd;
 
-void handler()
-{
+void handler() {
   write(STDOUT_FILENO, "\nInterrupt given, closing socket..\n", 36);
   close(sockfd);
   exit(EXIT_SUCCESS);
 }
 
-char *construct_path_in_home(char *file_name)
-{
+char *construct_path_in_home(char *file_name) {
   const char *home = getenv("HOME");
-  if (!home)
-  {
+  if (!home) {
     fprintf(stderr, "Failed to get value of HOME environment variable");
     return NULL;
   }
   const char *suffix = "/.local/share/minserver/";
   char *path = malloc(strlen(home) + strlen(suffix) + strlen(file_name) +
                       NULL_TERMINATOR_LENGTH);
-  if (!path)
-  {
+  if (!path) {
     fprintf(stderr, "Failed to allocate memory for constructing file path.");
     return NULL;
   }
@@ -33,21 +29,16 @@ char *construct_path_in_home(char *file_name)
 }
 
 void process_args(int argc, char *argv[], int *port, char **cert_path,
-                  char **key_path)
-{
+                  char **key_path) {
   int c;
-  while ((c = getopt(argc, argv, "c:h::k:p:")) != -1)
-  {
-    switch (c)
-    {
+  while ((c = getopt(argc, argv, "c:h::k:p:")) != -1) {
+    switch (c) {
     case 'c':
-      if (*cert_path)
-      {
+      if (*cert_path) {
         free(*cert_path);
       }
       *cert_path = strdup(optarg);
-      if (!*cert_path)
-      {
+      if (!*cert_path) {
         fprintf(stderr, "Failed to allocate memory for cert_path.\n");
         exit(EXIT_FAILURE);
       }
@@ -61,13 +52,11 @@ void process_args(int argc, char *argv[], int *port, char **cert_path,
       printf("  -p               Specify port to listen on\n");
       exit(EXIT_SUCCESS);
     case 'k':
-      if (*key_path)
-      {
+      if (*key_path) {
         free(*key_path);
       }
       *key_path = strdup(optarg);
-      if (!*key_path)
-      {
+      if (!*key_path) {
         fprintf(stderr, "Failed to allocate memory for key_path.\n");
         exit(EXIT_FAILURE);
       }
@@ -75,8 +64,7 @@ void process_args(int argc, char *argv[], int *port, char **cert_path,
       break;
     case 'p':
       *port = atoi(optarg);
-      if (*port < 1024 || *port > 49151)
-      {
+      if (*port < 1024 || *port > 49151) {
         fprintf(
             stderr,
             "Invalid port specified, port must be between 1024 and 49151.\n");
@@ -91,14 +79,12 @@ void process_args(int argc, char *argv[], int *port, char **cert_path,
   }
 }
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
   // These values will be changed if their corresponding arguments are given
   int port = 8080;
   char *cert_path = construct_path_in_home("cert");
   char *key_path = construct_path_in_home("key");
-  if (!cert_path || !key_path)
-  {
+  if (!cert_path || !key_path) {
     return EXIT_FAILURE;
   }
 

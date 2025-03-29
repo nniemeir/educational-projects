@@ -43,7 +43,8 @@ and e in alphabet.
 */
 int findKey(const std::string &target) {
   std::string caseInsensitiveTarget = target;
-  std::transform(caseInsensitiveTarget.begin(), caseInsensitiveTarget.end(), caseInsensitiveTarget.begin(),
+  std::transform(caseInsensitiveTarget.begin(), caseInsensitiveTarget.end(),
+                 caseInsensitiveTarget.begin(),
                  [](unsigned char c) { return std::tolower(c); });
 
   const char alphabet[] = "abcdefghijklmnopqrstuvwxyz";

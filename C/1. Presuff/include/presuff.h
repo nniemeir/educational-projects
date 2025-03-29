@@ -16,7 +16,7 @@
 #define SLASH_LENGTH 1
 
 int pattern_rename(const char *directoryPath, const char *pattern,
-                  const char *filteredExtension, long mode);
+                   const char *filteredExtension, long mode);
 void print_help_msg();
 
 #endif

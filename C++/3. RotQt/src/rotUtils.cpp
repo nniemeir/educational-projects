@@ -9,7 +9,7 @@ QString shiftText(const QString &target, int key, bool isEncrypting) {
   // Keep key inside range of alphabet
   key = key % ALPHABET_LENGTH;
   if (key < 0) {
-      key += ALPHABET_LENGTH;
+    key += ALPHABET_LENGTH;
   }
   for (QChar i : target) {
     if (i.isLetter()) {

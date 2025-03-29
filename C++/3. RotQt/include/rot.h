@@ -1,11 +1,11 @@
 #ifndef ROT_H_
 #define ROT_H_
 
+#include <QFile>
+#include <QMessageBox>
+#include <QTextStream>
 #include <cstdlib>
 #include <unistd.h>
-#include <QFile>
-#include <QTextStream>
-#include <QMessageBox>
 
 QString shiftText(const QString &target, int key, bool isEncrypting);
 int findKey(const QString &target);

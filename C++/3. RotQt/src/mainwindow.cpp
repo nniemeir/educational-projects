@@ -27,17 +27,17 @@ MainWindow::MainWindow(QWidget *parent)
   ui->outputTextEdit->setText("...");
   ui->outputTextEdit->setAlignment(Qt::AlignLeft);
 
-  QObject::connect(ui->saveButton, &QPushButton::clicked,
-                   this, &MainWindow::saveFile);
+  QObject::connect(ui->saveButton, &QPushButton::clicked, this,
+                   &MainWindow::saveFile);
 
-  QObject::connect(ui->decryptButton, &QPushButton::clicked,
-                   this, &MainWindow::decryptText);
+  QObject::connect(ui->decryptButton, &QPushButton::clicked, this,
+                   &MainWindow::decryptText);
 
-  QObject::connect(ui->encryptButton, &QPushButton::clicked,
-                   this, &MainWindow::encryptText);
+  QObject::connect(ui->encryptButton, &QPushButton::clicked, this,
+                   &MainWindow::encryptText);
 
-  QObject::connect(ui->fileButton, &QPushButton::clicked,
-                   this, &MainWindow::loadFile);
+  QObject::connect(ui->fileButton, &QPushButton::clicked, this,
+                   &MainWindow::loadFile);
 }
 
 MainWindow::~MainWindow() { delete ui; }
@@ -47,11 +47,11 @@ void MainWindow::loadFile() {
       QFileDialog::getOpenFileName(this, "Open a file", QDir::homePath());
   if (inputFileName != "") {
     QString originalFileContents = readFile(inputFileName);
-      if (originalFileContents.isEmpty()) {
-        QMessageBox::warning(nullptr, "Warning",
-                              QString("%1 is empty").arg(inputFileName));
-        return;
-      }
+    if (originalFileContents.isEmpty()) {
+      QMessageBox::warning(nullptr, "Warning",
+                           QString("%1 is empty").arg(inputFileName));
+      return;
+    }
     ui->sourceTextEdit->setText(originalFileContents);
     ui->decryptButton->setEnabled(true);
     ui->encryptButton->setEnabled(true);
@@ -62,9 +62,9 @@ int MainWindow::setKey(QString target) {
   QString key = ui->keyLineEdit->text();
   if (key == "") {
     currentKey = findKey(target);
-  QMessageBox::information(
-      nullptr, "Information",
-      QString("The key appears to be %1").arg(currentKey));
+    QMessageBox::information(
+        nullptr, "Information",
+        QString("The key appears to be %1").arg(currentKey));
   } else {
     currentKey = key.toInt();
   }
@@ -90,11 +90,10 @@ void MainWindow::saveFile() {
       tr("Text File (*.txt);;All Files (*)"));
   if (path != "") {
     QString strPath = path;
-      if (!writeFile(processedFileContents, strPath)) {
-        QMessageBox::critical(
-            nullptr, "Error",
-            QString("Unable to open %1 for writing").arg(strPath));
-      }
+    if (!writeFile(processedFileContents, strPath)) {
+      QMessageBox::critical(
+          nullptr, "Error",
+          QString("Unable to open %1 for writing").arg(strPath));
+    }
   }
 }
-
