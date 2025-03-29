@@ -17,3 +17,7 @@ QPushButton {
     background-color: #505050;
 }
 
+QPushButton::disabled {
+    color: gray;
+}
+

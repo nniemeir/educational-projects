@@ -1,7 +1,6 @@
 #include "../include/mainwindow.h"
 #include "../include/rot.h"
 #include "./ui_mainwindow.h"
-#include <QFileDialog>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
@@ -27,15 +26,32 @@ MainWindow::MainWindow(QWidget *parent)
   ui->outputTextEdit->setReadOnly(true);
   ui->outputTextEdit->setText("...");
   ui->outputTextEdit->setAlignment(Qt::AlignLeft);
+
+  QObject::connect(ui->saveButton, &QPushButton::clicked,
+                   this, &MainWindow::saveFile);
+
+  QObject::connect(ui->decryptButton, &QPushButton::clicked,
+                   this, &MainWindow::decryptText);
+
+  QObject::connect(ui->encryptButton, &QPushButton::clicked,
+                   this, &MainWindow::encryptText);
+
+  QObject::connect(ui->fileButton, &QPushButton::clicked,
+                   this, &MainWindow::loadFile);
 }
 
 MainWindow::~MainWindow() { delete ui; }
 
-void MainWindow::on_fileButton_clicked() {
+void MainWindow::loadFile() {
   inputFileName =
       QFileDialog::getOpenFileName(this, "Open a file", QDir::homePath());
   if (inputFileName != "") {
     QString originalFileContents = readFile(inputFileName);
+      if (originalFileContents.isEmpty()) {
+        QMessageBox::warning(nullptr, "Warning",
+                              QString("%1 is empty").arg(inputFileName));
+        return;
+      }
     ui->sourceTextEdit->setText(originalFileContents);
     ui->decryptButton->setEnabled(true);
     ui->encryptButton->setEnabled(true);
@@ -46,6 +62,9 @@ int MainWindow::setKey(QString target) {
   QString key = ui->keyLineEdit->text();
   if (key == "") {
     currentKey = findKey(target);
+  QMessageBox::information(
+      nullptr, "Information",
+      QString("The key appears to be %1").arg(currentKey));
   } else {
     currentKey = key.toInt();
   }
@@ -61,16 +80,21 @@ void MainWindow::processFile(bool isEncrypting) {
   this->processedFileContents = processedFileContents;
 }
 
-void MainWindow::on_decryptButton_clicked() { processFile(false); }
+void MainWindow::decryptText() { processFile(false); }
 
-void MainWindow::on_encryptButton_clicked() { processFile(true); }
+void MainWindow::encryptText() { processFile(true); }
 
-void MainWindow::on_saveButton_clicked() {
+void MainWindow::saveFile() {
   QString path = QFileDialog::getSaveFileName(
       this, tr("Save Output Text"), QDir::homePath(),
       tr("Text File (*.txt);;All Files (*)"));
   if (path != "") {
     QString strPath = path;
-    writeFile(processedFileContents, strPath);
+      if (!writeFile(processedFileContents, strPath)) {
+        QMessageBox::critical(
+            nullptr, "Error",
+            QString("Unable to open %1 for writing").arg(strPath));
+      }
   }
 }
+

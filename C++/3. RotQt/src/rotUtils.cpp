@@ -3,9 +3,14 @@
 static constexpr int ALPHABET_LENGTH = 26;
 static constexpr int ASSUMED_MOST_FREQUENT = 4; // 'e' in the alphabet
 
-// Shift each letter in target by key, where key is an integer
+// Shift each letter in target by key
 QString shiftText(const QString &target, int key, bool isEncrypting) {
-  QString cipherText;
+  QString processedText;
+  // Keep key inside range of alphabet
+  key = key % ALPHABET_LENGTH;
+  if (key < 0) {
+      key += ALPHABET_LENGTH;
+  }
   for (QChar i : target) {
     if (i.isLetter()) {
       int unicodeValue = i.unicode();
@@ -27,12 +32,12 @@ QString shiftText(const QString &target, int key, bool isEncrypting) {
                           'a');
         }
       }
-      cipherText += newChar;
+      processedText += newChar;
     } else {
-      cipherText += i; // Append non-letter characters unchanged
+      processedText += i; // Append non-letter characters unchanged
     }
   }
-  return cipherText;
+  return processedText;
 }
 
 /* Since the letter e is most common in English, the key is the absolute value

@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QFileDialog>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -18,14 +19,10 @@ public:
     ~MainWindow();
 
 private slots:
-    void on_decryptButton_clicked();
-
-    void on_encryptButton_clicked();
-
-    void on_fileButton_clicked();
-
-    void on_saveButton_clicked();
-
+    void decryptText();
+    void encryptText();
+    void loadFile();
+    void saveFile();
 
 private:
     Ui::MainWindow *ui;
@@ -33,7 +30,6 @@ private:
     QString processedFileContents;
     int currentKey;
     int setKey();
-    void noFileMsg();
     int setKey(QString target);
     void processFile(bool isEncrypting);
 };
