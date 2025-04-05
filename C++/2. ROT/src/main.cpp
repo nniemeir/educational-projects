@@ -138,7 +138,7 @@ int main(int argc, char *argv[]) {
     return outputResult(printToFile, postText, outputFile, key);
   }
 
-  // If key is not provided by user, frequency analysis is used to find it
+  // If key is not provided by user, frequency analysis is used to guess it
   if (key == 0) {
     key = findKey(target);
   }

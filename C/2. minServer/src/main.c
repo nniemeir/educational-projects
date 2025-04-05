@@ -3,11 +3,14 @@
 int sockfd;
 
 void handler() {
+  // printf is not async-signal-safe, so we opt for the write function
   write(STDOUT_FILENO, "\nInterrupt given, closing socket..\n", 36);
   close(sockfd);
   exit(EXIT_SUCCESS);
 }
 
+// /home/USERNAME/.local/share/minserver/ is prepended to the provided
+// filename
 char *construct_path_in_home(char *file_name) {
   const char *home = getenv("HOME");
   if (!home) {
@@ -90,6 +93,7 @@ int main(int argc, char *argv[]) {
 
   process_args(argc, argv, &port, &cert_path, &key_path);
 
+  // sigaction listens for SIGINT (sent by Ctrl+C) for the duration of the process's lifetime
   struct sigaction sa;
   memset(&sa, 0, sizeof(sa));
   sa.sa_handler = handler;

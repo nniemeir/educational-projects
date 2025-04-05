@@ -1,6 +1,7 @@
 #include "../include/server.h"
 #include "../include/response.h"
 
+// Free the SSL object and context if they are currently allocated
 void SSL_cleanup(SSL *ssl, SSL_CTX *ctx) {
   if (ssl) {
     SSL_free(ssl);
@@ -10,6 +11,7 @@ void SSL_cleanup(SSL *ssl, SSL_CTX *ctx) {
   }
 }
 
+// Sets up the SSL structure for client connection
 SSL *setup_ssl(SSL_CTX *ctx, int clientfd) {
   SSL *ssl = SSL_new(ctx);
   if (ssl == NULL) {
@@ -33,11 +35,13 @@ SSL *setup_ssl(SSL_CTX *ctx, int clientfd) {
 }
 
 void handle_client(SSL_CTX *ctx, int clientfd) {
+  // Setup SSL connection with client
   SSL *ssl = setup_ssl(ctx, clientfd);
   if (!ssl) {
     return;
   }
 
+  // Read the data sent by the client
   char buffer[BUFFER_SIZE];
   int bytes_read = SSL_read(ssl, buffer, sizeof(buffer) - 1);
   if (bytes_read <= 0) {
@@ -53,6 +57,7 @@ void handle_client(SSL_CTX *ctx, int clientfd) {
     return;
   }
 
+  // After an appropriate response is generated, it is sent to the client
   if (SSL_write(ssl, response, strlen(response)) <= 0) {
     fprintf(stderr, "Failed to write to connection.\n");
     free(response);
@@ -62,6 +67,7 @@ void handle_client(SSL_CTX *ctx, int clientfd) {
 
   free(response);
 
+  // The connection is then closed
   if (SSL_shutdown(ssl) < 0) {
     fprintf(stderr, "Failed to shutdown connection.\n");
   }
@@ -70,16 +76,23 @@ void handle_client(SSL_CTX *ctx, int clientfd) {
   close(clientfd);
 }
 
+// The TCP socket set up here is later used for our connections
 int init_socket(int port) {
+  // AF_INET specifies that we are using IPv4 protocols
+  // SOCK_STREAM specifies that this is a standard TCP connection
+  // SOCK_STREAM only has one valid protocol (IPPROTO_TCP)
   sockfd = socket(AF_INET, SOCK_STREAM, 0);
   if (sockfd == -1) {
     fprintf(stderr, "Failed to create socket.\n");
     return -1;
   }
 
+  //
   struct sockaddr_in socket_address;
   socket_address.sin_family = AF_INET;
+  // The port must be in network byte order
   socket_address.sin_port = htons(port);
+  // INADDR_ANY allows the socket to bind to any available interface
   socket_address.sin_addr.s_addr = INADDR_ANY;
 
   if (bind(sockfd, (struct sockaddr *)&socket_address,
@@ -95,6 +108,8 @@ int init_socket(int port) {
   return sockfd;
 }
 
+// Set up the SSL context
+// The SSL context is a group of configuration settings for our connections
 SSL_CTX *init_ssl_ctx(char **cert_path, char **key_path) {
   SSL_CTX *ctx = SSL_CTX_new(TLS_server_method());
   if (ctx == NULL) {
@@ -116,6 +131,7 @@ SSL_CTX *init_ssl_ctx(char **cert_path, char **key_path) {
   return ctx;
 }
 
+// Accept incoming connections, creating a new process for each one
 int client_loop(SSL_CTX *ctx, int sockfd) {
   int clientfd = accept(sockfd, NULL, NULL);
   if (clientfd == -1) {
@@ -123,6 +139,8 @@ int client_loop(SSL_CTX *ctx, int sockfd) {
     return 1;
   }
 
+  // Processes created via forking do not share memory, making them preferable
+  // to threads in this instance
   pid_t pid = fork();
   if (pid == -1) {
     fprintf(stderr, "Failed to fork process.\n");
@@ -140,8 +158,8 @@ int client_loop(SSL_CTX *ctx, int sockfd) {
   return 1;
 }
 
+// The main function for HTTPS server
 int init_server(int *port, char **cert_path, char **key_path) {
-
   if (!OPENSSL_init_ssl(OPENSSL_INIT_LOAD_SSL_STRINGS |
                             OPENSSL_INIT_LOAD_CRYPTO_STRINGS,
                         NULL)) {

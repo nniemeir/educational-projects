@@ -3,7 +3,7 @@
 // chosen directory
 #include "../include/presuff.h"
 
-char *path_is_working_dir(char *dir_path, int path_size) {
+char *get_working_dir(char *dir_path, int path_size) {
   if (!getcwd(dir_path, path_size)) {
     fprintf(stderr, "Failed to assign working directory to variable");
     return NULL;
@@ -60,7 +60,7 @@ void process_args(int argc, char *argv[], char *dir_arg, char *pattern,
   for (index = optind; index < argc; index++)
     printf("Non-option argument %s\n", argv[index]);
 
-  if (!mode) {
+  if (!mode_args_given) {
     printf("Missing mode argument.\n");
     exit(EXIT_FAILURE);
   }
@@ -83,7 +83,7 @@ int main(int argc, char *argv[]) {
 
   if (dir_arg[0] == '\0') {
     snprintf(dir_path, sizeof(dir_path), "%s",
-             path_is_working_dir(dir_arg, sizeof(dir_arg)));
+             get_working_dir(dir_arg, sizeof(dir_arg)));
   } else {
     snprintf(dir_path, sizeof(dir_path), "%s", dir_arg);
   }

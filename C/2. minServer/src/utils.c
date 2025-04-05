@@ -1,6 +1,7 @@
 #include "../include/utils.h"
 #include "../include/file.h"
 
+// Determine if the HTTP method is supported by the server
 char *get_method(char *buffer) {
   if (strncmp(buffer, "GET", 3) == 0) {
     return "GET";
@@ -22,12 +23,16 @@ char *extract_host(char *buffer) {
     return NULL;
   }
   char *substring = NULL;
+
+  // Skip the request line
   char *first_line_end = strchr(host, '\n');
   if (!first_line_end) {
     free(host);
     return NULL;
   }
   substring = first_line_end + 1;
+
+  // Skip to right after the Host label
   char *host_position = strstr(substring, "Host:");
   if (!host_position) {
     fprintf(stderr, "No host found.\n");
@@ -35,6 +40,8 @@ char *extract_host(char *buffer) {
     return NULL;
   }
   host_position += 6;
+
+  // Terminate the string after the hostname
   char *host_end = strchr(host_position, ':');
   if (host_end) {
     *host_end = '\0';
@@ -48,6 +55,7 @@ char *extract_host(char *buffer) {
   return host_result;
 }
 
+// Extract the header by truncating the response at the first carriage return
 char *extract_header(char *buffer) {
   char *header_line = strdup(buffer);
   if (!header_line) {
@@ -60,6 +68,7 @@ char *extract_header(char *buffer) {
   return header_line;
 }
 
+// Gather relevant information about the request and print it to stdout
 int log_request(char *buffer, int response_code, int response_size) {
   char *host = extract_host(buffer);
   if (!host) {

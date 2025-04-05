@@ -14,6 +14,8 @@
 #define MODE_APPEND 2
 #define NULL_TERMINATOR_LENGTH 1
 #define SLASH_LENGTH 1
+#define dot '.'
+
 
 int pattern_rename(const char *directoryPath, const char *pattern,
                    const char *filteredExtension, long mode);

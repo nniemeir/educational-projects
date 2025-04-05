@@ -9,7 +9,7 @@ std::optional<record> searchRecords(std::ifstream &csvFile,
   std::string manufacturerIDField;
   std::string manufacturerNameField;
   // Search the first field of each line in the CSV file until a match is found
-  // or end of file
+  // or EOF
   while (std::getline(csvFile, manufacturerIDField, ',') && !foundRecord) {
     std::getline(csvFile, manufacturerNameField, '\n');
     if (manufacturerIDField == search_term) {
@@ -36,7 +36,7 @@ bool validateInput(const std::string &mac) {
 // Alter input string to match formatting of the CSV file
 std::string formatMAC(const std::string &mac) {
   std::string searchTerm = mac;
-  // Remove punctuation symbols from target string
+  // Remove punctuation symbols and spaces from target string
   searchTerm.erase(remove_if(searchTerm.begin(), searchTerm.end(), ispunct),
                    searchTerm.end());
   searchTerm.erase(remove_if(searchTerm.begin(), searchTerm.end(), isspace),

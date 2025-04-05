@@ -2,6 +2,8 @@
 #include "../include/file.h"
 #include "../include/utils.h"
 
+// Matches the response code to its corresponding HTTP header
+// See Mozilla's HTTP documentation for further details about HTTP response codes
 char *get_metadata(int response_code) {
   switch (response_code) {
   case 200:
@@ -24,6 +26,7 @@ char *get_metadata(int response_code) {
   }
 }
 
+// Reads the specified file into a variable
 FILE *open_file(const char *file_request) {
   FILE *file = fopen(file_request, "r");
   if (file == NULL) {
@@ -70,6 +73,8 @@ char *add_file_to_response(char *method, char *file_request, char *response,
     return NULL;
   }
 
+  // Ensure that sending the requested file and appropriate metadata won't
+  // overload the buffer
   size_t file_size = get_file_size(file_request);
   size_t metadata_length = strlen(metadata);
   size_t available_space = BUFFER_SIZE - metadata_length;
@@ -81,14 +86,18 @@ char *add_file_to_response(char *method, char *file_request, char *response,
   }
 
   memcpy(response, metadata, metadata_length);
+
   if (strcmp(method, "GET") == 0) {
     read_file_chunks(file, response, file_size, metadata_length,
                      available_space);
   }
+
   fclose(file);
   return response;
 }
 
+// Allocates memory to response and ensures said memory is initialized to all
+// zeros
 char *allocate_response() {
   char *response = malloc(BUFFER_SIZE);
   if (!response) {
@@ -98,6 +107,8 @@ char *allocate_response() {
   return response;
 }
 
+// The requested file path is extracted by skipping over the HTTP method and
+// terminating at the next space
 char *isolate_file_request(char *buffer_copy) {
   if (!buffer_copy) {
     fprintf(stderr, "Failed to make copy of buffer.\n");
@@ -114,6 +125,7 @@ char *isolate_file_request(char *buffer_copy) {
   return file_request;
 }
 
+// Generate an HTTP response based on the contents of the request buffer
 char *generate_response(char *buffer) {
   char *response;
   response = allocate_response();
