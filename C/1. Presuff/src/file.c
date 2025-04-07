@@ -19,7 +19,7 @@ char *construct_new_file_path(const char *dir_path, const char *pattern,
                               const char *filename, long mode) {
 
   // The file extension occurs after the last period in the filename
-  char *file_extension = strrchr(filename, dot);
+  char *file_extension = strrchr(filename, *dot);
   if (file_extension == NULL || file_extension[0] == '\0') {
     return NULL;
   }
@@ -98,11 +98,12 @@ int pattern_rename(const char *dir_path, const char *pattern,
       continue;
     }
 
+    char *file_extension = strrchr(entry->d_name, *dot);
     // Ignore files without extensions
-    char *file_extension = strrchr(entry->d_name, dot) + 1;
     if (!file_extension || file_extension[0] == '\0') {
       continue;
     }
+    file_extension++;
 
     // Ignore files without the filtered extension if one has been specified
     size_t extension_length = strlen(file_extension) + NULL_TERMINATOR_LENGTH;

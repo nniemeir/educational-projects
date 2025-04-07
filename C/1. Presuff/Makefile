@@ -1,6 +1,5 @@
 SRC =	src/file.c \
-	src/main.c \
-	src/utils.c
+	src/main.c 
 
 CFLAGS += -I./include
 

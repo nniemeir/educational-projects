@@ -3,17 +3,9 @@
 // chosen directory
 #include "../include/presuff.h"
 
-char *get_working_dir(char *dir_path, int path_size) {
-  if (!getcwd(dir_path, path_size)) {
-    fprintf(stderr, "Failed to assign working directory to variable");
-    return NULL;
-  }
-  dir_path[path_size - 1] = '\0';
-  return dir_path;
-}
-
 void process_args(int argc, char *argv[], char *dir_arg, char *pattern,
-                  char *ext_arg, int *mode) {
+                  char *ext_arg, char *filtered_extension, char *dir_path,
+                  int *mode) {
   opterr = 0;
   int mode_args_given = 0;
   int index, c;
@@ -35,7 +27,20 @@ void process_args(int argc, char *argv[], char *dir_arg, char *pattern,
       *mode = MODE_APPEND;
       break;
     case 'h':
-      print_help_msg();
+      printf("Usage: presuff [options]\n");
+      printf("Options:\n");
+      printf("  -b               Prepend pattern to basenames\n");
+      printf("  -d <directory>   Specify directory\n");
+      printf("  -e               Append pattern to basenames\n");
+      printf("  -h               Display this help message\n");
+      printf("  -p <pattern>     Specify pattern to prepend/append\n");
+      printf("  -x <extension>   Specify extension of files to perform "
+             "renaming on\n");
+      printf("\n");
+      printf("Example usage:\n");
+      printf("  presuff -b -d /path/to/directory -p pat_ -x txt\n");
+      printf("  presuff -e -p _pat\n");
+      printf("\n");
       exit(EXIT_SUCCESS);
     case 'p':
       if (!optarg) {
@@ -69,6 +74,21 @@ void process_args(int argc, char *argv[], char *dir_arg, char *pattern,
     printf("Conflicting mode arguments given.\n");
     exit(EXIT_FAILURE);
   }
+
+  if (dir_arg[0] == '\0') {
+    if (!getcwd(dir_path, PATH_MAX)) {
+      fprintf(stderr, "Failed to assign working directory to variable");
+      exit(EXIT_FAILURE);
+    }
+  } else {
+    snprintf(dir_path, PATH_MAX, "%s", dir_arg);
+  }
+
+  if (ext_arg[0] == '\0') {
+    snprintf(filtered_extension, sizeof("None"), "None");
+  } else {
+    snprintf(filtered_extension, sizeof(ext_arg), "%s", ext_arg);
+  }
 }
 
 int main(int argc, char *argv[]) {
@@ -79,20 +99,8 @@ int main(int argc, char *argv[]) {
   char ext_arg[NAME_MAX] = {0};
   int mode = 0;
 
-  process_args(argc, argv, dir_arg, pattern, ext_arg, &mode);
-
-  if (dir_arg[0] == '\0') {
-    snprintf(dir_path, sizeof(dir_path), "%s",
-             get_working_dir(dir_arg, sizeof(dir_arg)));
-  } else {
-    snprintf(dir_path, sizeof(dir_path), "%s", dir_arg);
-  }
-
-  if (ext_arg[0] == '\0') {
-    snprintf(filtered_extension, sizeof(filtered_extension), "None");
-  } else {
-    snprintf(filtered_extension, sizeof(filtered_extension), "%s", ext_arg);
-  }
+  process_args(argc, argv, dir_arg, pattern, ext_arg, filtered_extension,
+               dir_path, &mode);
 
   if (!pattern_rename(dir_path, pattern, filtered_extension, mode)) {
     fprintf(stderr, "Renaming files failed.\n");
