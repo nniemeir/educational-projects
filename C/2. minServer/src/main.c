@@ -2,7 +2,7 @@
 
 int sockfd;
 
-void handler() {
+void handler(void) {
   // printf is not async-signal-safe, so we opt for the write function
   write(STDOUT_FILENO, "\nInterrupt given, closing socket..\n", 36);
   close(sockfd);
