@@ -98,7 +98,7 @@ char *add_file_to_response(char *method, char *file_request, char *response,
 
 // Allocates memory to response and ensures said memory is initialized to all
 // zeros
-char *allocate_response() {
+char *allocate_response(void) {
   char *response = malloc(BUFFER_SIZE);
   if (!response) {
     return NULL;
