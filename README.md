@@ -5,8 +5,9 @@
 
 ### C
 1. PreSuff - POSIX program to prepend or append a string to the name of all files in a directory with specified extension
-2. minServer - a basic HTTPS web server
-3. Kurosawa - a kernel module that prints a randomly selected Akira Kurosawa quote to the kernel ring buffer
+2. Halfway Across Prototype - very early version of what would become [Halfway Across](https://github.com/nniemeir/Halfway-Across).
+3. minServer - a basic HTTPS web server
+4. Kurosawa - a kernel module that prints a randomly selected Akira Kurosawa quote to the kernel ring buffer
 
 ### C++
 1. OUI: use IEEE RA data to determine NIC manufacturer from MAC Address
