@@ -2,7 +2,7 @@ SRC = src/file.c src/main.c src/response.c src/server.c src/utils.c
 
 CFLAGS += -I./include
 
-NAME = minserver
+NAME = cyllenian
 
 RM = rm -f
 
@@ -12,9 +12,9 @@ DESTDIR = /usr/bin/
 
 SRCMAN = man/
 
-MANPAGE = minserver.1
+MANPAGE = cyllenian.1
 
-COMPMAN = minserver.1.gz 
+COMPMAN = cyllenian.1.gz 
 
 COMPRESS = gzip < $(SRCMAN)$(MANPAGE) > $(SRCMAN)$(COMPMAN)
 

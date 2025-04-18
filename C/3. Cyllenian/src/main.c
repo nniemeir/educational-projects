@@ -9,7 +9,7 @@ void handler(void) {
   exit(EXIT_SUCCESS);
 }
 
-// /home/USERNAME/.local/share/minserver/ is prepended to the provided
+// /home/USERNAME/.local/share/cyllenian/ is prepended to the provided
 // filename
 char *construct_path_in_home(char *file_name) {
   const char *home = getenv("HOME");
@@ -17,7 +17,7 @@ char *construct_path_in_home(char *file_name) {
     fprintf(stderr, "Failed to get value of HOME environment variable");
     return NULL;
   }
-  const char *suffix = "/.local/share/minserver/";
+  const char *suffix = "/.local/share/cyllenian/";
   char *path = malloc(strlen(home) + strlen(suffix) + strlen(file_name) +
                       NULL_TERMINATOR_LENGTH);
   if (!path) {
@@ -47,7 +47,7 @@ void process_args(int argc, char *argv[], int *port, char **cert_path,
       }
       break;
     case 'h':
-      printf("Usage: minserver [options]\n");
+      printf("Usage: cyllenian [options]\n");
       printf("Options:\n");
       printf("  -c               Specify path to certificate file\n");
       printf("  -h               Show this help message\n");
